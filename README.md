@@ -13,3 +13,6 @@
 ### API Documentation
 <code><img title="Swagger" alt="swagger" width="40px" 
            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swagger/swagger-original.svg" /></code>
+<code><img title="Postman" alt="postman" width="40px" 
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg" /></code>
+          
