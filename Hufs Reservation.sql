@@ -1,14 +1,20 @@
-﻿CREATE TABLE `Room` (
+﻿DROP TABLE IF EXISTS `Room`;
+
+CREATE TABLE `Room` (
 	`roomId`	BIGINT	NOT NULL,
 	`timetableConfigId`	BIGINT	NOT NULL,
 	`name`	VARCHAR(255)	NULL
 );
+
+DROP TABLE IF EXISTS `Partition`;
 
 CREATE TABLE `Partition` (
 	`partitionId`	BIGINT	NOT NULL,
 	`timetableConfigId`	BIGINT	NOT NULL,
 	`roomId`	BIGINT	NOT NULL
 );
+
+DROP TABLE IF EXISTS `Reservation`;
 
 CREATE TABLE `Reservation` (
 	`reservationId`	BIGINT	NOT NULL,
@@ -21,26 +27,32 @@ CREATE TABLE `Reservation` (
 	`state`	ENUM (  'RESERVATED', 'VISITED', 'NOSHOW' )	NULL
 );
 
+DROP TABLE IF EXISTS `User`;
+
 CREATE TABLE `User` (
 	`userId`	BIGINT	NOT NULL,
 	`serial`	INT	NULL,
 	`name`	VARCHAR(30)	NULL,
 	`password`	VARCHAR(255)	NULL,
-	`isAdmin`	TYNYINT(1)	NULL
+	`isAdmin`	BOOLEAN	NULL
 );
+
+DROP TABLE IF EXISTS `TimetableConfig`;
 
 CREATE TABLE `TimetableConfig` (
 	`timetableConfigId`	BIGINT	NOT NULL,
-	`startTime`	DATETIME	NULL,
-	`endTime`	DATETIME	NULL,
+	`startTime`	TIME	NULL,
+	`endTime`	TIME	NULL,
 	`intervalMinute`	INT	NULL,
 	`maxSlots`	DATE	NULL
 );
 
+DROP TABLE IF EXISTS `Untitled4`;
+
 CREATE TABLE `Untitled4` (
 	`timetableId`	BIGINT	NOT NULL,
-	`startTime`	DATETIME	NULL,
-	`endTime`	DATETIME	NULL,
+	`startTime`	TIME	NULL,
+	`endTime`	TIME	NULL,
 	`intervalMinute`	INT	NULL,
 	`maxSlots`	DATE	NULL
 );
