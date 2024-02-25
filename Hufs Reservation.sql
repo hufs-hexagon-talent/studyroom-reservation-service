@@ -34,7 +34,7 @@ CREATE TABLE `User` (
 	`serial`	INT	NULL,
 	`name`	VARCHAR(30)	NULL,
 	`password`	VARCHAR(255)	NULL,
-	`isAdmin`	BOOLEAN	NULL
+	`isAdmin`	BOOLEAN	NULL
 );
 
 DROP TABLE IF EXISTS `TimetableConfig`;
@@ -47,9 +47,9 @@ CREATE TABLE `TimetableConfig` (
 	`maxSlots`	DATE	NULL
 );
 
-DROP TABLE IF EXISTS `Untitled4`;
+DROP TABLE IF EXISTS `Timetable`;
 
-CREATE TABLE `Untitled4` (
+CREATE TABLE `Timetable` (
 	`timetableId`	BIGINT	NOT NULL,
 	`startTime`	TIME	NULL,
 	`endTime`	TIME	NULL,
@@ -84,7 +84,7 @@ ALTER TABLE `TimetableConfig` ADD CONSTRAINT `PK_TIMETABLECONFIG` PRIMARY KEY (
 	`timetableConfigId`
 );
 
-ALTER TABLE `Untitled4` ADD CONSTRAINT `PK_UNTITLED4` PRIMARY KEY (
+ALTER TABLE `Timetable` ADD CONSTRAINT `PK_TIMETABLE` PRIMARY KEY (
 	`timetableId`
 );
 
@@ -130,10 +130,10 @@ REFERENCES `Partition` (
 	`roomId`
 );
 
-ALTER TABLE `Reservation` ADD CONSTRAINT `FK_Untitled4_TO_Reservation_1` FOREIGN KEY (
+ALTER TABLE `Reservation` ADD CONSTRAINT `FK_Timetable_TO_Reservation_1` FOREIGN KEY (
 	`timetableId`
 )
-REFERENCES `Untitled4` (
+REFERENCES `Timetable` (
 	`timetableId`
 );
 
