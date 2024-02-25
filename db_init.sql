@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS `Room`;
+﻿DROP TABLE IF EXISTS `Room`;
 
 CREATE TABLE `Room` (
 	`roomId`	BIGINT	NOT NULL,
 	`timetableConfigId`	BIGINT	NOT NULL,
-	`name`	VARCHAR(255)	NOT NULL
+	`name`	VARCHAR(255)	NULL
 );
 
 DROP TABLE IF EXISTS `Partition`;
@@ -22,39 +22,39 @@ CREATE TABLE `Reservation` (
 	`partitionId`	BIGINT	NOT NULL,
 	`timetableId`	BIGINT	NOT NULL,
 	`roomId`	BIGINT	NOT NULL,
-	`timetableIndexFrom` INT,
-	`timetableIndexTo` INT,
-	`state`	ENUM('RESERVATED', 'VISITED', 'NOSHOW')	
+	`timetableIndexFrom`	INT	NULL,
+	`timetableIndexTo`	INT	NULL,
+	`state`	ENUM (  'RESERVATED', 'VISITED', 'NOSHOW' )	NULL
 );
 
 DROP TABLE IF EXISTS `User`;
 
 CREATE TABLE `User` (
-	`userId`	BIGINT NOT NULL,
-	`serial`	INT,
-	`name`	VARCHAR(30),
-	`password`	VARCHAR(255),
-	`isAdmin`	BOOLEAN
+	`userId`	BIGINT	NOT NULL,
+	`serial`	INT	NULL,
+	`name`	VARCHAR(30)	NULL,
+	`password`	VARCHAR(255)	NULL,
+	`isAdmin`	BOOLEAN	NULL
 );
 
 DROP TABLE IF EXISTS `TimetableConfig`;
 
 CREATE TABLE `TimetableConfig` (
 	`timetableConfigId`	BIGINT	NOT NULL,
-	`startTime`	TIME,
-	`endTime`	TIME,
-	`intervalMinute`	INT,
-	`maxSlots`	DATE	
+	`startTime`	TIME	NULL,
+	`endTime`	TIME	NULL,
+	`intervalMinute`	INT	NULL,
+	`maxSlots`	DATE	NULL
 );
 
 DROP TABLE IF EXISTS `Timetable`;
 
 CREATE TABLE `Timetable` (
 	`timetableId`	BIGINT	NOT NULL,
-	`startTime`	TIME,
-	`endTime`	TIME,
-	`intervalMinute` INT,
-	`maxSlots`	DATE
+	`startTime`	TIME	NULL,
+	`endTime`	TIME	NULL,
+	`intervalMinute`	INT	NULL,
+	`maxSlots`	DATE	NULL
 );
 
 ALTER TABLE `Room` ADD CONSTRAINT `PK_ROOM` PRIMARY KEY (
