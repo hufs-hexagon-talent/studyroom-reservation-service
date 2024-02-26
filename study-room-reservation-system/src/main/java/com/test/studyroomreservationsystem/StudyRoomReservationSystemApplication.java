@@ -2,7 +2,6 @@ package com.test.studyroomreservationsystem;
 
 import com.test.studyroomreservationsystem.config.JpaConfig;
 import com.test.studyroomreservationsystem.repository.ReservationRepository;
-import com.test.studyroomreservationsystem.repository.jpa.JpaReservationRepo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
