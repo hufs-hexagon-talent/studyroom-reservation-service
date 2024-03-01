@@ -7,7 +7,7 @@
 ### ORM 
 <code><img title="Spring JPA" alt="spring_jpa" width="40px" 
            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" /></code>
-### FE
+### FW
 <code><img title="Spring" alt="spring" width="40px" 
            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" /></code>
 ### API Documentation
