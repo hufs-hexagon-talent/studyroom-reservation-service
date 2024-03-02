@@ -11,10 +11,6 @@ public class ReservationUpdateDto {
     private Long reservationId;
     public ReservationUpdateDto() {
     }
-    public ReservationUpdateDto(Enum<State> state) {
-        this.state = state;
-    }
-
     public ReservationUpdateDto(Integer roomId, Integer partitionId, Enum<State> state){
         this.roomId = roomId;
         this.partitionId = partitionId;
