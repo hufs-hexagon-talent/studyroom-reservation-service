@@ -16,7 +16,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    // C
+    // 예약 등록
     @PostMapping("/enroll")
     public String enrollReservation(@ModelAttribute Reservation reservation, RedirectAttributes redirectAttributes) {
         Reservation savedReservation = reservationService.save(reservation);
@@ -24,7 +24,7 @@ public class ReservationController {
         redirectAttributes.addAttribute("status", true);
         return "redirect:/reservations/{reservationId}";
     }
-    // R
+    // 예약 조회
     @GetMapping("/{reservationId}")
     public String reservation(@PathVariable long reservationId, Model model) {
         Reservation reservation = reservationService.findByReservationId(reservationId).get();
@@ -32,7 +32,7 @@ public class ReservationController {
         return "reservation";
     }
 
-    //   U
+    // 예약 수정
     @PostMapping("/{reservationId}/edit")
     public String edit(@PathVariable long reservationId, @ModelAttribute ReservationUpdateDto updateParam) {
         reservationService.update(reservationId,updateParam);
