@@ -25,7 +25,7 @@ public class ReservationRepositoryTest {
     void save() {
         // given
         Reservation reservation =
-                new Reservation(306L, 1L, 1L,State.RESERVATION);
+                new Reservation(306, 1, 1L,State.RESERVATION);
         // when
         Reservation savedReservation = reservationRepository.save(reservation);
 
@@ -40,12 +40,12 @@ public class ReservationRepositoryTest {
     void update(){
         // given
         Reservation reservation =
-            new Reservation(306L, 1L, 1L,State.RESERVATION);
+            new Reservation(306, 1, 1L,State.RESERVATION);
         Reservation savedReservation = reservationRepository.save(reservation);
         Long reservationId = savedReservation.getReservationId();
 
         // when
-        ReservationUpdateDto updateDto = new ReservationUpdateDto(428L, 2L, State.VISITED);
+        ReservationUpdateDto updateDto = new ReservationUpdateDto(428, 2, State.VISITED);
         reservationRepository.update(reservationId,updateDto);
 
         // then
@@ -59,7 +59,7 @@ public class ReservationRepositoryTest {
     void delete(){
         // given
         Reservation reservation =
-                new Reservation(306L, 1L, 1L,State.RESERVATION);
+                new Reservation(306, 1, 1L,State.RESERVATION);
         Reservation savedReservation = reservationRepository.save(reservation);
         assertThat(savedReservation.getReservationId()).isEqualTo(reservation.getReservationId());
         Long reservationId = savedReservation.getReservationId();

@@ -13,16 +13,21 @@ public class Reservation {
     @Id // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
 
-//    @Column
-    private Long roomId;
-    private Long partitionId;
+    //    @Column
+    private Long userId;
+    private Integer partitionId;
+    private Integer timetableId;
+    private Integer roomId;
+    private Integer timetableIndexFrom;
+    private Integer timetableIndexTo;
     private Enum<State> state;
+
 
 
 
     public Reservation() {}
 
-    public Reservation(Long roomId, Long partitionId, Long reservationId, Enum<State> state) {
+    public Reservation(Integer roomId, Integer partitionId, Long reservationId, Enum<State> state) {
         this.roomId = roomId;
         this.partitionId = partitionId;
         this.reservationId = reservationId;

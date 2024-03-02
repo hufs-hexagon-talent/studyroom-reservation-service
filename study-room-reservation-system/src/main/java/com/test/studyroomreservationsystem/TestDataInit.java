@@ -19,8 +19,8 @@ public class TestDataInit {
     public void initData() {
         log.info("TEST DATE INIT");
 
-        reservationRepository.save(new Reservation(306L,1L,1L, State.RESERVATION));
-         reservationRepository.save(new Reservation(428L,2L,2L, State.VISITED));
+        reservationRepository.save(new Reservation(306,1,1L, State.RESERVATION));
+         reservationRepository.save(new Reservation(428,2,2L, State.VISITED));
     }
 
 }
