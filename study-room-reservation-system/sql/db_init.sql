@@ -1,37 +1,37 @@
 ﻿
--- Room Table
-ALTER TABLE `Room` DROP FOREIGN KEY `FK_Room_TimetableConfig`;
+-- room Table
+ALTER TABLE `room` DROP FOREIGN KEY `FK_Room_TimetableConfig`;
 
-DROP TABLE IF EXISTS `Room`;
-CREATE TABLE `Room` (
+DROP TABLE IF EXISTS `room`;
+CREATE TABLE `room` (
 	`roomId` INT NOT NULL,
 	`timetableConfigId` BIGINT ,
 	`name`	VARCHAR(255),
 	PRIMARY KEY (`roomId`)
 );
 
--- Partition Table
-ALTER TABLE `Partition` DROP FOREIGN KEY `FK_Partition_TimetableConfig`;
-ALTER TABLE `Partition` DROP FOREIGN KEY `FK_Partition_Room`;
+-- partition Table
+ALTER TABLE `partition` DROP FOREIGN KEY `FK_Partition_TimetableConfig`;
+ALTER TABLE `partition` DROP FOREIGN KEY `FK_Partition_Room`;
 
-DROP TABLE IF EXISTS `Partition`;
-CREATE TABLE `Partition` (
+DROP TABLE IF EXISTS `partition`;
+CREATE TABLE `partition` (
 	`partitionId` INT NOT NULL,
 	`timetableConfigId` BIGINT	,
 	`roomId` INT	,
 	PRIMARY KEY (`partitionId`)
 );
 
--- Reservation Table
-ALTER TABLE `Reservation` DROP FOREIGN KEY `FK_Reservation_User`;
-ALTER TABLE `Reservation` DROP FOREIGN KEY `FK_Reservation_Partition`;
-ALTER TABLE `Reservation` DROP FOREIGN KEY `FK_Reservation_Room`;
-ALTER TABLE `Reservation` DROP FOREIGN KEY `FK_Reservation_Timetable`;
+-- reservation Table
+ALTER TABLE `reservation` DROP FOREIGN KEY `FK_Reservation_User`;
+ALTER TABLE `reservation` DROP FOREIGN KEY `FK_Reservation_Partition`;
+ALTER TABLE `reservation` DROP FOREIGN KEY `FK_Reservation_Room`;
+ALTER TABLE `reservation` DROP FOREIGN KEY `FK_Reservation_Timetable`;
 
-DROP TABLE IF EXISTS `Reservation`;
-CREATE TABLE `Reservation` (
+DROP TABLE IF EXISTS `reservation`;
+CREATE TABLE `reservation` (
 	`reservationId`	BIGINT NOT NULL AUTO_INCREMENT,
-	`userId` INT NOT NULL,
+	`userId` BIGINT NOT NULL,
 	`partitionId`	INT	,
 	`timetableId`	BIGINT,
 	`roomId`	INT	,
@@ -41,9 +41,9 @@ CREATE TABLE `Reservation` (
 	PRIMARY KEY(`reservationId`)
 );
 
--- User Table
-DROP TABLE IF EXISTS `User`;
-CREATE TABLE `User` (
+-- user Table
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
 	`userId` BIGINT NOT NULL, -- 학번 
 	`name`	VARCHAR(30),
 	`password`	VARCHAR(255),
@@ -51,9 +51,9 @@ CREATE TABLE `User` (
 	PRIMARY KEY(`userId`)
 );
 
--- TimetableConfig Table
-DROP TABLE IF EXISTS `TimetableConfig`;
-CREATE TABLE `TimetableConfig` (
+-- timetableConfig Table
+DROP TABLE IF EXISTS `timetableConfig`;
+CREATE TABLE `timetableConfig` (
 	`timetableConfigId` BIGINT NOT NULL,
 	`startTime`	TIME,
 	`endTime`	TIME,
@@ -62,9 +62,9 @@ CREATE TABLE `TimetableConfig` (
 	PRIMARY KEY(`timetableConfigId`)
 );
 
--- TimetableConfig Table
-DROP TABLE IF EXISTS `Timetable`;
-CREATE TABLE `Timetable` (
+-- timetableConfig Table
+DROP TABLE IF EXISTS `timetable`;
+CREATE TABLE `timetable` (
 	`timetableId` BIGINT NOT NULL,
 	`startTime`	TIME ,
 	`endTime`	TIME ,
@@ -76,31 +76,31 @@ CREATE TABLE `Timetable` (
 
 
 
-ALTER TABLE `Room` ADD CONSTRAINT `FK_Room_TimetableConfig` 
-FOREIGN KEY (`timetableConfigId`) REFERENCES `TimetableConfig` (`timetableConfigId`);
+ALTER TABLE `room` ADD CONSTRAINT `FK_Room_TimetableConfig` 
+FOREIGN KEY (`timetableConfigId`) REFERENCES `timetableConfig` (`timetableConfigId`);
 
-ALTER TABLE `Partition` ADD CONSTRAINT `FK_Partition_TimetableConfig` 
-FOREIGN KEY (`timetableConfigId`) REFERENCES `TimetableConfig` (`timetableConfigId`);
+ALTER TABLE `partition` ADD CONSTRAINT `FK_Partition_TimetableConfig` 
+FOREIGN KEY (`timetableConfigId`) REFERENCES `timetableConfig` (`timetableConfigId`);
 
-ALTER TABLE `Partition` ADD CONSTRAINT `FK_Partition_Room` 
-FOREIGN KEY (`roomId`) REFERENCES `Room` (`roomId`);
-
-
-ALTER TABLE `Reservation` ADD CONSTRAINT `FK_Reservation_User` 
-FOREIGN KEY (`userId`) REFERENCES `User` (`userId`);
-
-ALTER TABLE `Reservation` ADD CONSTRAINT `FK_Reservation_Partition` 
-FOREIGN KEY (`partitionId`) REFERENCES `Partition` (`partitionId`);
-
-ALTER TABLE `Reservation` ADD CONSTRAINT `FK_Reservation_Room`
-FOREIGN KEY (`roomId`) REFERENCES `Room` (`roomId`);
-
-ALTER TABLE `Reservation` ADD CONSTRAINT `FK_Reservation_Timetable` 
-FOREIGN KEY (`timetableId`) REFERENCES `Timetable` (`timetableId`);
+ALTER TABLE `partition` ADD CONSTRAINT `FK_Partition_Room` 
+FOREIGN KEY (`roomId`) REFERENCES `room` (`roomId`);
 
 
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_Reservation_User` 
+FOREIGN KEY (`userId`) REFERENCES `user` (`userId`);
+
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_Reservation_Partition` 
+FOREIGN KEY (`partitionId`) REFERENCES `partition` (`partitionId`);
+
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_Reservation_Room`
+FOREIGN KEY (`roomId`) REFERENCES `room` (`roomId`);
+
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_Reservation_Timetable` 
+FOREIGN KEY (`timetableId`) REFERENCES `timetable` (`timetableId`);
 
 
--- INSERT INTO `Reservation` (`userId`) VALUES
+
+
+-- INSERT INTO `reservation` (`userId`) VALUES
 --     (111),(222),(333),
 --     (444),(555),(666);
