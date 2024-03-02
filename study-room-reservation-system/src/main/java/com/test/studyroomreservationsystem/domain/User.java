@@ -15,7 +15,7 @@ public class User {
     private Long userId;
     private String name;
     private String password;
-    private boolean isAdmin;
+    private Boolean isAdmin;
 
     public User() {}
 
