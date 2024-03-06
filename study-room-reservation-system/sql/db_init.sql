@@ -1,15 +1,19 @@
-﻿DROP TABLE IF EXISTS `timetable`;
+﻿ALTER TABLE `reservation` DROP FOREIGN KEY `FK_timetable_reservation`;
+ALTER TABLE `room` DROP FOREIGN KEY `FK_timetableconfig_room`;
+ALTER TABLE `reservation` DROP FOREIGN KEY `FK_user_reservation`;
+ALTER TABLE `timetable` DROP FOREIGN KEY `FK_part_timetable`;
+
+DROP TABLE IF EXISTS `timetable`;
 DROP TABLE IF EXISTS `timetableconfig`;
 DROP TABLE IF EXISTS `user` ;
 DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `partition`;
 DROP TABLE IF EXISTS `room`;
--- room Table
 
+-- room Table
 CREATE TABLE `room` (
-	`room_id` INT NOT NULL,
+	`room_id` INT NOT NULL AUTO_INCREMENT,
 	`timetable_config_id` BIGINT NOT NULL,
-	`name` VARCHAR(255),
 	PRIMARY KEY (`room_id`)
 );
 
@@ -17,7 +21,7 @@ CREATE TABLE `room` (
 
 
 CREATE TABLE `partition`(
-	`partition_id` INT NOT NULL,
+	`partition_id` INT NOT NULL AUTO_INCREMENT,
 	`timetable_config_id` BIGINT	,
 	`room_id` INT	,
 	PRIMARY KEY (`partition_id`)
@@ -51,7 +55,7 @@ CREATE TABLE `user` (
 -- timetableConfig Table
 
 CREATE TABLE `timetableconfig` (
-	`timetable_config_id` BIGINT NOT NULL,
+	`timetable_config_id` BIGINT NOT NULL AUTO_INCREMENT,
 	`start_time` TIME,
 	`end_time` TIME,
 	`interval_minute`	INT	,
@@ -62,7 +66,7 @@ CREATE TABLE `timetableconfig` (
 -- timetableConfig Table
 
 CREATE TABLE `timetable` (
-	`timetable_id` BIGINT NOT NULL,
+	`timetable_id` BIGINT NOT NULL AUTO_INCREMENT,
 	`partition_id` INT	,
 	`start_time`	TIME ,
 	`end_time`	TIME ,
@@ -73,21 +77,21 @@ CREATE TABLE `timetable` (
 
 
 
-ALTER TABLE `room` ADD CONSTRAINT FK_timetableconfig_room FOREIGN KEY (`timetable_config_id`)
+ALTER TABLE `room` ADD CONSTRAINT `FK_timetableconfig_room` FOREIGN KEY (`timetable_config_id`)
 REFERENCES `timetableconfig` (`timetable_config_id`);
 
-ALTER TABLE `partition` ADD CONSTRAINT FK_room_part FOREIGN KEY (`room_id`)
+ALTER TABLE `partition` ADD CONSTRAINT `FK_room_partition` FOREIGN KEY (`room_id`)
 REFERENCES `room` (`room_id`);
 
-ALTER TABLE `reservation` ADD CONSTRAINT FK_user_reservation FOREIGN KEY (`user_id`) 
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_user_reservation` FOREIGN KEY (`user_id`) 
 REFERENCES `user` (`user_id`);
 
-ALTER TABLE `reservation` ADD CONSTRAINT FK_part_reservation FOREIGN KEY (`partition_id`)
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_partition_reservation` FOREIGN KEY (`partition_id`)
 REFERENCES `partition` (`partition_id`);
 
-ALTER TABLE `reservation` ADD CONSTRAINT FK_timetable_reservation FOREIGN KEY (`timetable_id`)
+ALTER TABLE `reservation` ADD CONSTRAINT `FK_timetable_reservation` FOREIGN KEY (`timetable_id`)
 REFERENCES `timetable` (`timetable_id`);
 
-ALTER TABLE `timetable` ADD CONSTRAINT FK_part_timetable FOREIGN KEY (`partition_id`)
+ALTER TABLE `timetable` ADD CONSTRAINT `FK_partition_timetable` FOREIGN KEY (`partition_id`)
 REFERENCES `partition` (`partition_id`);
 
