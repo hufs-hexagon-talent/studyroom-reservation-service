@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -21,41 +21,54 @@ public class UserServiceImpl implements UserService{
     }
     /*-------------------------------------------------*/
     @Override
-    public User createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         // 유효성 검사하기 , 비밀번호 암호화 하기
         User user = new User();
         user.setLoginId(userDto.getLoginId());
         user.setPassword(userDto.getPassword());
         user.setSerial(userDto.getSerial());
         user.setIsAdmin(userDto.getIsAdmin());
-        return userRepository.save(user);
+        return convertToDto(userRepository.save(user));
     }
 
     @Override
-    public User findUserById(Long userId) {
-        return userRepository.findById(userId)
+    public UserDto findUserById(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+        return convertToDto(user);
     }
 
     @Override
-    public List<User> findAllUser() {
-        return userRepository.findAll();
+    public List<UserDto> findAllUsers() {
+        return userRepository.findAll().stream().map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
+
     @Override
-    public User updateUser(Long userId, UserUpdateDto userUpdateDto) {
-        User findedUser = findUserById(userId);
+    public UserDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
 
-        findedUser.setLoginId(userUpdateDto.getLoginId());
-        findedUser.setPassword(userUpdateDto.getPassword());
-        findedUser.setSerial(userUpdateDto.getSerial());
-        findedUser.setIsAdmin(userUpdateDto.getIsAdmin());
+        user.setLoginId(userUpdateDto.getLoginId());
+        user.setPassword(userUpdateDto.getPassword());
+        user.setSerial(userUpdateDto.getSerial());
+        user.setIsAdmin(userUpdateDto.getIsAdmin());
 
-        return userRepository.save(findedUser);
+        return convertToDto(userRepository.save(user));
     }
 
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    private UserDto convertToDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setLoginId(user.getLoginId());
+        userDto.setPassword(user.getPassword());
+        userDto.setSerial(user.getSerial());
+        userDto.setIsAdmin(user.getIsAdmin());
+        return userDto;
     }
 }
