@@ -3,7 +3,7 @@ package com.test.studyroomreservationsystem.service;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
-import com.test.studyroomreservationsystem.dto.ReservationCreateDto;
+import com.test.studyroomreservationsystem.dto.ReservationDto;
 import com.test.studyroomreservationsystem.dto.RoomDto;
 import com.test.studyroomreservationsystem.dto.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
@@ -65,7 +65,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override // 룸이 운영시간인지?
-    public boolean isRoomAvailable(Long roomId, ReservationCreateDto createDto) {
+    public boolean isRoomAvailable(Long roomId, ReservationDto createDto) {
         Room room = findRoomById(roomId);
         RoomOperationPolicy roomOperationPolicy = room.getRoomOperationPolicy();
         LocalTime operationStartTime = roomOperationPolicy.getOperationStartTime();
