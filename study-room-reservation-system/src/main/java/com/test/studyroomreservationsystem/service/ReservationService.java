@@ -1,16 +1,17 @@
 package com.test.studyroomreservationsystem.service;
 
 
-import com.test.studyroomreservationsystem.domain.Reservation;
-import com.test.studyroomreservationsystem.repository.ReservationUpdateDto;
+import com.test.studyroomreservationsystem.domain.entity.Reservation;
+import com.test.studyroomreservationsystem.dto.ReservationCreateDto;
+import com.test.studyroomreservationsystem.dto.ReservationUpdateDto;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ReservationService {
-    Reservation save(Reservation reservation);
-    void update(Long reservationId , ReservationUpdateDto updateParam);
-    Optional<Reservation> findByReservationId(Long reservationId);
-    void deleteByReservationId(Long reservationId);
+    Reservation createReservation(ReservationCreateDto reservationDto);
+    Reservation findReservationById(Long reservationId);
+    List<Reservation> findAllReservation();
+    Reservation updateReservation(Long reservationId , ReservationUpdateDto reservationUpdateDto);
+    void deleteReservationById(Long reservationId);
 
-    //    List<Reservation> findAll();
 }
