@@ -46,7 +46,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
         roomOperationPolicy.setOperationStartTime(policyDto.getOperationStartTime());
         roomOperationPolicy.setOperationEndTime(policyDto.getOperationEndTime());
         roomOperationPolicy.setEachMaxMinute(policyDto.getEachMaxMinute());
-        return roomOperationPolicy;
+        return roomOperationPolicyRepository.save(roomOperationPolicy);
     }
 
     @Override
