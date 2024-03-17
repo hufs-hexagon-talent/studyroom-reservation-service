@@ -44,6 +44,12 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ReservationNotPossibleException("The room is not available.");
         }
         Reservation reservation = new Reservation();
+        reservation.setRoom(roomService.findRoomById(reservationDto.getRoomId()));
+        reservation.setUser(userService.findUserById(reservationDto.getUserId()));
+        reservation.setStartDateTime(reservationDto.getStartDateTime());
+        reservation.setEndDateTime(reservationDto.getEndDateTime());
+        reservation.setState(reservationDto.getState());
+
         return reservationRepository.save(reservation);
         
         }
@@ -156,7 +162,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     public ReservationDto convertToDto(Reservation reservation) {
         ReservationDto reservationDto = new ReservationDto();
-        reservationDto.setReservationId(reservation.getReservationId());
+
         reservationDto.setRoomId(reservation.getRoom().getRoomId());
         reservationDto.setUserId(reservation.getUser().getUserId());
         reservationDto.setStartDateTime(reservation.getStartDateTime());
