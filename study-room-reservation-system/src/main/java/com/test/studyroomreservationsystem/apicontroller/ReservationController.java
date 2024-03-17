@@ -1,8 +1,10 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
-import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,6 +60,31 @@ public class ReservationController {
         ReservationDto reservation = reservationService.convertToDto(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
+    @Operation(summary = "reservation 룸 업데이트", description = "해당 reservation id의 룸 업데이트 API")
+    @PutMapping("/{reservationId}/room")
+    ResponseEntity<ReservationDto> updateRoomReservation(@PathVariable Long reservationId,
+                                                     @RequestBody ReservationRoomDto reservationDto) {
+        Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
+        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        return new ResponseEntity<>(reservation, HttpStatus.OK);
+    }
+    @Operation(summary = "reservation 시간 업데이트", description = "해당 reservation id의 시간 업데이트 API")
+    @PutMapping("/{reservationId}/time")
+    ResponseEntity<ReservationDto> updateTimeReservation(@PathVariable Long reservationId,
+                                                     @RequestBody ReservationTimeDto reservationDto) {
+        Reservation updateReservation = reservationService.updateTimeReservation(reservationId, reservationDto);
+        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        return new ResponseEntity<>(reservation, HttpStatus.OK);
+    }
+    @Operation(summary = "reservation 상태 업데이트", description = "해당 reservation id의 상태 업데이트 API")
+    @PutMapping("/{reservationId}/state")
+    ResponseEntity<ReservationDto> updateStateReservation(@PathVariable Long reservationId,
+                                                          @RequestBody ReservationStateDto reservationDto) {
+        Reservation updateReservation = reservationService.updateStateReservation(reservationId, reservationDto);
+        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        return new ResponseEntity<>(reservation, HttpStatus.OK);
+    }
+
     @Operation(summary = "reservation 삭제", description = "해당 reservation id의 정보 삭제 API")
     @DeleteMapping("/{reservationId}")
     ResponseEntity<Void> deleteReservation(@PathVariable Long reservationId) {
