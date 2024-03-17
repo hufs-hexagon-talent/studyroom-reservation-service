@@ -1,8 +1,8 @@
 package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
-import com.test.studyroomreservationsystem.dto.RoomOperationPolicyDto;
-import com.test.studyroomreservationsystem.dto.RoomOperationPolicyUpdateDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
 
 import java.util.List;
 

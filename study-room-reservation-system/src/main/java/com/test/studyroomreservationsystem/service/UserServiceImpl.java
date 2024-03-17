@@ -2,8 +2,8 @@ package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.UserRepository;
-import com.test.studyroomreservationsystem.dto.UserDto;
-import com.test.studyroomreservationsystem.dto.UserUpdateDto;
+import com.test.studyroomreservationsystem.dto.user.UserDto;
+import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 import com.test.studyroomreservationsystem.service.exception.LoginIdAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.exception.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.exception.UserNotFoundException;

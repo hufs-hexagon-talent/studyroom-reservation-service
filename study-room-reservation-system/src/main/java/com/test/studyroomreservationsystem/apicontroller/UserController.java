@@ -1,8 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.UserDto;
-import com.test.studyroomreservationsystem.dto.UserUpdateDto;
+import com.test.studyroomreservationsystem.dto.user.UserDto;
+import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -2,8 +2,8 @@ package com.test.studyroomreservationsystem.apicontroller;
 
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
-import com.test.studyroomreservationsystem.dto.RoomDto;
-import com.test.studyroomreservationsystem.dto.RoomUpdateDto;
+import com.test.studyroomreservationsystem.dto.room.RoomDto;
+import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

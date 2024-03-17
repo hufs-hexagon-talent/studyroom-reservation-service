@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.dto;
+package com.test.studyroomreservationsystem.dto.reservation;
 
 import com.test.studyroomreservationsystem.domain.ReservationState;
 import lombok.Getter;
@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter @Setter
 public class ReservationDto { // CR
+    private Long reservationId;
     private Long userId;
     private Long roomId;
     private LocalDateTime startDateTime;

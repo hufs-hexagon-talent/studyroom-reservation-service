@@ -3,12 +3,13 @@ package com.test.studyroomreservationsystem.service;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
-import com.test.studyroomreservationsystem.dto.ReservationDto;
-import com.test.studyroomreservationsystem.dto.RoomDto;
-import com.test.studyroomreservationsystem.dto.RoomUpdateDto;
+import com.test.studyroomreservationsystem.dto.room.RoomDto;
+import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -79,15 +80,15 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override // 룸이 운영시간인지?
-    public boolean isRoomAvailable(Long roomId, ReservationDto createDto) {
+    public boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         Room room = findRoomById(roomId);
 
         RoomOperationPolicy roomOperationPolicy = room.getRoomOperationPolicy();
         LocalTime operationStartTime = roomOperationPolicy.getOperationStartTime();
         LocalTime operationEndTime = roomOperationPolicy.getOperationEndTime();
 
-        LocalTime reservationStartTime = createDto.getStartDateTime().toLocalTime();
-        LocalTime reservationEndTime = createDto.getEndDateTime().toLocalTime();
+        LocalTime reservationStartTime = startDateTime.toLocalTime();
+        LocalTime reservationEndTime = endDateTime.toLocalTime();
 
 
         return !operationStartTime.isAfter(reservationStartTime) && !operationEndTime.isBefore(reservationEndTime);

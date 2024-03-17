@@ -1,10 +1,10 @@
 package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
-import com.test.studyroomreservationsystem.dto.ReservationDto;
-import com.test.studyroomreservationsystem.dto.RoomDto;
-import com.test.studyroomreservationsystem.dto.RoomUpdateDto;
+import com.test.studyroomreservationsystem.dto.room.RoomDto;
+import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RoomService {
@@ -15,5 +15,5 @@ public interface RoomService {
     Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto);
     void deleteRoom(Long roomId);
     RoomDto convertToDto(Room room);
-    boolean isRoomAvailable(Long roomId, ReservationDto createDto);
+    boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

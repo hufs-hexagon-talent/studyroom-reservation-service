@@ -1,11 +1,11 @@
-package com.test.studyroomreservationsystem.dto;
+package com.test.studyroomreservationsystem.dto.user;
 
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter@Setter
-public class UserUpdateDto { // U dto
+@Setter@Getter
+public class UserDto { // CR dto
     private String loginId;
     private String password;
     private String serial;
