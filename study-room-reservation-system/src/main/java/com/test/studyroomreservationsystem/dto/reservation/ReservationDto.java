@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Getter @Setter
 public class ReservationDto { // CR
-    private Long reservationId;
     private Long userId;
     private Long roomId;
     private LocalDateTime startDateTime;
