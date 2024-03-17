@@ -27,16 +27,16 @@ public class UserController {
     @Operation(summary = "user 생성", description = "user 생성하는 API")
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        User user = userService.createUser(userDto);
-        UserDto createdUser = userService.convertToDto(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        User createdUser = userService.createUser(userDto);
+        UserDto user = userService.convertToDto(createdUser);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
     @Operation(summary = "user 조회", description = "user id로 조회 API")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
-        User user = userService.findUserById(userId);
-        UserDto foundUser = userService.convertToDto(user);
-        return new ResponseEntity<>(foundUser, HttpStatus.OK);
+        User foundUser = userService.findUserById(userId);
+        UserDto user = userService.convertToDto(foundUser);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(summary = "모든 user 조회", description = "모든 user 조회 API")
@@ -51,9 +51,9 @@ public class UserController {
     @Operation(summary = "user 정보 업데이트", description = "해당 user id의 정보 업데이트 API")
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
-        User user = userService.updateUser(userId, userUpdateDto);
-        UserDto updatedUser = userService.convertToDto(user);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        User updatedUser = userService.updateUser(userId, userUpdateDto);
+        UserDto user = userService.convertToDto(updatedUser);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @Operation(summary = "user 삭제", description = "해당 user id의 정보 삭제 API")
