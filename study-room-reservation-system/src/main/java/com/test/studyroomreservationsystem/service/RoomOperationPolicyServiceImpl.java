@@ -9,49 +9,73 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyService{
 
-    RoomOperationPolicyRepository roomOperationPolicyRepository;
+    RoomOperationPolicyRepository policyRepository;
     @Autowired
-    public RoomOperationPolicyServiceImpl(RoomOperationPolicyRepository roomOperationPolicyRepository) {
-        this.roomOperationPolicyRepository = roomOperationPolicyRepository;
+    public RoomOperationPolicyServiceImpl(RoomOperationPolicyRepository policyRepository) {
+        this.policyRepository = policyRepository;
     }
 
     @Override
     public RoomOperationPolicy createPolicy(RoomOperationPolicyDto policyDto) {
-        RoomOperationPolicy roomOperationPolicy = new RoomOperationPolicy();
+        RoomOperationPolicy policy = new RoomOperationPolicy();
 
-        roomOperationPolicy.setOperationStartTime(policyDto.getOperationStartTime());
-        roomOperationPolicy.setOperationEndTime(policyDto.getOperationEndTime());
-        roomOperationPolicy.setEachMaxMinute(policyDto.getEachMaxMinute());
+        policy.setOperationStartTime(policyDto.getOperationStartTime());
+        policy.setOperationEndTime(policyDto.getOperationEndTime());
+        policy.setEachMaxMinute(policyDto.getEachMaxMinute());
 
-        return roomOperationPolicyRepository.save(roomOperationPolicy);
+        return policyRepository.save(policy);
     }
     @Override
+    public RoomOperationPolicyDto convertToDto(RoomOperationPolicy policy) {
+
+        RoomOperationPolicyDto policyDto = new RoomOperationPolicyDto();
+        policyDto.setOperationStartTime(policy.getOperationStartTime());
+        policyDto.setOperationEndTime(policy.getOperationEndTime());
+        policyDto.setEachMaxMinute(policy.getEachMaxMinute());
+
+        return policyDto;
+    }
+    @Override
+    public RoomOperationPolicyUpdateDto convertToUpdateDto(RoomOperationPolicy policy) {
+
+        RoomOperationPolicyUpdateDto policyDto = new RoomOperationPolicyUpdateDto();
+        policyDto.setOperationStartTime(policy.getOperationStartTime());
+        policyDto.setOperationEndTime(policy.getOperationEndTime());
+        policyDto.setEachMaxMinute(policy.getEachMaxMinute());
+
+        return policyDto;
+    }
+
+    @Override
     public RoomOperationPolicy findPolicyById(Long policyId) {
-        return roomOperationPolicyRepository.findById(policyId)
-                .orElseThrow(()-> new RoomOperationPolicyNotFoundException("RoomOperationPolicy not found with id: " + policyId));
+        return policyRepository.findById(policyId)
+                .orElseThrow(() -> new RoomOperationPolicyNotFoundException("RoomOperationPolicy not found with id: " + policyId));
     }
 
     @Override
     public List<RoomOperationPolicy> getAllPolicies() {
-        return roomOperationPolicyRepository.findAll();
+        return policyRepository.findAll();
     }
 
     @Override
     public RoomOperationPolicy updatePolicy(Long policyId, RoomOperationPolicyUpdateDto policyDto) {
-        RoomOperationPolicy roomOperationPolicy = findPolicyById(policyId);
-        roomOperationPolicy.setOperationStartTime(policyDto.getOperationStartTime());
-        roomOperationPolicy.setOperationEndTime(policyDto.getOperationEndTime());
-        roomOperationPolicy.setEachMaxMinute(policyDto.getEachMaxMinute());
-        return roomOperationPolicyRepository.save(roomOperationPolicy);
+        RoomOperationPolicy policy = findPolicyById(policyId);
+
+        policy.setOperationStartTime(policyDto.getOperationStartTime());
+        policy.setOperationEndTime(policyDto.getOperationEndTime());
+        policy.setEachMaxMinute(policyDto.getEachMaxMinute());
+
+        return policyRepository.save(policy);
     }
 
     @Override
     public void deletePolicy(Long policyId) {
-        roomOperationPolicyRepository.deleteById(policyId);
+        policyRepository.deleteById(policyId);
     }
 
 

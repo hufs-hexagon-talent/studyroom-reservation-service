@@ -12,4 +12,8 @@ public interface RoomOperationPolicyService {
     void deletePolicy(Long policyId);
     RoomOperationPolicy findPolicyById(Long policyId);
     List<RoomOperationPolicy> getAllPolicies();
+
+    RoomOperationPolicyDto convertToDto(RoomOperationPolicy policy);
+    RoomOperationPolicyUpdateDto convertToUpdateDto(RoomOperationPolicy policy);
+
 }
