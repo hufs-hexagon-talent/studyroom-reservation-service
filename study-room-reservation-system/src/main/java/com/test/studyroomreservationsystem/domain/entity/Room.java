@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name="room")
 public class Room {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
     private String roomName;
