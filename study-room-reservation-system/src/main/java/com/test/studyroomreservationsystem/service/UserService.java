@@ -7,11 +7,11 @@ import com.test.studyroomreservationsystem.dto.UserUpdateDto;
 import java.util.List;
 
 public interface UserService {
-    UserDto createUser(UserDto userDto);
-    UserDto findUserById(Long userId);
-    List<UserDto> findAllUsers();
+    User createUser(UserDto userDto);
+    User findUserById(Long userId);
+    List<User> findAllUsers();
+    User updateUser(Long userId, UserUpdateDto userUpdateDto);
 
-    UserDto updateUser(Long userId, UserUpdateDto userUpdateDto);
-
+    UserDto convertToDto(User user);
     void deleteUser(Long userId);
 }
