@@ -3,7 +3,7 @@ ALTER TABLE `room` DROP FOREIGN KEY `FK_timetableconfig_room`;
 ALTER TABLE `reservation` DROP FOREIGN KEY `FK_user_reservation`;
 ALTER TABLE `timetable` DROP FOREIGN KEY `FK_part_timetable`;
 
-DROP TABLE IF EXISTS `timetable`;
+DROP TABLE IF EXISTS `room_operation_policy`;
 DROP TABLE IF EXISTS `user` ;
 DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `room`;
