@@ -12,33 +12,46 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 
+
 @Service
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final RoomOperationPolicyService policyService; // 주입
     @Autowired
-    public RoomServiceImpl(RoomRepository roomRepository, RoomOperationPolicyService policyService) {
+    public RoomServiceImpl(RoomRepository roomRepository,
+                           RoomOperationPolicyService policyService) {
         this.roomRepository = roomRepository;
         this.policyService = policyService;
     }
+
+
 
     @Override
     public Room createRoom(RoomDto roomDto) {
         Room room = new Room();
         room.setRoomName(roomDto.getRoomName());
+        room.setRoomOperationPolicy(policyService.findPolicyById(roomDto.getRoomOperationPolicyId()));
         return roomRepository.save(room);
+    }
+
+    @Override
+    public RoomDto convertToDto(Room room) {
+        RoomDto roomDto = new RoomDto();
+        roomDto.setRoomId(room.getRoomId());
+        roomDto.setRoomOperationPolicyId(room.getRoomOperationPolicy().getRoomOperationPolicyId());
+        roomDto.setRoomName(room.getRoomName());
+        return roomDto;
     }
 
     @Override
     public Room findRoomById(Long roomId) {
         return roomRepository.findById(roomId)
-                .orElseThrow(()-> new RoomNotFoundException("Room not found with id: " + roomId));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found with id: " + roomId));
     }
-
     @Override
     public Room findRoomByName(String roomName) {
         return roomRepository.findByRoomName(roomName)
-                .orElseThrow(()-> new RoomNotFoundException("Room not found with name: " + roomName));
+                .orElseThrow(() -> new RoomNotFoundException("Room not found with name: " + roomName));
     }
 
 
@@ -51,6 +64,7 @@ public class RoomServiceImpl implements RoomService {
     public Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto) {
         Room room = findRoomById(roomId);
         room.setRoomName(roomUpdateDto.getRoomName());
+
         if (roomUpdateDto.getRoomOperationPolicyId() != null) {
             RoomOperationPolicy policy = policyService.findPolicyById(roomUpdateDto.getRoomOperationPolicyId());
             room.setRoomOperationPolicy(policy);
@@ -60,13 +74,14 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void deleteRoomById(Long roomId) {
+    public void deleteRoom(Long roomId) {
         roomRepository.deleteById(roomId);
     }
 
     @Override // 룸이 운영시간인지?
     public boolean isRoomAvailable(Long roomId, ReservationDto createDto) {
         Room room = findRoomById(roomId);
+
         RoomOperationPolicy roomOperationPolicy = room.getRoomOperationPolicy();
         LocalTime operationStartTime = roomOperationPolicy.getOperationStartTime();
         LocalTime operationEndTime = roomOperationPolicy.getOperationEndTime();

@@ -13,6 +13,7 @@ public interface RoomService {
     Room findRoomByName(String roomName);
     List<Room> findAllRoom();
     Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto);
-    void deleteRoomById(Long roomId);
+    void deleteRoom(Long roomId);
+    RoomDto convertToDto(Room room);
     boolean isRoomAvailable(Long roomId, ReservationDto createDto);
 }
