@@ -28,38 +28,38 @@ public class RoomController {
     @Operation(summary = "room 생성", description = "room 생성하는 API")
     @PostMapping
     public ResponseEntity<RoomDto> createRoom(@RequestBody RoomDto roomDto) {
-        Room room = roomService.createRoom(roomDto);
-        RoomDto createdRoom = roomService.convertToDto(room);
+        Room createdRoom = roomService.createRoom(roomDto);
+        RoomDto room = roomService.convertToDto(createdRoom);
 
-        return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
+        return new ResponseEntity<>(room, HttpStatus.CREATED);
     }
     @Operation(summary = "room 조회", description = "room id로 조회 API")
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable Long roomId) {
-        Room room = roomService.findRoomById(roomId);
-        RoomDto foundRoom = roomService.convertToDto(room);
-        return new ResponseEntity<>(foundRoom, HttpStatus.OK);
+        Room foundRoom = roomService.findRoomById(roomId);
+        RoomDto room = roomService.convertToDto(foundRoom);
+        return new ResponseEntity<>(room, HttpStatus.OK);
     }
 
     @Operation(summary = "모든 room 조회", description = "모든 room 조회 API")
     @GetMapping
     public ResponseEntity<List<RoomDto>> getAllRooms() {
-        List<Room> rooms = roomService.findAllRoom();
-        List<RoomDto> roomDtoList = rooms.stream()
+        List<RoomDto> rooms = roomService.findAllRoom()
+                .stream()
                 .map(roomService::convertToDto)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(roomDtoList, HttpStatus.OK);
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
 
     }
     @Operation(summary = "room 정보 업데이트", description = "해당 room id의 정보 업데이트 API")
     @PutMapping("/{roomId}")
     public ResponseEntity<RoomDto> updateRoom(@PathVariable Long roomId,
                                               @RequestBody RoomUpdateDto roomDto) {
-        Room room = roomService.updateRoom(roomId, roomDto);
-        RoomDto updatedRoom = roomService.convertToDto(room);
+        Room updatedRoom = roomService.updateRoom(roomId, roomDto);
+        RoomDto room = roomService.convertToDto(updatedRoom);
 
-        return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
+        return new ResponseEntity<>(room, HttpStatus.OK);
     }
     @Operation(summary = "room 삭제", description = "해당 room id의 정보 삭제 API")
     @DeleteMapping("/{roomId}")
