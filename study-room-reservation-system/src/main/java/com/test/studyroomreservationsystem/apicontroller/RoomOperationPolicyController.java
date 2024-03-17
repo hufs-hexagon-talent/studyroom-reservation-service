@@ -25,17 +25,17 @@ public class RoomOperationPolicyController {
     @PostMapping
     public ResponseEntity<RoomOperationPolicyDto> createPolicy(@RequestBody RoomOperationPolicyDto policyDto) {
 
-        RoomOperationPolicy policy = roomOperationPolicyService.createPolicy(policyDto);
-        RoomOperationPolicyDto createdPolicy = roomOperationPolicyService.convertToDto(policy);
+        RoomOperationPolicy createdPolicy = roomOperationPolicyService.createPolicy(policyDto);
+        RoomOperationPolicyDto policy = roomOperationPolicyService.convertToDto(createdPolicy);
 
-        return new ResponseEntity<>(createdPolicy, HttpStatus.CREATED);
+        return new ResponseEntity<>(policy, HttpStatus.CREATED);
     }
     @Operation(summary = "RoomOperationPolicy 조회", description = "RoomOperationPolicy id로 조회 API")
     @GetMapping("/{roomOperationPolicyId}")
     public ResponseEntity<RoomOperationPolicyDto> getPolicy(@PathVariable Long roomOperationPolicyId) {
-        RoomOperationPolicy policy = roomOperationPolicyService.findPolicyById(roomOperationPolicyId);// dto 로 전환
-        RoomOperationPolicyDto foundPolicy = roomOperationPolicyService.convertToDto(policy);
-        return new ResponseEntity<>(foundPolicy, HttpStatus.OK);
+        RoomOperationPolicy foundPolicy = roomOperationPolicyService.findPolicyById(roomOperationPolicyId);// dto 로 전환
+        RoomOperationPolicyDto policy = roomOperationPolicyService.convertToDto(foundPolicy);
+        return new ResponseEntity<>(policy, HttpStatus.OK);
     }
     @Operation(summary = "모든 RoomOperationPolicy 조회", description = "모든 RoomOperationPolicy 조회 API")
     @GetMapping
@@ -50,10 +50,10 @@ public class RoomOperationPolicyController {
     @PutMapping("/{roomOperationPolicyId}")
     public ResponseEntity<RoomOperationPolicyUpdateDto> updatePolicy(@PathVariable Long roomOperationPolicyId,
                                                                      @RequestBody RoomOperationPolicyUpdateDto policyDto) {
-        RoomOperationPolicy policy = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, policyDto);
-        RoomOperationPolicyUpdateDto updatedPolicy = roomOperationPolicyService.convertToUpdateDto(policy);
+        RoomOperationPolicy updatedPolicy = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, policyDto);
+        RoomOperationPolicyUpdateDto policy = roomOperationPolicyService.convertToUpdateDto(updatedPolicy);
 
-        return new ResponseEntity<>(updatedPolicy, HttpStatus.OK);
+        return new ResponseEntity<>(policy, HttpStatus.OK);
     }
     @Operation(summary = "RoomOperationPolicy 삭제", description = "해당 RoomOperationPolicy id의 정보 삭제 API")
     @DeleteMapping("/{roomOperationPolicyId}")
