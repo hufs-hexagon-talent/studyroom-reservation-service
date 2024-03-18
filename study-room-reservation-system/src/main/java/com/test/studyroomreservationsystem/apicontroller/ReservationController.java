@@ -27,7 +27,7 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @Operation(summary = "reservation 생성", description = "reservation 생성하는 API")
+    @Operation(summary = "reservation 생성", description = "reservation 생성 하는 API")
     @PostMapping
     ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationDto reservationDto) {
         Reservation createdReservation = reservationService.createReservation(reservationDto);
@@ -52,6 +52,18 @@ public class ReservationController {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
+
+    @Operation(summary = "User 의 모든 Reservation 기록 조회 ",description = "user id로 reservation history 조회 API")
+    @GetMapping("/user-history/{userId}") // URI 재구성
+    ResponseEntity<List<ReservationDto>> getAllReservationsByUser(@PathVariable Long userId) {
+
+        List<ReservationDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
+                .stream()
+                .map(reservationService::convertToDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
+    }
+
     @Operation(summary = "reservation 정보 업데이트", description = "해당 reservation id의 정보 업데이트 API")
     @PutMapping("/{reservationId}")
     ResponseEntity<ReservationDto> updateReservation(@PathVariable Long reservationId,
