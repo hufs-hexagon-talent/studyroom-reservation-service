@@ -13,6 +13,7 @@ public interface ReservationService {
     Reservation createReservation(ReservationDto reservationDto);
     Reservation findReservationById(Long reservationId);
     List<Reservation> findAllReservation();
+    List<Reservation> findAllReservationByUser(Long userId);
     Reservation updateReservation(Long reservationId , ReservationDto reservationDto);
     Reservation updateTimeReservation(Long reservationId , ReservationTimeDto timeDto);
     Reservation updateStateReservation(Long reservationId , ReservationStateDto stateDto);
