@@ -1,0 +1,22 @@
+#spring.profiles.active=debug
+
+
+
+spring:
+    datasource:
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
+        username: root
+        password: 1234
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
+        user: root
+        password: 1234
+# COVERT PROP TO YML
