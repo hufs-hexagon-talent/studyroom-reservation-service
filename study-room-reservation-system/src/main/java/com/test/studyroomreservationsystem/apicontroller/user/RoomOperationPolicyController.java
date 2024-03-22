@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.apicontroller;
+package com.test.studyroomreservationsystem.apicontroller.user;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Tag(name = "RoomOperationPolicy", description = "Room 운영 정책 관련 API")
 @RestController
-@RequestMapping("/api/policies")
+@RequestMapping("/user/policies")
 public class RoomOperationPolicyController {
     private final RoomOperationPolicyService roomOperationPolicyService;
     @Autowired
