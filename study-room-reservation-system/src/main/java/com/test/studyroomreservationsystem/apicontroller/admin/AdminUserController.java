@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.apicontroller;
+package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.UserDto;
@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/admin/users")
+public class AdminUserController {
     private final UserService userService;
     @Autowired
-    public UserController(UserService userService) {
+    public AdminUserController(UserService userService) {
         this.userService = userService;
     }
 

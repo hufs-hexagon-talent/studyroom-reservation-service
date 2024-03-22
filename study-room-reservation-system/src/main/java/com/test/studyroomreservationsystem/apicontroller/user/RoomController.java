@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.apicontroller;
+package com.test.studyroomreservationsystem.apicontroller.user;
 
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Room", description = "방 정보 관련 API")
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("/user/rooms")
 public class RoomController {
     private final RoomService roomService;
     @Autowired

@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.apicontroller;
+package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationDto;
@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
-@RequestMapping("/api/reservations")
-public class ReservationController {
+@RequestMapping("/admin/reservations")
+public class AdminReservationController {
     private final ReservationService reservationService;
 
     @Autowired
-    public ReservationController(ReservationService reservationService) {
+    public AdminReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
 
