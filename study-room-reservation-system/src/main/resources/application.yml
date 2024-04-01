@@ -1,4 +1,3 @@
-#spring.profiles.active=debug
 
 
 
@@ -9,14 +8,19 @@ spring:
         password: 1234
         driver-class-name: com.mysql.cj.jdbc.Driver
 
+    profiles:
+        active:
+            info
     jpa:
         show-sql: true
-        hibernate:
-            ddl-auto: update
-    flyway:
-        enabled: true
-        baseline-on-migrate: true
-        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
-        user: root
-        password: 1234
-# COVERT PROP TO YML
+        properties:
+            hibernate:
+                ddl-auto: update # 배포시 변경해야함
+                format_sql: true # SQL을 보기 좋게 포맷팅
+#    flyway:
+#        enabled: true
+#        baseline-on-migrate: true
+#        baseline-version: 1
+#        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
+#        user: root
+#        password: 1234
