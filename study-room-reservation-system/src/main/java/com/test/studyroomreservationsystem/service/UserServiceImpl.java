@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService{
         user.setPassword(userDto.getPassword());
         user.setSerial(userDto.getSerial());
         user.setIsAdmin(userDto.getIsAdmin());
+        user.setUserName(userDto.getUserName());
 
         return userRepository.save(user);
     }
@@ -68,10 +69,11 @@ public class UserServiceImpl implements UserService{
         user.setPassword(userUpdateDto.getPassword());
         user.setSerial(userUpdateDto.getSerial());
         user.setIsAdmin(userUpdateDto.getIsAdmin());
+        user.setUserName(userUpdateDto.getUserName());
+
 
         return userRepository.save(user);
     }
-
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
