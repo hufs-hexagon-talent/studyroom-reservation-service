@@ -12,11 +12,8 @@ public class Room {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
+    @Column(name="room_name")
     private String roomName;
-
-    @ManyToOne
-    @JoinColumn(name = "room_operation_policy_id")
-    private RoomOperationPolicy roomOperationPolicy;
 
 }
 
