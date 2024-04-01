@@ -25,9 +25,11 @@ public class Reservation {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    @Column(name="reservation_start_time")
+    private LocalDateTime reservationStartTime;
 
+    @Column(name="reservation_end_time")
+    private LocalDateTime reservationEndTime;
 
     @Enumerated(EnumType.STRING)
     private ReservationState state; // RESERVED, VISITED, NOSHOW
