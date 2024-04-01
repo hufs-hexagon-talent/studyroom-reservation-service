@@ -29,8 +29,8 @@ public class SwaggerConfig {
     }
     private Info apiInfo() {
         return new Info()
-                .title("User API Test") // API의 제목
-                .description("User CRUD") // API에 대한 설명
-                .version("1.0.0"); // API의 버전
+                .title("HUFS Reservation Service") // API의 제목
+                .description("User Side, Admin Side API") // API에 대한 설명
+                .version("1.0.1"); // API의 버전
     }
 }
