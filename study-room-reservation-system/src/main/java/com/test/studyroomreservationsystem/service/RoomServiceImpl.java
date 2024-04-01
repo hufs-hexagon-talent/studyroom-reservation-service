@@ -2,27 +2,34 @@ package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
+import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
+import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
+import com.test.studyroomreservationsystem.service.exception.RoomPolicyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
-    private final RoomOperationPolicyService policyService; // 주입
+    private final RoomOperationPolicyScheduleRepository scheduleRepository;
+    private final RoomOperationPolicyScheduleService scheduleService; // 주입
     @Autowired
-    public RoomServiceImpl(RoomRepository roomRepository,
-                           RoomOperationPolicyService policyService) {
+
+    public RoomServiceImpl(RoomRepository roomRepository, RoomOperationPolicyScheduleRepository scheduleRepository, RoomOperationPolicyScheduleService scheduleService) {
         this.roomRepository = roomRepository;
-        this.policyService = policyService;
+        this.scheduleRepository = scheduleRepository;
+        this.scheduleService = scheduleService;
     }
 
 
@@ -31,7 +38,6 @@ public class RoomServiceImpl implements RoomService {
     public Room createRoom(RoomDto roomDto) {
         Room room = new Room();
         room.setRoomName(roomDto.getRoomName());
-        room.setRoomOperationPolicy(policyService.findPolicyById(roomDto.getRoomOperationPolicyId()));
         return roomRepository.save(room);
     }
 
@@ -39,7 +45,6 @@ public class RoomServiceImpl implements RoomService {
     public RoomDto convertToDto(Room room) {
         RoomDto roomDto = new RoomDto();
         roomDto.setRoomId(room.getRoomId());
-        roomDto.setRoomOperationPolicyId(room.getRoomOperationPolicy().getRoomOperationPolicyId());
         roomDto.setRoomName(room.getRoomName());
         return roomDto;
     }
@@ -66,11 +71,6 @@ public class RoomServiceImpl implements RoomService {
         Room room = findRoomById(roomId);
         room.setRoomName(roomUpdateDto.getRoomName());
 
-        if (roomUpdateDto.getRoomOperationPolicyId() != null) {
-            RoomOperationPolicy policy = policyService.findPolicyById(roomUpdateDto.getRoomOperationPolicyId());
-            room.setRoomOperationPolicy(policy);
-        }
-
         return roomRepository.save(room);
     }
 
@@ -81,9 +81,20 @@ public class RoomServiceImpl implements RoomService {
 
     @Override // 룸이 운영시간인지?
     public boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        Room room = findRoomById(roomId);
 
-        RoomOperationPolicy roomOperationPolicy = room.getRoomOperationPolicy();
+        Room room = findRoomById(roomId);
+        LocalDate date = startDateTime.toLocalDate();
+
+        // 룸과 날짜로 정책 찾기
+        RoomOperationPolicySchedule schedule
+                = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
+                .orElseThrow(
+                        ()-> new RoomPolicyNotFoundException("Operation policy for room with ID " + roomId + " on date " + date + " not found.")
+                );
+
+
+        RoomOperationPolicy roomOperationPolicy = schedule.getRoomOperationPolicy();
+
         LocalTime operationStartTime = roomOperationPolicy.getOperationStartTime();
         LocalTime operationEndTime = roomOperationPolicy.getOperationEndTime();
 

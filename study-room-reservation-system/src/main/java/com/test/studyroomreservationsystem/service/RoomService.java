@@ -16,4 +16,6 @@ public interface RoomService {
     void deleteRoom(Long roomId);
     RoomDto convertToDto(Room room);
     boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+
 }
