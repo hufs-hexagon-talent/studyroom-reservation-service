@@ -1,14 +1,23 @@
 package com.test.studyroomreservationsystem.domain;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
+import com.test.studyroomreservationsystem.domain.entity.Room;
+import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
+import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
+import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,89 +28,164 @@ public class ReservationRepositoryTest {
 
     @Autowired
     ReservationRepository reservationRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    RoomRepository roomRepository;
 
-
-    @BeforeEach
-    void beforeRemove(){
+    private Room room;
+    private User user;
+    void beforeRemove() {
         reservationRepository.deleteAll();
+        roomRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
+    // test 에 사용될 인스턴스 세팅
+    void setUp() {
+        Room room = new Room();
+        room.setRoomName("306-1");
+        this.room = roomRepository.save(room);
+
+        User user = new User();
+        user.setLoginId("hwangbbang");
+        user.setPassword("1234");
+        user.setSerial("202103769");
+        user.setIsAdmin(true);
+        this.user = userRepository.save(user);
+
+    }
+
+    private Reservation createReservation(LocalDateTime reservationStartTime, LocalDateTime reservationEndTime) {
+        Reservation reservation = new Reservation();
+        reservation.setUser(user);
+        reservation.setRoom(room);
+        reservation.setReservationStartTime(reservationStartTime);
+        reservation.setReservationEndTime(reservationEndTime);
+        reservation.setState(ReservationState.RESERVATION);
+        return reservation;
+    }
+    @BeforeEach
+    void initWork() {
+        beforeRemove();
+        setUp();
+    }
 
     @Test
     void save() {
         // given
-        Reservation reservation =
-                new Reservation(202103769L, 1, 1, 428, 10, 11, State.RESERVATION);
+        LocalDateTime reservationStartTIme = LocalDateTime.now();
+        LocalDateTime reservationEndTIme = reservationStartTIme.plusHours(1).plusMinutes(30);
+
+        Reservation reservation = createReservation(reservationStartTIme, reservationEndTIme);
+
         // when
         Reservation savedReservation = reservationRepository.save(reservation);
 
         // then
-        Reservation findReservation =
-                reservationRepository.findById(reservation.getReservationId()).get();
-
-        assertThat(findReservation).isEqualTo(savedReservation);
-    }
-
-//    @Test
-//    void update() {
-//        // given
-//        Reservation reservation = new Reservation();
-//        reservation.setUserId(202103769L);
-//        reservation.setPartitionId(1);
-//        reservation.setTimetableId(1);
-//        reservation.setRoomId(428);
-//        reservation.setTimetableIndexFrom(10);
-//        reservation.setTimetableIndexTo(11);
-//        reservation.setState(State.RESERVATION);
-//
-//        Reservation savedReservation = reservationRepository.save(reservation);
-//
-//        new ReservationUpdateDto()
-//
-//        // when
-//
-//
-//        // then
-//        Reservation findReservation = reservationRepository.findByReservationId(reservationId).get();
-//
-//        assertThat(findReservation.getPartitionId()).isEqualTo(updateDto.getPartitionId());
-//        assertThat(findReservation.getState()).isEqualTo(updateDto.getState());
-//        assertThat(findReservation.getRoomId()).isEqualTo(updateDto.getRoomId());
-//    }
-    @Test
-    void delete(){
-        // given
-        Reservation reservation = new Reservation(202103769L, 1, 1, 428, 10, 11, State.RESERVATION);
-        Reservation savedReservation = reservationRepository.save(reservation);
-        assertThat(savedReservation.getReservationId()).isEqualTo(reservation.getReservationId());
-
-        Long reservationId = savedReservation.getReservationId();
-        System.out.println("reservationId : "+reservationId);
-        // when
-        reservationRepository.deleteById(reservationId);
-        boolean exists = reservationRepository.existsById(reservationId);
-
-        // then
-        assertThat(exists).isFalse();
+        assertThat(savedReservation).isNotNull();
+        assertThat(savedReservation.getRoom()).isEqualTo(reservation.getRoom());
+        assertThat(savedReservation.getUser()).isEqualTo(reservation.getUser());
+        assertThat(savedReservation.getReservationStartTime()).isEqualTo(reservation.getReservationStartTime());
+        assertThat(savedReservation.getReservationEndTime()).isEqualTo(reservation.getReservationEndTime());
+        assertThat(savedReservation.getState()).isEqualTo(reservation.getState());
 
     }
     @Test
-    void deleteAll(){
+    void testFindAllByUser() {
         // given
-        Reservation reservation1 = new Reservation(202103769L, 1, 1, 428, 10, 11, State.RESERVATION);
-        Reservation reservation2 = new Reservation(202112345L, 2, 4, 306, 11, 12, State.VISITED);
-        Reservation reservation3 = new Reservation(209999999L, 3, 2, 428, 12, 13, State.NOSHOW);
+        LocalDateTime reservationStartTime = LocalDateTime.now();
+        LocalDateTime reservationEndTime = reservationStartTime.plusHours(1).plusMinutes(30);
+
+        Reservation reservation1 = createReservation(reservationStartTime, reservationEndTime);
+
         reservationRepository.save(reservation1);
-        reservationRepository.save(reservation2);
-        reservationRepository.save(reservation3);
-        assertThat(reservationRepository.count()).isEqualTo(3);
 
+
+        reservationStartTime = reservationEndTime.plusHours(2);
+        reservationEndTime = reservationStartTime.plusHours(3).plusMinutes(30);
+
+        Reservation reservation2 = createReservation(reservationStartTime, reservationEndTime);
+
+        reservationRepository.save(reservation2);
         // when
-        reservationRepository.deleteAll();
+        Optional<List<Reservation>> reservationsByUsers = reservationRepository.findAllByUser(user);
 
         // then
-        assertThat(reservationRepository.count()).isEqualTo(0);
-
+        Assertions.assertTrue(reservationsByUsers.isPresent());
+        assertThat(reservationsByUsers.get()).hasSize(2);
+        assertThat(reservationsByUsers.get())
+                .extracting(Reservation::getUser)
+                .containsOnly(user);
     }
 
+
+    @Test
+    void okTestFindOverlappingReservations() {
+        // given
+        LocalDateTime defaultTime = LocalDateTime.now();
+
+        LocalDateTime startTime1 =  defaultTime;
+        LocalDateTime endTime1 = defaultTime.plusHours(1);
+        Reservation overlappingReservation1 = createReservation(startTime1, endTime1);
+        reservationRepository.save(overlappingReservation1);
+
+        LocalDateTime startTime2 = defaultTime.plusHours(1);
+        LocalDateTime endTime2 = defaultTime.plusHours(1).plusMinutes(30);
+        Reservation overlappingReservation2 = createReservation(startTime2, endTime2);
+        reservationRepository.save(overlappingReservation2);
+
+        // overlappingReservation1 : 0 시간 ~ 1시간
+        // overlappingReservation2 : 1 시간 ~ 1시간 30 분
+        // assertionReservation  : 0 시간 ~ 2시간
+        LocalDateTime assertionStartTime = defaultTime;
+        LocalDateTime assertionEndTime = defaultTime.plusHours(2);
+
+        // when
+        List<Reservation> foundReservations
+                = reservationRepository.findOverlappingReservations(room.getRoomId(), assertionStartTime, assertionEndTime);
+
+        // then
+
+        assertThat(foundReservations).hasSize(2)
+                .extracting("reservationId")
+                .containsExactlyInAnyOrder(
+                        overlappingReservation1.getReservationId(),
+                        overlappingReservation2.getReservationId()
+                );
+
+        assertThat(foundReservations)
+                .extracting("state")
+                .containsOnly(ReservationState.RESERVATION);
+    }
+    @Test
+    void notOkTestFindOverlappingReservations() {
+        // given
+
+        // nonOverlappingReservation1 : 1 시간 ~ 1 시간 30
+        LocalDateTime defaultTime = LocalDateTime.now();
+
+        LocalDateTime startTime1 = defaultTime.plusHours(1);
+        LocalDateTime endTime1 = defaultTime.plusHours(1).plusMinutes(30);
+        Reservation nonOverlappingReservation1 = createReservation(startTime1, endTime1);
+        reservationRepository.save(nonOverlappingReservation1);
+
+        // nonOverlappingReservation2 : 0 시간 ~ 0 시간 30
+        LocalDateTime startTime2 = defaultTime.plusHours(0);
+        LocalDateTime endTime2 = defaultTime.plusMinutes(30);
+        Reservation nonOverlappingReservation2 = createReservation(startTime2, endTime2);
+        reservationRepository.save(nonOverlappingReservation2);
+
+        // assertionReservation  : 0 시간 30 ~ 1 시간
+        LocalDateTime assertionStartTime = defaultTime.plusMinutes(30);
+        LocalDateTime assertionEndTime = defaultTime.plusHours(1);
+
+        // when
+        List<Reservation> foundReservations
+                = reservationRepository.findOverlappingReservations(room.getRoomId(), assertionStartTime, assertionEndTime);
+
+        // then
+        assertThat(foundReservations).hasSize(0);
+
+    }
 }
