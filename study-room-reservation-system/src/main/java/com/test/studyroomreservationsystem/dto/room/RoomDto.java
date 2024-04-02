@@ -8,5 +8,4 @@ import lombok.Setter;
 public class RoomDto {
     private Long roomId;
     private String roomName;
-    private Long roomOperationPolicyId;
 }
