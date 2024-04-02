@@ -24,7 +24,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final RoomService roomService;
     private final UserService userService;
     @Autowired
-
     public ReservationServiceImpl(ReservationRepository reservationRepository, RoomService roomService, UserService userService) {
         this.reservationRepository = reservationRepository;
         this.roomService = roomService;
@@ -47,8 +46,8 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = new Reservation();
         reservation.setRoom(roomService.findRoomById(reservationDto.getRoomId()));
         reservation.setUser(userService.findUserById(reservationDto.getUserId()));
-        reservation.setStartDateTime(reservationDto.getStartDateTime());
-        reservation.setEndDateTime(reservationDto.getEndDateTime());
+        reservation.setReservationStartTime(reservationDto.getStartDateTime());
+        reservation.setReservationEndTime(reservationDto.getEndDateTime());
         reservation.setState(reservationDto.getState());
 
         return reservationRepository.save(reservation);
@@ -95,8 +94,8 @@ public class ReservationServiceImpl implements ReservationService {
         Room room = roomService.findRoomById(reservationDto.getRoomId());
         reservation.setRoom(room);
 
-        reservation.setStartDateTime(reservationDto.getStartDateTime());
-        reservation.setEndDateTime(reservationDto.getEndDateTime());
+        reservation.setReservationStartTime(reservationDto.getStartDateTime());
+        reservation.setReservationEndTime(reservationDto.getEndDateTime());
         reservation.setState(reservationDto.getState());
 
         return reservationRepository.save(reservation);
@@ -106,7 +105,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation updateTimeReservation(Long reservationId, ReservationTimeDto timeDto) {
         Reservation reservation = findReservationById(reservationId);
-
         Long roomId = reservation.getRoom().getRoomId();
         LocalDateTime startDateTime = timeDto.getStartDateTime();
         LocalDateTime endDateTime = timeDto.getEndDateTime();
@@ -117,8 +115,8 @@ public class ReservationServiceImpl implements ReservationService {
             // 에약 변경 불가
             throw new ReservationNotPossibleException("The room is not available.");
         }
-        reservation.setStartDateTime(startDateTime);
-        reservation.setEndDateTime(endDateTime);
+        reservation.setReservationStartTime(startDateTime);
+        reservation.setReservationEndTime(endDateTime);
         return reservationRepository.save(reservation);
     }
 
@@ -137,8 +135,8 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = findReservationById(reservationId);
 
         Long roomId = roomDto.getRoomId();
-        LocalDateTime startDateTime = reservation.getStartDateTime();
-        LocalDateTime endDateTime = reservation.getEndDateTime();
+        LocalDateTime startDateTime = reservation.getReservationStartTime();
+        LocalDateTime endDateTime = reservation.getReservationEndTime();
 
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
         if (!isAvailable) {
@@ -174,11 +172,12 @@ public class ReservationServiceImpl implements ReservationService {
 
         reservationDto.setRoomId(reservation.getRoom().getRoomId());
         reservationDto.setUserId(reservation.getUser().getUserId());
-        reservationDto.setStartDateTime(reservation.getStartDateTime());
-        reservationDto.setEndDateTime(reservation.getEndDateTime());
+        reservationDto.setStartDateTime(reservation.getReservationStartTime());
+        reservationDto.setEndDateTime(reservation.getReservationEndTime());
         reservationDto.setState(reservation.getState());
         return reservationDto;
 
     }
+
 
 }
