@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.service;
 
+import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
@@ -34,21 +35,23 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation createReservation(ReservationDto reservationDto) {
         Long roomId = reservationDto.getRoomId();
+        Long userId = reservationDto.getUserId();
         LocalDateTime startDateTime = reservationDto.getStartDateTime();
         LocalDateTime endDateTime = reservationDto.getEndDateTime();
+        ReservationState state = reservationDto.getState();
         // 예약 가능 여부 확인 로직
 
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
         if (!isAvailable) {
             // 에약 불가
-            throw new ReservationNotPossibleException("The room is not available.");
+            throw new ReservationNotPossibleException(roomId);
         }
         Reservation reservation = new Reservation();
-        reservation.setRoom(roomService.findRoomById(reservationDto.getRoomId()));
-        reservation.setUser(userService.findUserById(reservationDto.getUserId()));
-        reservation.setReservationStartTime(reservationDto.getStartDateTime());
-        reservation.setReservationEndTime(reservationDto.getEndDateTime());
-        reservation.setState(reservationDto.getState());
+        reservation.setRoom(roomService.findRoomById(roomId));
+        reservation.setUser(userService.findUserById(userId));
+        reservation.setReservationStartTime(startDateTime);
+        reservation.setReservationEndTime(endDateTime);
+        reservation.setState(state);
 
         return reservationRepository.save(reservation);
         
@@ -57,7 +60,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation findReservationById(Long reservationId) {
         return reservationRepository.findById(reservationId)
-                .orElseThrow(()->new ReservationNotFoundException("Reservation not found with id: " + reservationId));
+                .orElseThrow(()->new ReservationNotFoundException(reservationId));
     }
 
     @Override
@@ -70,7 +73,7 @@ public class ReservationServiceImpl implements ReservationService {
     public List<Reservation> findAllReservationByUser(Long userId) {
         User user = userService.findUserById(userId);
         return reservationRepository.findAllByUser(user).orElseThrow(
-                () -> new ReservationHistoryNotFoundException("Reservation History not found with user id: " + userId));
+                () -> new ReservationHistoryNotFoundException(userId));
     }
 
     @Override
@@ -83,7 +86,7 @@ public class ReservationServiceImpl implements ReservationService {
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
         if (!isAvailable) {
             // 에약 변경 불가
-            throw new ReservationNotPossibleException("The room is not available.");
+            throw new ReservationNotPossibleException(roomId);
         }
         //변경 가능
         Reservation reservation = findReservationById(reservationId);
@@ -113,7 +116,7 @@ public class ReservationServiceImpl implements ReservationService {
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
         if (!isAvailable) {
             // 에약 변경 불가
-            throw new ReservationNotPossibleException("The room is not available.");
+            throw new ReservationNotPossibleException(roomId);
         }
         reservation.setReservationStartTime(startDateTime);
         reservation.setReservationEndTime(endDateTime);
@@ -141,7 +144,7 @@ public class ReservationServiceImpl implements ReservationService {
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
         if (!isAvailable) {
             // 에약 변경 불가
-            throw new ReservationNotPossibleException("The room is not available.");
+            throw new ReservationNotPossibleException(roomId);
         }
         reservation.setRoom(roomService.findRoomById(roomId));
         return reservationRepository.save(reservation);
