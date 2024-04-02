@@ -41,7 +41,7 @@ public class AdminRoomOperationPolicyController {
     @Operation(summary = "모든 RoomOperationPolicy 조회", description = "모든 RoomOperationPolicy 조회 API")
     @GetMapping
     public ResponseEntity<List<RoomOperationPolicyDto>> getAllPolices() {
-        List<RoomOperationPolicyDto> policies = roomOperationPolicyService.getAllPolicies()
+        List<RoomOperationPolicyDto> policies = roomOperationPolicyService.findAllPolicies()
                 .stream()
                 .map(roomOperationPolicyService::convertToDto)
                 .collect(Collectors.toList());
