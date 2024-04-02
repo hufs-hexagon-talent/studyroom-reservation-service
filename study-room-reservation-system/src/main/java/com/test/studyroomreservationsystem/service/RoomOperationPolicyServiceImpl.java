@@ -53,7 +53,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
     @Override
     public RoomOperationPolicy findPolicyById(Long policyId) {
         return policyRepository.findById(policyId)
-                .orElseThrow(() -> new RoomOperationPolicyNotFoundException("RoomOperationPolicy not found with id: " + policyId));
+                .orElseThrow(() -> new RoomOperationPolicyNotFoundException(policyId));
     }
 
     @Override
