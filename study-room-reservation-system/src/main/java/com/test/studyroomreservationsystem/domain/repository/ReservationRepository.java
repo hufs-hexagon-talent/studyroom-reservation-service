@@ -16,7 +16,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.room.roomId = :roomId AND (r.startDateTime < :endTime AND r.endDateTime > :startTime)"
+            "WHERE r.room.roomId = :roomId AND (r.reservationStartTime < :endTime AND r.reservationEndTime > :startTime)"
     )
     List<Reservation> findOverlappingReservations( @Param("roomId") Long roomId,
                                                   @Param("startTime") LocalDateTime startTime,
