@@ -10,4 +10,5 @@ public class UserUpdateDto { // U dto
     private String password;
     private String serial;
     private Boolean isAdmin;
+    private String userName;
 }
