@@ -19,7 +19,7 @@ public class RoomOperationPolicySchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_operation_policy_schedule_id")
-    private Long RoomOperationPolicyScheduleId;
+    private Long roomOperationPolicyScheduleId;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
