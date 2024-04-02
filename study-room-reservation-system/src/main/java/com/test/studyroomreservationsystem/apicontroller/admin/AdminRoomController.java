@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
+import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomService;
@@ -68,6 +69,4 @@ public class AdminRoomController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }
