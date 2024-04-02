@@ -1,9 +1,11 @@
 package com.test.studyroomreservationsystem.service.exception;
 
 
+import java.time.LocalDate;
+
 public class RoomPolicyNotFoundException extends RuntimeException {
-    public RoomPolicyNotFoundException(String message) {
-        super(message);
+    public RoomPolicyNotFoundException(Long roomId, LocalDate date) {
+        super("Operation policy for room with ID " + roomId + " on date " + date + " not found.");
     }
 }
 

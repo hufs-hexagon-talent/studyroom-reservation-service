@@ -23,13 +23,11 @@ import java.util.Optional;
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
-    private final RoomOperationPolicyScheduleService scheduleService; // 주입
     @Autowired
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomOperationPolicyScheduleRepository scheduleRepository, RoomOperationPolicyScheduleService scheduleService) {
+    public RoomServiceImpl(RoomRepository roomRepository, RoomOperationPolicyScheduleRepository scheduleRepository) {
         this.roomRepository = roomRepository;
         this.scheduleRepository = scheduleRepository;
-        this.scheduleService = scheduleService;
     }
 
 
@@ -52,12 +50,12 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room findRoomById(Long roomId) {
         return roomRepository.findById(roomId)
-                .orElseThrow(() -> new RoomNotFoundException("Room not found with id: " + roomId));
+                .orElseThrow(() -> new RoomNotFoundException(roomId));
     }
     @Override
     public Room findRoomByName(String roomName) {
         return roomRepository.findByRoomName(roomName)
-                .orElseThrow(() -> new RoomNotFoundException("Room not found with name: " + roomName));
+                .orElseThrow(() -> new RoomNotFoundException(roomName));
     }
 
 
@@ -89,7 +87,7 @@ public class RoomServiceImpl implements RoomService {
         RoomOperationPolicySchedule schedule
                 = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
                 .orElseThrow(
-                        ()-> new RoomPolicyNotFoundException("Operation policy for room with ID " + roomId + " on date " + date + " not found.")
+                        () -> new RoomPolicyNotFoundException(roomId, date)
                 );
 
 
