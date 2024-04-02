@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//@Tag(name = "Admin", description = "[관리자]")
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
 @RequestMapping("/admin/reservations")
@@ -53,7 +54,7 @@ public class AdminReservationController {
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
-    @Operation(summary = "User 의 모든 Reservation 기록 조회 ",description = "user id로 reservation history 조회 API")
+    @Operation(summary = "User 의 모든 Reservation 기록 조회 ", description = "user id로 reservation history 조회 API")
     @GetMapping("/user-history/{userId}") // URI 재구성
     ResponseEntity<List<ReservationDto>> getAllReservationsByUser(@PathVariable Long userId) {
 
@@ -73,6 +74,7 @@ public class AdminReservationController {
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     @Operation(summary = "reservation 룸 업데이트", description = "해당 reservation id의 룸 업데이트 API")
+
     @PutMapping("/{reservationId}/room")
     ResponseEntity<ReservationDto> updateRoomReservation(@PathVariable Long reservationId,
                                                      @RequestBody ReservationRoomDto reservationDto) {
