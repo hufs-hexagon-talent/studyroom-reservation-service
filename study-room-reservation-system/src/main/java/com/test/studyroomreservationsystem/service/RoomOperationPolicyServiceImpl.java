@@ -57,7 +57,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
     }
 
     @Override
-    public List<RoomOperationPolicy> getAllPolicies() {
+    public List<RoomOperationPolicy> findAllPolicies() {
         return policyRepository.findAll();
     }
 
