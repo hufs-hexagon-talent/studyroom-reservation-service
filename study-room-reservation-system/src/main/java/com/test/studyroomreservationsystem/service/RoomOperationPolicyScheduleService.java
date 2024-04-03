@@ -5,14 +5,15 @@ import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomO
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomOperationPolicyScheduleService {
-    RoomOperationPolicySchedule createSchedule();
-    RoomOperationPolicySchedule updateSchedule(Long roomScheduleId);
-    void deleteSchedule(Long roomScheduleId);
-    RoomOperationPolicySchedule findScheduleById();
+    RoomOperationPolicySchedule createSchedule(RoomOperationPolicyScheduleDto scheduleDto);
+    RoomOperationPolicySchedule findScheduleById(Long scheduleId);
     List<RoomOperationPolicySchedule> findAllSchedule();
-    RoomOperationPolicySchedule findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate);
+    RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleDto scheduleDto);
+    void deleteSchedule(Long roomScheduleId);
+    Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate);
     RoomOperationPolicyScheduleDto convertToDto(RoomOperationPolicySchedule schedule);
     List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday();
 
