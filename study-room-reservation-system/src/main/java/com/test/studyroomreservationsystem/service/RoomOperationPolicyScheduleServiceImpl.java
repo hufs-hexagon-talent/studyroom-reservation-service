@@ -65,7 +65,7 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
     @Override
     public List<RoomOperationPolicySchedule> findAllSchedule() {return scheduleRepository.findAll();}
     @Override
-    public void deleteSchedule(Long roomScheduleId) {
+    public void deleteScheduleById(Long roomScheduleId) {
         scheduleRepository.deleteById(roomScheduleId);
     }
 

@@ -13,7 +13,7 @@ public interface RoomOperationPolicyScheduleService {
     RoomOperationPolicySchedule findScheduleById(Long scheduleId);
     List<RoomOperationPolicySchedule> findAllSchedule();
     RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto);
-    void deleteSchedule(Long roomScheduleId);
+    void deleteScheduleById(Long roomScheduleId);
     Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate);
     RoomOperationPolicyScheduleDto convertToDto(RoomOperationPolicySchedule schedule);
     List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday();
