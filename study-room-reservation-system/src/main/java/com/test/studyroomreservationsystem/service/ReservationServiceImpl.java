@@ -108,6 +108,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation updateTimeReservation(Long reservationId, ReservationTimeDto timeDto) {
         Reservation reservation = findReservationById(reservationId);
+
         Long roomId = reservation.getRoom().getRoomId();
         LocalDateTime startDateTime = timeDto.getStartDateTime();
         LocalDateTime endDateTime = timeDto.getEndDateTime();
