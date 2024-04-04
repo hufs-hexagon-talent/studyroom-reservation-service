@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,16 +19,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/schedules")
 public class AdminRoomOperationPolicyScheduleController {
     private final RoomOperationPolicyScheduleServiceImpl scheduleService;
+
     @Autowired
-    public AdminRoomOperationPolicyScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
+    AdminRoomOperationPolicyScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
         this.scheduleService = scheduleService;
     }
 
     @Operation(summary = "schedule 생성", description = "스케쥴 생성(상세설명 추후 추가)")
     @PostMapping
-    public ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
+     ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
+
         RoomOperationPolicySchedule createdSchedule
                 = scheduleService.createSchedule(scheduleDto);
+
         RoomOperationPolicyScheduleDto createdScheduleDto
                 = scheduleService.convertToDto(createdSchedule);
         return new ResponseEntity<>(createdScheduleDto, HttpStatus.CREATED);
@@ -35,27 +39,48 @@ public class AdminRoomOperationPolicyScheduleController {
 
     @Operation(summary = "schedule 조회", description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회")
     @GetMapping("/{roomOperationPolicyScheduleId}")
-    public ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
+     ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
+
         RoomOperationPolicySchedule foundSchedule
                 = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
-        RoomOperationPolicyScheduleDto foundScheduleDto = scheduleService.convertToDto(foundSchedule);
+
+        RoomOperationPolicyScheduleDto foundScheduleDto
+                = scheduleService.convertToDto(foundSchedule);
+
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
     }
 
     @Operation(summary = "현재로 부터 예약가능한 방들 조회", description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회")
     @GetMapping("/available")
-    public ResponseEntity<List<RoomOperationPolicyScheduleDto>> getAvailableRoomsGroupedByDate() {
+     ResponseEntity<List<RoomOperationPolicyScheduleDto>> getAvailableRoomsGroupedByDate() {
+
         List<RoomOperationPolicyScheduleDto> availableRooms
                 = scheduleService.findAvailableRoomsGroupedByDateFromToday()
                 .stream()
                 .map(scheduleService::convertToDto)
                 .collect(Collectors.toList());
+
         return new ResponseEntity<>(availableRooms, HttpStatus.OK);
+    }
+
+//    @Operation(summary = )
+    @PutMapping("/{roomOperationPolicyScheduleId}")
+    ResponseEntity<RoomOperationPolicyScheduleDto>
+    updateSchedule(@PathVariable Long roomOperationPolicyScheduleId,
+                   @RequestBody RoomOperationPolicyScheduleUpdateDto scheduleUpdateDto) {
+
+        RoomOperationPolicySchedule updatedSchedule
+                = scheduleService.updateSchedule(roomOperationPolicyScheduleId, scheduleUpdateDto);
+
+        RoomOperationPolicyScheduleDto updatedScheduleDto
+                = scheduleService.convertToDto(updatedSchedule);
+
+        return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
 
     @Operation(summary = "schedule 삭제", description = "해당 schedule id의 정보 삭제 API")
     @DeleteMapping("/{roomOperationPolicyScheduleId}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
+     ResponseEntity<Void> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
         scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
