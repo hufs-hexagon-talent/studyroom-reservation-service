@@ -1,6 +1,5 @@
 package com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule;
 
-import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import lombok.Getter;
 import lombok.Setter;
 
