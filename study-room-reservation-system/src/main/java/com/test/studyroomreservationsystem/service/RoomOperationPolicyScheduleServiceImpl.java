@@ -5,6 +5,7 @@ import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySche
 import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
 import com.test.studyroomreservationsystem.service.exception.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.service.exception.ScheduleNotFoundException;
@@ -69,8 +70,23 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
     }
 
     @Override
-    public RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleDto scheduleDto) {
-        return null;
+    public RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto) {
+        RoomOperationPolicySchedule schedule = findScheduleById(scheduleId);
+
+        Long roomOperationPolicyId = scheduleDto.getRoomOperationPolicyId();
+        Long roomId = scheduleDto.getRoomId();
+        LocalDate date = scheduleDto.getPolicyApplicationDate();
+
+        // 어떤 날에 대한 스케쥴(운영시간)로 변경할 때, 그 날에 부여된 스케쥴이 없어야만 함
+        if (isExistSchedule(roomId, date)) {
+            // 예외 처리
+            throw new ScheduleAlreadyExistException(roomId,date);
+        }
+        schedule.setRoomOperationPolicy(policyService.findPolicyById(roomOperationPolicyId));
+        schedule.setRoom(roomService.findRoomById(roomId));
+        schedule.setPolicyApplicationDate(date);
+
+        return scheduleRepository.save(schedule);
     }
     @Override
     public Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate) {
@@ -80,7 +96,12 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
 
     @Override
     public RoomOperationPolicyScheduleDto convertToDto(RoomOperationPolicySchedule schedule) {
-        return null;
+        RoomOperationPolicyScheduleDto roomOperationPolicyScheduleDto = new RoomOperationPolicyScheduleDto();
+
+        roomOperationPolicyScheduleDto.setRoomOperationPolicyId(schedule.getRoomOperationPolicy().getRoomOperationPolicyId());
+        roomOperationPolicyScheduleDto.setRoomId(schedule.getRoom().getRoomId());
+        roomOperationPolicyScheduleDto.setPolicyApplicationDate(schedule.getPolicyApplicationDate());
+        return roomOperationPolicyScheduleDto;
     }
     @Override
     public List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday() {

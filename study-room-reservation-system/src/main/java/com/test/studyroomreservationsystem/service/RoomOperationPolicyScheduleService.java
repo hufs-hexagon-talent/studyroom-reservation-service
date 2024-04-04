@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,7 +12,7 @@ public interface RoomOperationPolicyScheduleService {
     RoomOperationPolicySchedule createSchedule(RoomOperationPolicyScheduleDto scheduleDto);
     RoomOperationPolicySchedule findScheduleById(Long scheduleId);
     List<RoomOperationPolicySchedule> findAllSchedule();
-    RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleDto scheduleDto);
+    RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto);
     void deleteSchedule(Long roomScheduleId);
     Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate);
     RoomOperationPolicyScheduleDto convertToDto(RoomOperationPolicySchedule schedule);
