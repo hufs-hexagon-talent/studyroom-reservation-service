@@ -3,7 +3,6 @@ package com.test.studyroomreservationsystem.apicontroller.user;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
