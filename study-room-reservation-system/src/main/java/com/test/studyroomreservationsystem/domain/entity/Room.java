@@ -2,11 +2,14 @@ package com.test.studyroomreservationsystem.domain.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter
 @Entity
+@NoArgsConstructor
 @Table(name="room")
 public class Room {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,5 +17,9 @@ public class Room {
 
     @Column(name="room_name")
     private String roomName;
-
+    @Builder
+    public Room(Long roomId, String roomName) {
+        this.roomId = roomId;
+        this.roomName = roomName;
+    }
 }
