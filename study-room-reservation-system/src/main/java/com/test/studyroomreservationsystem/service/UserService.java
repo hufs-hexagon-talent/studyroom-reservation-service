@@ -11,6 +11,5 @@ public interface UserService {
     User findUserById(Long userId);
     List<User> findAllUsers();
     User updateUser(Long userId, UserUpdateDto userUpdateDto);
-    UserDto convertToDto(User user);
     void deleteUser(Long userId);
 }

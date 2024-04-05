@@ -79,12 +79,5 @@ public class UserServiceImpl implements UserService {
         userDao.deleteById(userId);
     }
 
-    public UserDto convertToDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setLoginId(user.getLoginId());
-        userDto.setPassword(user.getPassword());
-        userDto.setSerial(user.getSerial());
-        userDto.setIsAdmin(user.getIsAdmin());
-        return userDto;
-    }
+    
 }
