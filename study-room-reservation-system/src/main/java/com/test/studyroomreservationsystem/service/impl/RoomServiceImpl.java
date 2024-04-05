@@ -1,10 +1,10 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.RoomDao;
+import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomService;
@@ -22,12 +22,12 @@ import java.util.List;
 @Service
 public class RoomServiceImpl implements RoomService {
     private final RoomDao roomDao;
-    private final RoomOperationPolicyScheduleRepository scheduleRepository;
+    private final RoomOperationPolicyScheduleDao scheduleDao;
     @Autowired
 
-    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleRepository scheduleRepository) {
+    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleDao scheduleDao) {
         this.roomDao = roomDao;
-        this.scheduleRepository = scheduleRepository;
+        this.scheduleDao = scheduleDao;
     }
 
 
@@ -85,7 +85,7 @@ public class RoomServiceImpl implements RoomService {
 
         // 룸과 날짜로 정책 찾기
         RoomOperationPolicySchedule schedule
-                = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
+                = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
                 .orElseThrow(
                         () -> new RoomPolicyNotFoundException(roomId, date)
                 );
