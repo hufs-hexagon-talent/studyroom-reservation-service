@@ -7,6 +7,8 @@ import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationService {
@@ -18,7 +20,7 @@ public interface ReservationService {
     Reservation updateTimeReservation(Long reservationId , ReservationTimeDto timeDto);
     Reservation updateStateReservation(Long reservationId , ReservationStateDto stateDto);
     Reservation updateRoomReservation(Long reservationId , ReservationRoomDto roomDto);
-
     void deleteReservationById(Long reservationId);
     ReservationDto convertToDto(Reservation reservation);
+    List<Reservation> findReservationsByDate(LocalDateTime dateTime);
 }
