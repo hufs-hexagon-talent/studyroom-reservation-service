@@ -21,6 +21,5 @@ public interface ReservationService {
     Reservation updateStateReservation(Long reservationId , ReservationStateDto stateDto);
     Reservation updateRoomReservation(Long reservationId , ReservationRoomDto roomDto);
     void deleteReservationById(Long reservationId);
-    ReservationDto convertToDto(Reservation reservation);
     List<Reservation> findReservationsByDate(LocalDateTime dateTime);
 }

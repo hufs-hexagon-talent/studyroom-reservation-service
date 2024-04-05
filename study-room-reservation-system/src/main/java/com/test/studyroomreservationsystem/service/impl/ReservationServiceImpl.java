@@ -175,17 +175,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 
 
-    public ReservationDto convertToDto(Reservation reservation) {
-        ReservationDto reservationDto = new ReservationDto();
 
-        reservationDto.setRoomId(reservation.getRoom().getRoomId());
-        reservationDto.setUserId(reservation.getUser().getUserId());
-        reservationDto.setStartDateTime(reservation.getReservationStartTime());
-        reservationDto.setEndDateTime(reservation.getReservationEndTime());
-        reservationDto.setState(reservation.getState());
-        return reservationDto;
-
-    }
 
     @Override
     public List<Reservation> findReservationsByDate(LocalDateTime dateTime) {
