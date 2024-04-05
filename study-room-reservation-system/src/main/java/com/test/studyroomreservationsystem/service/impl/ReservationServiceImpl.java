@@ -1,10 +1,10 @@
 package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
@@ -20,18 +20,17 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
-    private final ReservationRepository reservationRepository;
+    private final ReservationDao reservationDao;
     private final RoomService roomService;
     private final UserService userService;
     @Autowired
-    public ReservationServiceImpl(ReservationRepository reservationRepository, RoomService roomService, UserService userService) {
-        this.reservationRepository = reservationRepository;
+    public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService) {
+        this.reservationDao = reservationDao;
         this.roomService = roomService;
         this.userService = userService;
     }
@@ -58,26 +57,26 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setReservationEndTime(endDateTime);
         reservation.setState(state);
 
-        return reservationRepository.save(reservation);
+        return reservationDao.save(reservation);
         
         }
 
     @Override
     public Reservation findReservationById(Long reservationId) {
-        return reservationRepository.findById(reservationId)
+        return reservationDao.findById(reservationId)
                 .orElseThrow(()->new ReservationNotFoundException(reservationId));
     }
 
     @Override
     public List<Reservation> findAllReservation() {
-        return reservationRepository.findAll();
+        return reservationDao.findAll();
     }
 
     // 해당 유저의 모든 reservation 로그 찾기
     @Override
     public List<Reservation> findAllReservationByUser(Long userId) {
         User user = userService.findUserById(userId);
-        return reservationRepository.findAllByUser(user).orElseThrow(
+        return reservationDao.findAllByUser(user).orElseThrow(
                 () -> new ReservationHistoryNotFoundException(userId));
     }
 
@@ -106,7 +105,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setReservationEndTime(reservationDto.getEndDateTime());
         reservation.setState(reservationDto.getState());
 
-        return reservationRepository.save(reservation);
+        return reservationDao.save(reservation);
     }
 
     // 현재 예약 에서 시간만 변경
@@ -126,7 +125,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
         reservation.setReservationStartTime(startDateTime);
         reservation.setReservationEndTime(endDateTime);
-        return reservationRepository.save(reservation);
+        return reservationDao.save(reservation);
     }
 
     // 현재 예약 에서 상태만 변경
@@ -134,7 +133,7 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation updateStateReservation(Long reservationId, ReservationStateDto stateDto) {
         Reservation reservation = findReservationById(reservationId);
         reservation.setState(stateDto.getState());
-        return reservationRepository.save(reservation);
+        return reservationDao.save(reservation);
     }
 
 
@@ -153,13 +152,13 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ReservationNotPossibleException(roomId);
         }
         reservation.setRoom(roomService.findRoomById(roomId));
-        return reservationRepository.save(reservation);
+        return reservationDao.save(reservation);
     }
 
 
     @Override
     public void deleteReservationById(Long reservationId) {
-        reservationRepository.deleteById(reservationId);
+        reservationDao.deleteById(reservationId);
     }
 
 
@@ -168,7 +167,7 @@ public class ReservationServiceImpl implements ReservationService {
         boolean isOperating = roomService.isRoomAvailable(roomId, startDateTime, endDateTime);
 
         // 다른 예약과 겹치지 않는지 확인 (계층)
-        boolean isNotOverlapping = reservationRepository.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
+        boolean isNotOverlapping = reservationDao.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
 
         return isOperating && isNotOverlapping;
 
@@ -191,11 +190,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> findReservationsByDate(LocalDateTime dateTime) {
         LocalDate date= dateTime.toLocalDate();
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-        List<Reservation> reservations = reservationRepository.findAllReservationsByDate(startOfDay, endOfDay);
-        return reservations;
+        return reservationDao.findAllReservationsByDate(date);
     }
 
 
