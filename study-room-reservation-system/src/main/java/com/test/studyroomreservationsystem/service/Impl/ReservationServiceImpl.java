@@ -15,7 +15,9 @@ import com.test.studyroomreservationsystem.service.exception.ReservationNotPossi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -181,6 +183,16 @@ public class ReservationServiceImpl implements ReservationService {
         reservationDto.setState(reservation.getState());
         return reservationDto;
 
+    }
+
+    @Override
+    public List<Reservation> findReservationsByDate(LocalDateTime dateTime) {
+        LocalDate date= dateTime.toLocalDate();
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+        List<Reservation> reservations = reservationRepository.findAllReservationsByDate(startOfDay, endOfDay);
+        return reservations;
     }
 
 
