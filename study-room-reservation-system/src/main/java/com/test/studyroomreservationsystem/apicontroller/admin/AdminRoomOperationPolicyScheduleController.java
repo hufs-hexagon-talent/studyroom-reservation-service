@@ -37,7 +37,7 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(createdScheduleDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "schedule 조회", description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회")
+    @Operation(summary = "schedule 조회", description = "스케쥴 조회")
     @GetMapping("/{roomOperationPolicyScheduleId}")
      ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
 
@@ -50,7 +50,7 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
     }
 
-    @Operation(summary = "현재로 부터 예약가능한 방들 조회", description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회")
+    @Operation(summary = "현재로 부터 미래까지 운영 예정인 방들 조회", description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회")
     @GetMapping("/available")
      ResponseEntity<List<RoomOperationPolicyScheduleDto>> getAvailableRoomsGroupedByDate() {
 
@@ -63,7 +63,8 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(availableRooms, HttpStatus.OK);
     }
 
-//    @Operation(summary = )
+
+    @Operation(summary = "schedule 업데이트", description = "해당 스케쥴 업데이트")
     @PutMapping("/{roomOperationPolicyScheduleId}")
     ResponseEntity<RoomOperationPolicyScheduleDto>
     updateSchedule(@PathVariable Long roomOperationPolicyScheduleId,
