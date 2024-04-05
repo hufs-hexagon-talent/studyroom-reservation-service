@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.dao.RoomOperationPolicyDao;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
-import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyRepository;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
@@ -14,10 +14,10 @@ import java.util.List;
 @Service
 public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyService {
 
-    RoomOperationPolicyRepository policyRepository;
+    RoomOperationPolicyDao policyDao;
     @Autowired
-    public RoomOperationPolicyServiceImpl(RoomOperationPolicyRepository policyRepository) {
-        this.policyRepository = policyRepository;
+    public RoomOperationPolicyServiceImpl(RoomOperationPolicyDao policyDao) {
+        this.policyDao = policyDao;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
         policy.setOperationEndTime(policyDto.getOperationEndTime());
         policy.setEachMaxMinute(policyDto.getEachMaxMinute());
 
-        return policyRepository.save(policy);
+        return policyDao.save(policy);
     }
     @Override
     public RoomOperationPolicyDto convertToDto(RoomOperationPolicy policy) {
@@ -53,13 +53,13 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
 
     @Override
     public RoomOperationPolicy findPolicyById(Long policyId) {
-        return policyRepository.findById(policyId)
+        return policyDao.findById(policyId)
                 .orElseThrow(() -> new RoomOperationPolicyNotFoundException(policyId));
     }
 
     @Override
     public List<RoomOperationPolicy> findAllPolicies() {
-        return policyRepository.findAll();
+        return policyDao.findAll();
     }
 
     @Override
@@ -70,12 +70,12 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
         policy.setOperationEndTime(policyDto.getOperationEndTime());
         policy.setEachMaxMinute(policyDto.getEachMaxMinute());
 
-        return policyRepository.save(policy);
+        return policyDao.save(policy);
     }
 
     @Override
     public void deletePolicy(Long policyId) {
-        policyRepository.deleteById(policyId);
+        policyDao.deleteById(policyId);
     }
 
 
