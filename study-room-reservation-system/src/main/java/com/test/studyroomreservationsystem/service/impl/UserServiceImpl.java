@@ -1,9 +1,10 @@
-package com.test.studyroomreservationsystem.service;
+package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 import com.test.studyroomreservationsystem.dto.user.UserDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
+import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.service.exception.LoginIdAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.exception.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.exception.UserNotFoundException;
@@ -13,12 +14,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserDao userDao;
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
     /*-------------------------------------------------*/
     @Override
@@ -34,15 +35,15 @@ public class UserServiceImpl implements UserService{
         user.setIsAdmin(userDto.getIsAdmin());
         user.setUserName(userDto.getUserName());
 
-        return userRepository.save(user);
+        return userDao.save(user);
     }
 
     private void isUserAlreadyExists(UserDto userDto) {
-        userRepository.findByLoginId(userDto.getLoginId()).ifPresent(user -> {
+        userDao.findByLoginId(userDto.getLoginId()).ifPresent(user -> {
             throw new LoginIdAlreadyExistsException(userDto.getLoginId());
             }
         );
-        userRepository.findBySerial(userDto.getSerial()).ifPresent(user -> {
+        userDao.findBySerial(userDto.getSerial()).ifPresent(user -> {
             throw new SerialAlreadyExistsException(userDto.getSerial());
             }
         );
@@ -50,13 +51,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User findUserById(Long userId) {
-        return userRepository.findById(userId)
+        return userDao.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Override
     public List<User> findAllUsers() {
-        return userRepository.findAll();
+        return userDao.findAll();
     }
 
 
@@ -71,11 +72,11 @@ public class UserServiceImpl implements UserService{
         user.setUserName(userUpdateDto.getUserName());
 
 
-        return userRepository.save(user);
+        return userDao.save(user);
     }
     @Override
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        userDao.deleteById(userId);
     }
 
     public UserDto convertToDto(User user) {
