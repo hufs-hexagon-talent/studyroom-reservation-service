@@ -3,7 +3,7 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
-import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleServiceImpl;
+import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
