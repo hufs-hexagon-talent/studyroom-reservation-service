@@ -13,7 +13,5 @@ public interface RoomOperationPolicyService {
     RoomOperationPolicy findPolicyById(Long policyId);
     List<RoomOperationPolicy> findAllPolicies();
 
-    RoomOperationPolicyDto convertToDto(RoomOperationPolicy policy);
-    RoomOperationPolicyUpdateDto convertToUpdateDto(RoomOperationPolicy policy);
 
 }

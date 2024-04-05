@@ -30,26 +30,8 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
 
         return policyDao.save(policy);
     }
-    @Override
-    public RoomOperationPolicyDto convertToDto(RoomOperationPolicy policy) {
 
-        RoomOperationPolicyDto policyDto = new RoomOperationPolicyDto();
-        policyDto.setOperationStartTime(policy.getOperationStartTime());
-        policyDto.setOperationEndTime(policy.getOperationEndTime());
-        policyDto.setEachMaxMinute(policy.getEachMaxMinute());
 
-        return policyDto;
-    }
-    @Override
-    public RoomOperationPolicyUpdateDto convertToUpdateDto(RoomOperationPolicy policy) {
-
-        RoomOperationPolicyUpdateDto policyDto = new RoomOperationPolicyUpdateDto();
-        policyDto.setOperationStartTime(policy.getOperationStartTime());
-        policyDto.setOperationEndTime(policy.getOperationEndTime());
-        policyDto.setEachMaxMinute(policy.getEachMaxMinute());
-
-        return policyDto;
-    }
 
     @Override
     public RoomOperationPolicy findPolicyById(Long policyId) {
