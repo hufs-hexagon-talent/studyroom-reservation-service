@@ -1,11 +1,10 @@
 package com.test.studyroomreservationsystem.dto.reservation;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter@Setter
+@Getter
 public class ReservationTimeDto {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;

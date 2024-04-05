@@ -1,9 +1,9 @@
 package com.test.studyroomreservationsystem.dto.reservation;
 
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter@Setter
+
+@Getter
 public class ReservationRoomDto {
     private Long roomId;
 }

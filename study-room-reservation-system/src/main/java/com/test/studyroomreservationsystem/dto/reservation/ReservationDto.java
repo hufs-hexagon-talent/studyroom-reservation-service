@@ -2,11 +2,11 @@ package com.test.studyroomreservationsystem.dto.reservation;
 
 import com.test.studyroomreservationsystem.domain.ReservationState;
 import lombok.Getter;
-import lombok.Setter;
+
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Getter
 public class ReservationDto { // CR
     private Long userId;
     private Long roomId;

@@ -1,11 +1,9 @@
 package com.test.studyroomreservationsystem.dto.user;
 
 
-import com.test.studyroomreservationsystem.domain.entity.User;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter@Getter
+@Getter
 public class UserDto { // CR dto
     private String loginId;
     private String password;
