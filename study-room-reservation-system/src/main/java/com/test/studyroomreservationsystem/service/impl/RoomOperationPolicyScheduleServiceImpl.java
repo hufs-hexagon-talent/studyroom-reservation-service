@@ -98,15 +98,7 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         return scheduleDao.findByRoomAndPolicyApplicationDate(room, policyDate);
     }
 
-    @Override
-    public RoomOperationPolicyScheduleDto convertToDto(RoomOperationPolicySchedule schedule) {
-        RoomOperationPolicyScheduleDto roomOperationPolicyScheduleDto = new RoomOperationPolicyScheduleDto();
 
-        roomOperationPolicyScheduleDto.setRoomOperationPolicyId(schedule.getRoomOperationPolicy().getRoomOperationPolicyId());
-        roomOperationPolicyScheduleDto.setRoomId(schedule.getRoom().getRoomId());
-        roomOperationPolicyScheduleDto.setPolicyApplicationDate(schedule.getPolicyApplicationDate());
-        return roomOperationPolicyScheduleDto;
-    }
     @Override
     public List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday() {
         LocalDate today = LocalDate.now();

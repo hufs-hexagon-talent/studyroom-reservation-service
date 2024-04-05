@@ -15,7 +15,6 @@ public interface RoomOperationPolicyScheduleService {
     RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto);
     void deleteScheduleById(Long roomScheduleId);
     Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate);
-    RoomOperationPolicyScheduleDto convertToDto(RoomOperationPolicySchedule schedule);
     List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday();
 
 }
