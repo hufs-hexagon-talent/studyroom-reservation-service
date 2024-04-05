@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service;
+package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
@@ -7,6 +7,7 @@ import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicy
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
+import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
 import com.test.studyroomreservationsystem.service.exception.RoomPolicyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service

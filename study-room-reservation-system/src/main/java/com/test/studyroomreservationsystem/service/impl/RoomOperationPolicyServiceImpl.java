@@ -1,9 +1,10 @@
-package com.test.studyroomreservationsystem.service;
+package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyRepository;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
+import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
 import com.test.studyroomreservationsystem.service.exception.RoomOperationPolicyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyService{
+public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyService {
 
     RoomOperationPolicyRepository policyRepository;
     @Autowired

@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service;
+package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
@@ -6,6 +6,9 @@ import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicy
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
+import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
+import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
 import com.test.studyroomreservationsystem.service.exception.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.service.exception.ScheduleNotFoundException;
@@ -17,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService{
+public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService {
 
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final RoomRepository roomRepository;

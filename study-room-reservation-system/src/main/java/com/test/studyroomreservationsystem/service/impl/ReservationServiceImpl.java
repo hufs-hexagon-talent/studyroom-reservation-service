@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service;
+package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
@@ -9,6 +9,9 @@ import com.test.studyroomreservationsystem.dto.reservation.ReservationDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
+import com.test.studyroomreservationsystem.service.ReservationService;
+import com.test.studyroomreservationsystem.service.RoomService;
+import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.service.exception.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.service.exception.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.service.exception.ReservationNotPossibleException;
