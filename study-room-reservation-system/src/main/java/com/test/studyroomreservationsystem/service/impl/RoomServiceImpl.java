@@ -39,13 +39,7 @@ public class RoomServiceImpl implements RoomService {
         return roomDao.save(room);
     }
 
-    @Override
-    public RoomDto convertToDto(Room room) {
-        RoomDto roomDto = new RoomDto();
-        roomDto.setRoomId(room.getRoomId());
-        roomDto.setRoomName(room.getRoomName());
-        return roomDto;
-    }
+
 
     @Override
     public Room findRoomById(Long roomId) {

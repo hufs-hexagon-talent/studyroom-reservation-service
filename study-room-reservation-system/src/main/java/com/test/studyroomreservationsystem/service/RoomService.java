@@ -14,7 +14,6 @@ public interface RoomService {
     List<Room> findAllRoom();
     Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto);
     void deleteRoom(Long roomId);
-    RoomDto convertToDto(Room room);
     boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 
