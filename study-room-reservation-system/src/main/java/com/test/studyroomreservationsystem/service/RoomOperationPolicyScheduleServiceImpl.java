@@ -90,7 +90,8 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
     }
     @Override
     public Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate) {
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RoomNotFoundException(roomId));
         return scheduleRepository.findByRoomAndPolicyApplicationDate(room, policyDate);
     }
 

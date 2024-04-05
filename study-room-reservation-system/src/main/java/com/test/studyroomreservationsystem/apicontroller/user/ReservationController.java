@@ -72,5 +72,6 @@ public class ReservationController {
         ReservationDto reservation = reservationService.convertToDto(updateReservation);
                 return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
+    //    메인 API → 날짜 주면, 각 방에서 어떤 예약들이 있는지 (전체 방에 대해서)
 
 }

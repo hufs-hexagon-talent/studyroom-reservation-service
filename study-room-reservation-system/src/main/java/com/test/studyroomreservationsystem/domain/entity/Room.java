@@ -16,5 +16,3 @@ public class Room {
     private String roomName;
 
 }
-
-
