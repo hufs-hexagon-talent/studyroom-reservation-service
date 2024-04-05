@@ -1,10 +1,10 @@
 package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.dao.RoomDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
-import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomService;
@@ -21,12 +21,12 @@ import java.util.List;
 
 @Service
 public class RoomServiceImpl implements RoomService {
-    private final RoomRepository roomRepository;
+    private final RoomDao roomDao;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     @Autowired
 
-    public RoomServiceImpl(RoomRepository roomRepository, RoomOperationPolicyScheduleRepository scheduleRepository) {
-        this.roomRepository = roomRepository;
+    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleRepository scheduleRepository) {
+        this.roomDao = roomDao;
         this.scheduleRepository = scheduleRepository;
     }
 
@@ -36,7 +36,7 @@ public class RoomServiceImpl implements RoomService {
     public Room createRoom(RoomDto roomDto) {
         Room room = new Room();
         room.setRoomName(roomDto.getRoomName());
-        return roomRepository.save(room);
+        return roomDao.save(room);
     }
 
     @Override
@@ -49,19 +49,19 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room findRoomById(Long roomId) {
-        return roomRepository.findById(roomId)
+        return roomDao.findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId));
     }
     @Override
     public Room findRoomByName(String roomName) {
-        return roomRepository.findByRoomName(roomName)
+        return roomDao.findByRoomName(roomName)
                 .orElseThrow(() -> new RoomNotFoundException(roomName));
     }
 
 
     @Override
     public List<Room> findAllRoom() {
-        return roomRepository.findAll();
+        return roomDao.findAll();
     }
 
     @Override
@@ -69,12 +69,12 @@ public class RoomServiceImpl implements RoomService {
         Room room = findRoomById(roomId);
         room.setRoomName(roomUpdateDto.getRoomName());
 
-        return roomRepository.save(room);
+        return roomDao.save(room);
     }
 
     @Override
     public void deleteRoom(Long roomId) {
-        roomRepository.deleteById(roomId);
+        roomDao.deleteById(roomId);
     }
 
     @Override // 룸이 운영시간인지?
