@@ -50,13 +50,12 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         // 예외 처리
             throw new ScheduleAlreadyExistException(roomId,date);
         }
+        RoomOperationPolicySchedule scheduleEntity = scheduleDto.toEntity(
+                        roomService.findRoomById(roomId),
+                        policyService.findPolicyById(roomOperationPolicyId)
+        );
 
-        RoomOperationPolicySchedule schedule = new RoomOperationPolicySchedule();
-        schedule.setRoom(roomService.findRoomById(roomId));
-        schedule.setRoomOperationPolicy(policyService.findPolicyById(roomOperationPolicyId));
-        schedule.setPolicyApplicationDate(date);
-
-        return scheduleDao.save(schedule);
+        return scheduleDao.save(scheduleEntity);
     }
 
     @Override

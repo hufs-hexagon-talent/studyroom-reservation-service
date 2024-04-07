@@ -16,5 +16,12 @@ public interface RoomOperationPolicyScheduleService {
     void deleteScheduleById(Long roomScheduleId);
     Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate);
     List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday();
+    default RoomOperationPolicyScheduleDto dtoFrom(RoomOperationPolicySchedule schedule) {
+        return RoomOperationPolicyScheduleDto.builder()
+                .roomOperationPolicyId(schedule.getRoomOperationPolicyScheduleId())
+                .roomId(schedule.getRoom().getRoomId())
+                .policyApplicationDate(schedule.getPolicyApplicationDate())
+                .build();
+    }
 
 }
