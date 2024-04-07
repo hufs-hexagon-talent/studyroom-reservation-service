@@ -16,5 +16,5 @@ public interface ReservationDao {
     void deleteById(Long reservationId);
     List<Reservation> findOverlappingReservations(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-    List<Reservation> findAllReservationsByDate(LocalDate date);
+//    List<Reservation> findAllReservationsByDate(LocalDate date);
 }

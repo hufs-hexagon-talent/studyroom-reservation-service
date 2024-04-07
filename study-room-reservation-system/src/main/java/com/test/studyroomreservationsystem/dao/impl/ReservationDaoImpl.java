@@ -48,9 +48,9 @@ public class ReservationDaoImpl implements ReservationDao {
         return reservationRepository.findOverlappingReservations(roomId, startDateTime, endDateTime);
     }
 
-    @Override
-    public List<Reservation> findAllReservationsByDate(LocalDate date) {
-        return reservationRepository.findAllReservationsByDate(date);
-    }
+//    @Override
+//    public List<Reservation> findAllReservationsByDate(LocalDate date) {
+//        return reservationRepository.findAllReservationsByDate(date);
+//    }
 
 }

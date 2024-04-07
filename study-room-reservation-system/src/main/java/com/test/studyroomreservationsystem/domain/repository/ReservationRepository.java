@@ -26,11 +26,11 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     Optional<List<Reservation>> findAllByUser(User user);
 
-    @Query("select r " +
-            "FROM Reservation r " +
-            "WHERE r.reservationStartTime >= :startOfDay AND r.reservationEndTime < :endOfDay " +
-            "GROUP BY r.room"
-    )
-    List<Reservation> findAllReservationsByDate(@Param("date") LocalDate date);
+//    @Query("select r " +
+//            "FROM Reservation r " +
+//            "WHERE r.reservationStartTime >= :startOfDay AND r.reservationEndTime < :endOfDay " +
+//            "GROUP BY r.room"
+//    )
+//    List<Reservation> findAllReservationsByDate(@Param("date") LocalDate date);
 
 }
