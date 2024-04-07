@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
+@Builder
 @NoArgsConstructor
 @Getter
 public class RoomDto {
@@ -18,7 +18,7 @@ public class RoomDto {
         this.roomName = roomName;
     }
 
-    @Builder
+
     public Room toEntity() {
         return Room.builder()
                 .roomId(roomId)
