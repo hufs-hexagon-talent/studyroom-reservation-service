@@ -58,9 +58,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Long userId, UserUpdateDto userUpdateDto) {
-        User user = findUserById(userId);
+        User userEntity = findUserById(userId);
 
-        User userEntity = userUpdateDto.toEntity();
+        userEntity.setLoginId(userUpdateDto.getLoginId());
+        userEntity.setPassword(userUpdateDto.getPassword());
+        userEntity.setSerial(userUpdateDto.getSerial());
+        userEntity.setIsAdmin(userUpdateDto.getIsAdmin());
+        userEntity.setUserName(userUpdateDto.getUserName());
 
         return userDao.save(userEntity);
     }
