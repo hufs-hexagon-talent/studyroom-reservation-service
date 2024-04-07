@@ -30,7 +30,7 @@ public class AdminRoomController {
     @PostMapping
     public ResponseEntity<RoomDto> createRoom(@RequestBody RoomDto roomDto) {
         Room createdRoom = roomService.createRoom(roomDto);
-        RoomDto room = roomService.convertToDto(createdRoom);
+        RoomDto room = roomService.dtoFrom(createdRoom);
 
         return new ResponseEntity<>(room, HttpStatus.CREATED);
     }
@@ -38,7 +38,7 @@ public class AdminRoomController {
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomDto> getRoomById(@PathVariable Long roomId) {
         Room foundRoom = roomService.findRoomById(roomId);
-        RoomDto room = roomService.convertToDto(foundRoom);
+        RoomDto room = roomService.dtoFrom(foundRoom);
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
 
@@ -47,7 +47,7 @@ public class AdminRoomController {
     public ResponseEntity<List<RoomDto>> getAllRooms() {
         List<RoomDto> rooms = roomService.findAllRoom()
                 .stream()
-                .map(roomService::convertToDto)
+                .map(roomService::dtoFrom)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(rooms, HttpStatus.OK);
@@ -58,7 +58,7 @@ public class AdminRoomController {
     public ResponseEntity<RoomDto> updateRoom(@PathVariable Long roomId,
                                               @RequestBody RoomUpdateDto roomDto) {
         Room updatedRoom = roomService.updateRoom(roomId, roomDto);
-        RoomDto room = roomService.convertToDto(updatedRoom);
+        RoomDto room = roomService.dtoFrom(updatedRoom);
 
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
