@@ -33,7 +33,7 @@ public class AdminRoomOperationPolicyScheduleController {
                 = scheduleService.createSchedule(scheduleDto);
 
         RoomOperationPolicyScheduleDto createdScheduleDto
-                = scheduleService.convertToDto(createdSchedule);
+                = scheduleService.dtoFrom(createdSchedule);
         return new ResponseEntity<>(createdScheduleDto, HttpStatus.CREATED);
     }
 
@@ -45,7 +45,7 @@ public class AdminRoomOperationPolicyScheduleController {
                 = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
 
         RoomOperationPolicyScheduleDto foundScheduleDto
-                = scheduleService.convertToDto(foundSchedule);
+                = scheduleService.dtoFrom(foundSchedule);
 
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
     }
@@ -57,7 +57,7 @@ public class AdminRoomOperationPolicyScheduleController {
         List<RoomOperationPolicyScheduleDto> availableRooms
                 = scheduleService.findAvailableRoomsGroupedByDateFromToday()
                 .stream()
-                .map(scheduleService::convertToDto)
+                .map(scheduleService::dtoFrom)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(availableRooms, HttpStatus.OK);
@@ -74,7 +74,7 @@ public class AdminRoomOperationPolicyScheduleController {
                 = scheduleService.updateSchedule(roomOperationPolicyScheduleId, scheduleUpdateDto);
 
         RoomOperationPolicyScheduleDto updatedScheduleDto
-                = scheduleService.convertToDto(updatedSchedule);
+                = scheduleService.dtoFrom(updatedSchedule);
 
         return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
