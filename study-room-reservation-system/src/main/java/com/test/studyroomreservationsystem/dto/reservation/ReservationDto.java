@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 @NoArgsConstructor
 public class ReservationDto { // CR
     private Long userId;
@@ -20,7 +21,7 @@ public class ReservationDto { // CR
     private LocalDateTime endDateTime;
     private ReservationState state;
 
-    @Builder
+
     public ReservationDto(Long userId, Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationState state) {
         this.userId = userId;
         this.roomId = roomId;
