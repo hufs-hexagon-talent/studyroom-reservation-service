@@ -34,9 +34,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room createRoom(RoomDto roomDto) {
-        Room room = new Room();
-        room.setRoomName(roomDto.getRoomName());
-        return roomDao.save(room);
+        Room roomEntity = roomDto.toEntity();
+        return roomDao.save(roomEntity);
     }
 
 
@@ -60,10 +59,10 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto) {
-        Room room = findRoomById(roomId);
-        room.setRoomName(roomUpdateDto.getRoomName());
+        Room roomEntity = findRoomById(roomId);
+        roomEntity.setRoomName(roomUpdateDto.getRoomName());
 
-        return roomDao.save(room);
+        return roomDao.save(roomEntity);
     }
 
     @Override

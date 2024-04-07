@@ -16,5 +16,10 @@ public interface RoomService {
     void deleteRoom(Long roomId);
     boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-
+    default  RoomDto dtoFrom(Room room) {
+        return RoomDto.builder()
+                .roomId(room.getRoomId())
+                .roomName(room.getRoomName())
+                .build();
+    }
 }
