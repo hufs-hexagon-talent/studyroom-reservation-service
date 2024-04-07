@@ -27,7 +27,7 @@ public class AdminRoomOperationPolicyController {
     public ResponseEntity<RoomOperationPolicyDto> createPolicy(@RequestBody RoomOperationPolicyDto policyDto) {
 
         RoomOperationPolicy createdPolicy = roomOperationPolicyService.createPolicy(policyDto);
-        RoomOperationPolicyDto policy = roomOperationPolicyService.convertToDto(createdPolicy);
+        RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(createdPolicy);
 
         return new ResponseEntity<>(policy, HttpStatus.CREATED);
     }
@@ -35,7 +35,7 @@ public class AdminRoomOperationPolicyController {
     @GetMapping("/{roomOperationPolicyId}")
     public ResponseEntity<RoomOperationPolicyDto> getPolicy(@PathVariable Long roomOperationPolicyId) {
         RoomOperationPolicy foundPolicy = roomOperationPolicyService.findPolicyById(roomOperationPolicyId);// dto 로 전환
-        RoomOperationPolicyDto policy = roomOperationPolicyService.convertToDto(foundPolicy);
+        RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(foundPolicy);
         return new ResponseEntity<>(policy, HttpStatus.OK);
     }
     @Operation(summary = "모든 RoomOperationPolicy 조회", description = "모든 RoomOperationPolicy 조회 API")
@@ -43,16 +43,16 @@ public class AdminRoomOperationPolicyController {
     public ResponseEntity<List<RoomOperationPolicyDto>> getAllPolices() {
         List<RoomOperationPolicyDto> policies = roomOperationPolicyService.findAllPolicies()
                 .stream()
-                .map(roomOperationPolicyService::convertToDto)
+                .map(roomOperationPolicyService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(policies, HttpStatus.OK);
     }
     @Operation(summary = "RoomOperationPolicy 정보 업데이트", description = "해당 RoomOperationPolicy id의 정보 업데이트 API")
     @PutMapping("/{roomOperationPolicyId}")
-    public ResponseEntity<RoomOperationPolicyUpdateDto> updatePolicy(@PathVariable Long roomOperationPolicyId,
+    public ResponseEntity<RoomOperationPolicyDto> updatePolicy(@PathVariable Long roomOperationPolicyId,
                                                                      @RequestBody RoomOperationPolicyUpdateDto policyDto) {
         RoomOperationPolicy updatedPolicy = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, policyDto);
-        RoomOperationPolicyUpdateDto policy = roomOperationPolicyService.convertToUpdateDto(updatedPolicy);
+        RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(updatedPolicy);
 
         return new ResponseEntity<>(policy, HttpStatus.OK);
     }
