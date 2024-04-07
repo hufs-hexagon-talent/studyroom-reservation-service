@@ -22,13 +22,8 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
 
     @Override
     public RoomOperationPolicy createPolicy(RoomOperationPolicyDto policyDto) {
-        RoomOperationPolicy policy = new RoomOperationPolicy();
-
-        policy.setOperationStartTime(policyDto.getOperationStartTime());
-        policy.setOperationEndTime(policyDto.getOperationEndTime());
-        policy.setEachMaxMinute(policyDto.getEachMaxMinute());
-
-        return policyDao.save(policy);
+        RoomOperationPolicy policyEntity = policyDto.toEntity();
+        return policyDao.save(policyEntity);
     }
 
 

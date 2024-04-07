@@ -13,5 +13,12 @@ public interface RoomOperationPolicyService {
     RoomOperationPolicy findPolicyById(Long policyId);
     List<RoomOperationPolicy> findAllPolicies();
 
+    default RoomOperationPolicyDto dtoFrom(RoomOperationPolicy roomOperationPolicy) {
+        return RoomOperationPolicyDto.builder()
+                .operationStartTime(roomOperationPolicy.getOperationStartTime())
+                .operationEndTime(roomOperationPolicy.getOperationEndTime())
+                .eachMaxMinute(roomOperationPolicy.getEachMaxMinute())
+                .build();
+    }
 
 }
