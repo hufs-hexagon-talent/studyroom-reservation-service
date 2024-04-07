@@ -32,7 +32,7 @@ public class AdminReservationController {
     @PostMapping
     ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationDto reservationDto) {
         Reservation createdReservation = reservationService.createReservation(reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(createdReservation);
+        ReservationDto reservation = reservationService.dtoFrom(createdReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
@@ -40,7 +40,7 @@ public class AdminReservationController {
     @GetMapping("/{reservationId}")
     ResponseEntity<ReservationDto> getReservationById(@PathVariable Long reservationId) {
         Reservation foundReservation = reservationService.findReservationById(reservationId);
-        ReservationDto reservation = reservationService.convertToDto(foundReservation);
+        ReservationDto reservation = reservationService.dtoFrom(foundReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class AdminReservationController {
     ResponseEntity<List<ReservationDto>> getAllReservations() {
         List<ReservationDto> reservations = reservationService.findAllReservation()
                 .stream()
-                .map(reservationService::convertToDto)
+                .map(reservationService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
@@ -60,7 +60,7 @@ public class AdminReservationController {
 
         List<ReservationDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
                 .stream()
-                .map(reservationService::convertToDto)
+                .map(reservationService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
     }
@@ -70,7 +70,7 @@ public class AdminReservationController {
     ResponseEntity<ReservationDto> updateReservation(@PathVariable Long reservationId,
                                                      @RequestBody ReservationDto reservationDto) {
         Reservation updateReservation = reservationService.updateReservation(reservationId, reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        ReservationDto reservation = reservationService.dtoFrom(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     @Operation(summary = "reservation 룸 업데이트", description = "해당 reservation id의 룸 업데이트 API")
@@ -79,7 +79,7 @@ public class AdminReservationController {
     ResponseEntity<ReservationDto> updateRoomReservation(@PathVariable Long reservationId,
                                                      @RequestBody ReservationRoomDto reservationDto) {
         Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        ReservationDto reservation = reservationService.dtoFrom(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     @Operation(summary = "reservation 시간 업데이트", description = "해당 reservation id의 시간 업데이트 API")
@@ -87,7 +87,7 @@ public class AdminReservationController {
     ResponseEntity<ReservationDto> updateTimeReservation(@PathVariable Long reservationId,
                                                      @RequestBody ReservationTimeDto reservationDto) {
         Reservation updateReservation = reservationService.updateTimeReservation(reservationId, reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        ReservationDto reservation = reservationService.dtoFrom(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     @Operation(summary = "reservation 상태 업데이트", description = "해당 reservation id의 상태 업데이트 API")
@@ -95,7 +95,7 @@ public class AdminReservationController {
     ResponseEntity<ReservationDto> updateStateReservation(@PathVariable Long reservationId,
                                                           @RequestBody ReservationStateDto reservationDto) {
         Reservation updateReservation = reservationService.updateStateReservation(reservationId, reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        ReservationDto reservation = reservationService.dtoFrom(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 

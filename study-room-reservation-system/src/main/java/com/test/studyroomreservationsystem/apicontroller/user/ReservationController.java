@@ -30,7 +30,7 @@ public class ReservationController {
     @PostMapping
     ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationDto reservationDto) {
         Reservation createdReservation = reservationService.createReservation(reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(createdReservation);
+        ReservationDto reservation = reservationService.dtoFrom(createdReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
@@ -38,7 +38,7 @@ public class ReservationController {
     @GetMapping("/{reservationId}")
     ResponseEntity<ReservationDto> getReservationById(@PathVariable Long reservationId) {
         Reservation foundReservation = reservationService.findReservationById(reservationId);
-        ReservationDto reservation = reservationService.convertToDto(foundReservation);
+        ReservationDto reservation = reservationService.dtoFrom(foundReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class ReservationController {
 
         List<ReservationDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
                 .stream()
-                .map(reservationService::convertToDto)
+                .map(reservationService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
     }
@@ -60,7 +60,7 @@ public class ReservationController {
     ResponseEntity<ReservationDto> updateRoomReservation(@PathVariable Long reservationId,
                                                      @RequestBody ReservationRoomDto reservationDto) {
         Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        ReservationDto reservation = reservationService.dtoFrom(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 
@@ -69,7 +69,7 @@ public class ReservationController {
     ResponseEntity<ReservationDto> updateTimeReservation(@PathVariable Long reservationId,
                                                      @RequestBody ReservationTimeDto reservationDto) {
         Reservation updateReservation = reservationService.updateTimeReservation(reservationId, reservationDto);
-        ReservationDto reservation = reservationService.convertToDto(updateReservation);
+        ReservationDto reservation = reservationService.dtoFrom(updateReservation);
                 return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     //    메인 API → 날짜 주면, 각 방에서 어떤 예약들이 있는지 (전체 방에 대해서)
