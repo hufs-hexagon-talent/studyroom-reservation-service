@@ -9,12 +9,13 @@ import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
+@Builder
 public class RoomOperationPolicyDto {
     private LocalTime operationStartTime;
     private LocalTime operationEndTime;
     private Integer eachMaxMinute;
 
-    @Builder
+
     public RoomOperationPolicyDto(LocalTime operationStartTime, LocalTime operationEndTime, Integer eachMaxMinute) {
         this.operationStartTime = operationStartTime;
         this.operationEndTime = operationEndTime;
