@@ -28,14 +28,14 @@ public class AdminUserController {
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
         User createdUser = userService.createUser(userDto);
-        UserDto user = userService.toDto(createdUser);
+        UserDto user = userService.dtoFrom(createdUser);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
     @Operation(summary = "user 조회", description = "user id로 조회 API")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
-        UserDto user = userService.toDto(foundUser);
+        UserDto user = userService.dtoFrom(foundUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public class AdminUserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userService.findAllUsers()
-                .stream().map(userService::toDto)
+                .stream().map(userService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class AdminUserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
         User updatedUser = userService.updateUser(userId, userUpdateDto);
-        UserDto user = userService.toDto(updatedUser);
+        UserDto user = userService.dtoFrom(updatedUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

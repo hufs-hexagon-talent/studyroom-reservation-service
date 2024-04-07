@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
-        UserDto user = userService.toDto(foundUser);
+        UserDto user = userService.dtoFrom(foundUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -33,7 +33,7 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
         User updatedUser = userService.updateUser(userId, userUpdateDto);
-        UserDto user = userService.toDto(updatedUser);
+        UserDto user = userService.dtoFrom(updatedUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
