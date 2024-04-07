@@ -26,16 +26,11 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserDto userDto) {
 
         isUserAlreadyExists(userDto);
-        // 유효성 검사하기 , 비밀번호 암호화 하기
+        // todo  유효성 검사하기 , 비밀번호 암호화 하기
 
-        User user = new User();
-        user.setLoginId(userDto.getLoginId());
-        user.setPassword(userDto.getPassword());
-        user.setSerial(userDto.getSerial());
-        user.setIsAdmin(userDto.getIsAdmin());
-        user.setUserName(userDto.getUserName());
+        User userEntity = userDto.toEntity();
 
-        return userDao.save(user);
+        return userDao.save(userEntity);
     }
 
     private void isUserAlreadyExists(UserDto userDto) {
@@ -65,14 +60,9 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long userId, UserUpdateDto userUpdateDto) {
         User user = findUserById(userId);
 
-        user.setLoginId(userUpdateDto.getLoginId());
-        user.setPassword(userUpdateDto.getPassword());
-        user.setSerial(userUpdateDto.getSerial());
-        user.setIsAdmin(userUpdateDto.getIsAdmin());
-        user.setUserName(userUpdateDto.getUserName());
+        User userEntity = userUpdateDto.toEntity();
 
-
-        return userDao.save(user);
+        return userDao.save(userEntity);
     }
     @Override
     public void deleteUser(Long userId) {
