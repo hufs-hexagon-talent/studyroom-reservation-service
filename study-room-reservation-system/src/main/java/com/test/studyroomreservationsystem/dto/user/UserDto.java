@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor
 public class UserDto { // CR dto
     private String loginId;
@@ -27,7 +28,7 @@ public class UserDto { // CR dto
         this.isAdmin = isAdmin;
         this.userName = userName;
     }
-    @Builder
+
     public User toEntity() {
         return User.builder()
                 .loginId(loginId)
