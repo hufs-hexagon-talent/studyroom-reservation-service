@@ -21,5 +21,15 @@ public interface ReservationService {
     Reservation updateStateReservation(Long reservationId , ReservationStateDto stateDto);
     Reservation updateRoomReservation(Long reservationId , ReservationRoomDto roomDto);
     void deleteReservationById(Long reservationId);
-    List<Reservation> findReservationsByDate(LocalDateTime dateTime);
+//    List<Reservation> findReservationsByDate(LocalDateTime dateTime);
+
+    default ReservationDto dtoFrom(Reservation reservation) {
+        return ReservationDto.builder()
+                .userId(reservation.getUser().getUserId())
+                .roomId(reservation.getRoom().getRoomId())
+                .startDateTime(reservation.getReservationStartTime())
+                .endDateTime(reservation.getReservationEndTime())
+                .state(reservation.getState())
+                .build();
+    }
 }

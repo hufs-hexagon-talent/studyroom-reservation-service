@@ -42,7 +42,8 @@ public class ReservationServiceImpl implements ReservationService {
         Long userId = reservationDto.getUserId();
         LocalDateTime startDateTime = reservationDto.getStartDateTime();
         LocalDateTime endDateTime = reservationDto.getEndDateTime();
-        ReservationState state = reservationDto.getState();
+//        ReservationState state = reservationDto.getState();
+
         // 예약 가능 여부 확인 로직
 
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
@@ -50,14 +51,12 @@ public class ReservationServiceImpl implements ReservationService {
             // 에약 불가
             throw new ReservationNotPossibleException(roomId);
         }
-        Reservation reservation = new Reservation();
-        reservation.setRoom(roomService.findRoomById(roomId));
-        reservation.setUser(userService.findUserById(userId));
-        reservation.setReservationStartTime(startDateTime);
-        reservation.setReservationEndTime(endDateTime);
-        reservation.setState(state);
+        Reservation reservationEntity = reservationDto.toEntity(
+                userService.findUserById(userId),
+                roomService.findRoomById(roomId)
+        );
 
-        return reservationDao.save(reservation);
+        return reservationDao.save(reservationEntity);
         
         }
 
@@ -177,12 +176,12 @@ public class ReservationServiceImpl implements ReservationService {
 
 
 
-    @Override
-    public List<Reservation> findReservationsByDate(LocalDateTime dateTime) {
-        LocalDate date= dateTime.toLocalDate();
-
-        return reservationDao.findAllReservationsByDate(date);
-    }
+//    @Override
+//    public List<Reservation> findReservationsByDate(LocalDateTime dateTime) {
+//        LocalDate date= dateTime.toLocalDate();
+//
+//        return reservationDao.findAllReservationsByDate(date);
+//    }
 
 
 }
