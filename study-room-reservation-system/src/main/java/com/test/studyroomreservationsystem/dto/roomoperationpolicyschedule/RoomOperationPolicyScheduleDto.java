@@ -11,12 +11,13 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
+@Builder
 public class RoomOperationPolicyScheduleDto {
     private Long roomId;
     private Long roomOperationPolicyId;
     private LocalDate policyApplicationDate;
 
-    @Builder
+
     public RoomOperationPolicyScheduleDto(Long roomId, Long roomOperationPolicyId, LocalDate policyApplicationDate) {
         this.roomId = roomId;
         this.roomOperationPolicyId = roomOperationPolicyId;
