@@ -1,22 +1,28 @@
+#   첫 번째 스테이지: 빌드 환경 구성
+
 #   베이스 이미지로 Java 17버전이 포함된 Docker 이미지를 사용
 FROM bellsoft/liberica-openjdk-alpine:17
 
-#   우분투 최신 버전
-FROM ubuntu:latest
+# 작업 디렉터리 설정
+WORKDIR /home/app
 
-#	Gradle을 사용해 빌드를 실행하는 명령어
-CMD ["./gradlew", "clean", "build"]
+# 소스 코드와 빌드 파일 복사
+COPY . .
 
-#   컨테이너 내에 /tmp 디렉터리를 볼륨으로 설정
-VOLUME /tmp
+# Gradle을 사용해 애플리케이션 빌드 (테스트 코드 실행X)
+RUN ./gradlew clean build -x test
+# --------------------------------------------
+# 두 번째 스테이지: 실행 환경 구성
+FROM bellsoft/liberica-openjdk-alpine:17
 
-#   Gradle로 빌드한 jar 파일의 위치를 변수로 설정
-ARG JAR_FILE=build/libs/*.jar
+# 작업 디렉터리 설정
+WORKDIR /app
 
+# 첫 번째 스테이지에서 생성된 JAR 파일을 두 번째 스테이지로 복사
+COPY --from=build /home/app/build/libs/*.jar app.jar
+
+# 생성자 정보 레이블 추가
 LABEL authors="hwangbyeonghun"
-
-#   JAR_FILE 변수에 지정된 파일을 app.jar라는 이름으로 컨테이너에 추가
-COPY ${JAR_FILE} app.jar
 
 #   컨테이너가 사용할 포트를 설정, 이 경우에는 8080 포트를 사용
 EXPOSE 8080
