@@ -1,42 +1,40 @@
-version: '3'
+version: '3.8'
 
 services:
-  database:
-    container_name: hufs-reservation-db
-    image: mysql
-    restart: unless-stopped
+  hufs-reservation-db:
+    image: mysql:8.3
+    platform: linux/amd64
     environment:
-      MYSQL_DATABASE: hufs-reservation-service-db
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_ROOT_PASSWORD: 1234
-      TZ: 'Asia/Seoul'
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "hufs-reservation-service-db"
+      MYSQL_USER: "hwangbbang"
+      MYSQL_PASSWORD: "1234"
+      TZ: "Asia/Seoul"
     ports:
       - "3306:3306"
-    volumes:
-      - ./mysql/conf.d:/etc/mysql/conf.d # MySQL 설정 파일 위치
-    command:
-      - "mysqld"
-      - "--character-set-server=utf8mb4"
-      - "--collation-server=utf8mb4_unicode_ci"
     networks:
       - hwangbbang_network
 
-  application:
-    container_name: hufs-reservation-service
-    restart: on-failure
+  hufs-reservation-service:
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
+      args:
+        - platform=linux/amd64
+    image: service_build_image
     ports:
       - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://hufs-reservation-db:3306/hufs-reservation-service-db?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "1234"
     depends_on:
-      - database
+      - hufs-reservation-db
     networks:
       - hwangbbang_network
+    environment:
+      SERVICE_DB_HOST: hufs-reservation-db
+      SERVICE_DB_USER: hwangbbang
+      SERVICE_DB_PASSWORD: "1234"
+      SERVICE_DB_NAME: "hufs-reservation-service-db"
+      TZ: "Asia/Seoul"
 
 networks:
   hwangbbang_network:
+    driver: bridge
