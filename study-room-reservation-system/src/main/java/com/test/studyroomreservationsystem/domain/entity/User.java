@@ -22,11 +22,13 @@ public class User {
     @Column(name="serial", unique = true)
     private String serial;
 
+    @Column(name="user_name")
+    private String userName;
+
     @Column(name="is_admin")
     private Boolean isAdmin;
 
-    @Column(name="user_name")
-    private String userName;
+
 
     @Builder
     public User(Long userId, String loginId, String password, String serial, Boolean isAdmin, String userName) {
