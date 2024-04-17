@@ -4,6 +4,7 @@ services:
   hufs-reservation-db:
     image: mysql:8.3
     platform: linux/amd64
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: "1234"
       MYSQL_DATABASE: "hufs-reservation-service-db"
@@ -21,13 +22,14 @@ services:
       dockerfile: Dockerfile
       args:
         - platform=linux/amd64
-    image: service_build_image
+    image: service_build_image:latest
     ports:
       - "8080:8080"
     depends_on:
       - hufs-reservation-db
     networks:
       - hwangbbang_network
+    restart: unless-stopped
     environment:
       SERVICE_DB_HOST: hufs-reservation-db
       SERVICE_DB_USER: hwangbbang
