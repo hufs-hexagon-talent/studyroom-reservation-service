@@ -2,7 +2,7 @@ server:
     port: 8081
 spring:
     datasource:
-        url: jdbc:mysql://localhost:3306/hufs-reservation-service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+        url: jdbc:mysql://172.19.0.2:3306/hufs-reservation-service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
         username: hwangbbang
         password: 1234
         driver-class-name: com.mysql.cj.jdbc.Driver
