@@ -32,8 +32,12 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+<<<<<<< HEAD
           context: ./services/${{ env.SERVICE_NAME }}
           file: ./services/${{ env.SERVICE_NAME }}/Dockerfile
+=======
+          file: ./Dockerfile
+>>>>>>> c3801657309160c2abe2ab8b22bb819b178a70e8
           push: true
           tags: |
             ghcr.io/${{ env.ORG_NAME }}/${{ env.PROJECT_NAME }}-${{ env.SERVICE_NAME }}:${{ github.sha }}
