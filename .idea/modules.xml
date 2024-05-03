@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/HUFS_RESERVATION_BackEnd.iml" filepath="$PROJECT_DIR$/.idea/HUFS_RESERVATION_BackEnd.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/study-room-reservation-system.main.iml" filepath="$PROJECT_DIR$/.idea/modules/study-room-reservation-system.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/study-room-reservation-system.test.iml" filepath="$PROJECT_DIR$/.idea/modules/study-room-reservation-system.test.iml" />
     </modules>
   </component>
 </project>
