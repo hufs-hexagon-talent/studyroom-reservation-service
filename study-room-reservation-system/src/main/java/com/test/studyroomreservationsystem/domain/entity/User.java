@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.domain.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 @Getter @Setter
@@ -13,20 +14,23 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @NotEmpty
     @Column(name = "login_id", unique = true)
     private String loginId;
 
+    @NotEmpty
     @Column(name = "password")
     private String password;
 
     @Column(name="serial", unique = true)
     private String serial;
 
+    @NotEmpty
     @Column(name="user_name")
     private String userName;
 
     @Column(name="is_admin")
-    private Boolean isAdmin;
+    private Boolean isAdmin = false; // 기본값
 
 
 
