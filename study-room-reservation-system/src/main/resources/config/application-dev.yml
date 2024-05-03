@@ -1,21 +1,26 @@
 server:
     port: 8081
 spring:
+#    profiles:
+#        active: dev
     datasource:
         url: jdbc:mysql://172.19.0.2:3306/hufs-reservation-service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
         username: hwangbbang
         password: 1234
         driver-class-name: com.mysql.cj.jdbc.Driver
 
-    profiles:
-        active: dev
     jpa:
         show-sql: true
         open-in-view: true
+        hibernate:
+            ddl-auto: update
         properties:
             hibernate:
-                ddl-auto: create # 배포시 변경해야함
                 format_sql: true # SQL을 보기 좋게 포맷팅
+    sql:
+        init:
+            mode: always
+            encoding: utf-8
 #    flyway:
 #        enabled: true
 #        baseline-on-migrate: true
