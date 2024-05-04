@@ -14,18 +14,15 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @NotEmpty
     @Column(name = "login_id", unique = true)
     private String loginId;
 
-    @NotEmpty
     @Column(name = "password")
     private String password;
 
-    @Column(name="serial", unique = true)
+    @Column(name="serial", unique = true, length = 9)
     private String serial;
 
-    @NotEmpty
     @Column(name="user_name")
     private String userName;
 
