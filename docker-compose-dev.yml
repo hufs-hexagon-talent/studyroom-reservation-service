@@ -13,8 +13,7 @@ services:
       TZ: "Asia/Seoul"
     ports:
       - "3306:3306"
-    networks:
-      - hwangbbang_network
+    
 
   hufs-reservation-service:
     build:
@@ -27,8 +26,7 @@ services:
       - "8080:8080"
     depends_on:
       - hufs-reservation-db
-    networks:
-      - hwangbbang_network
+    
     restart: unless-stopped
     environment:
       SERVICE_DB_HOST: hufs-reservation-db
