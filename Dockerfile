@@ -7,7 +7,7 @@ FROM bellsoft/liberica-openjdk-alpine:17 as build
 WORKDIR /home/app
 
 # 소스 코드와 빌드 파일 복사
-COPY  ./study-room-reservation-system .
+COPY ./study-room-reservation-system .
 
 # Gradle을 사용해 애플리케이션 빌드 (테스트 코드 실행X)
 RUN ./gradlew clean build -x test
