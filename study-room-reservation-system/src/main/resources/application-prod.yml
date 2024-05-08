@@ -1,0 +1,16 @@
+server:
+    port: 8080
+spring:
+    datasource:
+        url: ${ SPRING_DATASOURCE_URL }
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        show-sql: true
+        open-in-view: true
+        properties:
+            hibernate:
+                format_sql: true # SQL을 보기 좋게 포맷팅
+

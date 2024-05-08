@@ -12,10 +12,15 @@ spring:
     jpa:
         show-sql: true
         open-in-view: true
+        hibernate:
+            ddl-auto: update
         properties:
             hibernate:
-                ddl-auto: create
                 format_sql: true # SQL을 보기 좋게 포맷팅
+    sql:
+        init:
+            mode: always
+            encoding: utf-8
 #    flyway:
 #        enabled: true
 #        baseline-on-migrate: true
@@ -23,3 +28,4 @@ spring:
 #        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
 #        user: root
 #        password: 1234
+

@@ -1,5 +1,6 @@
 version: '3.8'
 
+
 services:
   hufs-reservation-db:
     image: mysql:8.3
@@ -7,13 +8,14 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: "1234"
-      MYSQL_DATABASE: "hufs-reservation-service-db"
+      MYSQL_DATABASE: "service-db"
       MYSQL_USER: "hwangbbang"
       MYSQL_PASSWORD: "1234"
-      TZ: "Asia/Seoul"
+      LC_ALL: C.UTF-8
     ports:
       - "3306:3306"
-    
+    volumes:
+      - ./study-room-reservation-system/mysql/init.d:/docker-entrypoint-initdb.d
 
   hufs-reservation-service:
     build:
@@ -26,15 +28,10 @@ services:
       - "8080:8080"
     depends_on:
       - hufs-reservation-db
-    
     restart: unless-stopped
+    command: [ "java", "-jar", "app.jar" ]
     environment:
-      SERVICE_DB_HOST: hufs-reservation-db
-      SERVICE_DB_USER: hwangbbang
-      SERVICE_DB_PASSWORD: "1234"
-      SERVICE_DB_NAME: "hufs-reservation-service-db"
-      TZ: "Asia/Seoul"
-
-networks:
-  hwangbbang_network:
-    driver: bridge
+      SPRING_DATASOURCE_URL: "jdbc:mysql://hufs-reservation-db:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
+      SPRING_DATASOURCE_USERNAME: "hwangbbang"
+      SPRING_DATASOURCE_PASSWORD: "1234"
+      SPRING_PROFILES_ACTIVE: prod
