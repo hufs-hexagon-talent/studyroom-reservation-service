@@ -1,11 +1,11 @@
-create table `hufs-reservation-db`.room
+create table `service-db`.room
 (
     room_id   bigint auto_increment
         primary key,
     room_name varchar(255) null
 );
 
-create table `hufs-reservation-db`.room_operation_policy
+create table `service-db`.room_operation_policy
 (
     room_operation_policy_id bigint auto_increment
         primary key,
@@ -14,7 +14,7 @@ create table `hufs-reservation-db`.room_operation_policy
     operation_start_time     time(6) null
 );
 
-create table `hufs-reservation-db`.room_operation_policy_schedule
+create table `service-db`.room_operation_policy_schedule
 (
     room_operation_policy_schedule_id bigint auto_increment
         primary key,
@@ -24,12 +24,12 @@ create table `hufs-reservation-db`.room_operation_policy_schedule
     constraint UKpfqbat5pgysdgfkha5fyggpi7
         unique (room_id, policy_application_date),
     constraint FK69q6uql7yr8nj2be1s7hduk8j
-        foreign key (room_operation_policy_id) references `hufs-reservation-db`.room_operation_policy (room_operation_policy_id),
+        foreign key (room_operation_policy_id) references `service-db`.room_operation_policy (room_operation_policy_id),
     constraint FKtqf4du6n3yxxy8bg6wwgyq0iq
-        foreign key (room_id) references `hufs-reservation-db`.room (room_id)
+        foreign key (room_id) references `service-db`.room (room_id)
 );
 
-create table `hufs-reservation-db`.user
+create table `service-db`.user
 (
     user_id   bigint auto_increment
         primary key,
@@ -44,7 +44,7 @@ create table `hufs-reservation-db`.user
         unique (serial)
 );
 
-create table `hufs-reservation-db`.reservation
+create table `service-db`.reservation
 (
     reservation_id         bigint auto_increment
         primary key,
@@ -54,8 +54,8 @@ create table `hufs-reservation-db`.reservation
     room_id                bigint                                    null,
     user_id                bigint                                    null,
     constraint FKm4oimk0l1757o9pwavorj6ljg
-        foreign key (user_id) references `hufs-reservation-db`.user (user_id),
+        foreign key (user_id) references `service-db`.user (user_id),
     constraint FKm8xumi0g23038cw32oiva2ymw
-        foreign key (room_id) references `hufs-reservation-db`.room (room_id)
+        foreign key (room_id) references `service-db`.room (room_id)
 );
 

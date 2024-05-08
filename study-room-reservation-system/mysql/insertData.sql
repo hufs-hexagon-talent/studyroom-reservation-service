@@ -1,4 +1,4 @@
-INSERT INTO `hufs-reservation-db`.`user`
+INSERT INTO `service-db`.`user`
 (user_name, login_id, password, serial, is_admin)
 VALUES
     ('관리자','admin', 'admin', '123456789' , TRUE),
@@ -7,7 +7,7 @@ VALUES
     ('이서연','lsy0476', 'lsy0476', '202202465',  FALSE),
     ('김소정','sojeong22', 'sojeong22', '202200720',  FALSE);
 
-INSERT INTO `hufs-reservation-db`.`room_operation_policy` (operation_start_time, operation_end_time, each_max_minute)
+INSERT INTO `service-db`.`room_operation_policy` (operation_start_time, operation_end_time, each_max_minute)
 VALUES
     ('09:00:00', '17:00:00', 60),
     ('09:00:00', '17:00:00', 120),
@@ -16,7 +16,7 @@ VALUES
     ('09:00:00', '22:00:00', 120),
     ('09:00:00', '22:00:00', 180);
 
-INSERT INTO `hufs-reservation-db`.`room` (room_name)
+INSERT INTO `service-db`.`room` (room_name)
 VALUES
     ('306-1'),
     ('306-2'),
@@ -25,7 +25,7 @@ VALUES
     ('428-1'),
     ('428-2');
 
-INSERT INTO `hufs-reservation-db`.`room_operation_policy_schedule` (room_id, room_operation_policy_id, policy_application_date)
+INSERT INTO `service-db`.`room_operation_policy_schedule` (room_id, room_operation_policy_id, policy_application_date)
 VALUES
     (1, 1, '2024-04-17'),
     (2, 1, '2024-04-17'),
@@ -34,6 +34,6 @@ VALUES
     (5, 1, '2024-04-17'),
     (6, 1, '2024-04-17');
 
-INSERT INTO `hufs-reservation-db`.`reservation` (user_id, room_id, reservation_start_time, reservation_end_time, state)
+INSERT INTO `service-db`.`reservation` (user_id, room_id, reservation_start_time, reservation_end_time, state)
 VALUES
     (2, 1, '2024-05-04 09:00:00', '2024-05-04 10:00:00', 'RESERVED');
