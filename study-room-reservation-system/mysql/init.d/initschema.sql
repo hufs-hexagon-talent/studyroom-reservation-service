@@ -59,7 +59,7 @@ create table `service-db`.reservation
         foreign key (room_id) references `service-db`.room (room_id)
 );
 
------------------------
+-- data 삽입
 INSERT INTO `service-db`.`user`
 (user_name, login_id, password, serial, is_admin)
 VALUES
