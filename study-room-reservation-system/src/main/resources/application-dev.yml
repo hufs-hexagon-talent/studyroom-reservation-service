@@ -29,3 +29,4 @@ spring:
 #        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
 #        user: root
 #        password: 1234
+
