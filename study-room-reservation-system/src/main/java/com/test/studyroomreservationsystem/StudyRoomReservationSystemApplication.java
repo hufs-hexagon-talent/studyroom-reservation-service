@@ -1,12 +1,9 @@
 package com.test.studyroomreservationsystem;
 
 import com.test.studyroomreservationsystem.config.JpaConfig;
-import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 
 @Import(JpaConfig.class)
 @SpringBootApplication

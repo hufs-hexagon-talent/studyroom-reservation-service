@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.user.UserDto;
+import com.test.studyroomreservationsystem.security.dto.UserDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,14 +24,14 @@ public class AdminUserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "user 생성", description = "user 생성하는 API")
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        User createdUser = userService.createUser(userDto);
-        UserDto user = userService.dtoFrom(createdUser);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-    @Operation(summary = "user 조회", description = "user id로 조회 API")
+//    @Operation(summary = "user 생성", description = "user 생성하는 API")
+//    @PostMapping
+//    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+//        User createdUser = userService.createUser(userDto);
+//        UserDto user = userService.dtoFrom(createdUser);
+//        return new ResponseEntity<>(user, HttpStatus.CREATED);
+//    }
+    @Operation(summary = "✅ 특정 회원 정보 조회", description = "username, password, isAdmin, name, serial 반환")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
@@ -39,7 +39,7 @@ public class AdminUserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @Operation(summary = "모든 user 조회", description = "모든 user 조회 API")
+    @Operation(summary = "✅ 모든 회원 정보 조회", description = "모든 user 조회 API")
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userService.findAllUsers()
@@ -48,7 +48,7 @@ public class AdminUserController {
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 
-    @Operation(summary = "user 정보 업데이트", description = "해당 user id의 정보 업데이트 API")
+    @Operation(summary = "❌ 특정 회원 정보 수정", description = "해당 user id의 정보 업데이트 API")
     @PutMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
         User updatedUser = userService.updateUser(userId, userUpdateDto);
@@ -56,7 +56,7 @@ public class AdminUserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @Operation(summary = "user 삭제", description = "해당 user id의 정보 삭제 API")
+    @Operation(summary = "✅ 특정 회원 삭제", description = "해당 user id의 정보 삭제 API")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);

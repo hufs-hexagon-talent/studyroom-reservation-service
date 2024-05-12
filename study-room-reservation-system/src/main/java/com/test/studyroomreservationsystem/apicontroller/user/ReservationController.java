@@ -25,27 +25,28 @@ public class ReservationController {
     public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
-
-    @Operation(summary = "유저 본인의 reservation 생성", description = "유저 본인의 reservation 생성 하는 API")
+    // todo 수정 예정
+    @Operation(summary = "❌ 예약 생성", description = "인증 받은 유저 사용자 예약 생성")
     @PostMapping
-    ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationDto reservationDto) {
+    ResponseEntity<ReservationDto> reserveProcess(@RequestBody ReservationDto reservationDto) {
         Reservation createdReservation = reservationService.createReservation(reservationDto);
         ReservationDto reservation = reservationService.dtoFrom(createdReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
-    @Operation(summary = "유저 본인의 현재 reservation 조회", description = "유저 본인의 현재 reservation id로 조회 API")
+    // todo 수정 예정
+    @Operation(summary = "❌ 예약 조회", description = " 인증 받은 유저 자신의 현재 예약 조회")
     @GetMapping("/{reservationId}")
-    ResponseEntity<ReservationDto> getReservationById(@PathVariable Long reservationId) {
+    ResponseEntity<ReservationDto> lookUpRecent(@PathVariable Long reservationId) {
         Reservation foundReservation = reservationService.findReservationById(reservationId);
         ReservationDto reservation = reservationService.dtoFrom(foundReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
-
-    @Operation(summary = "유저 본인의 모든 Reservation 기록 조회 ",description = "유저 본인 user id로 reservation history 조회 API")
+    // todo 수정 예정
+    @Operation(summary = "❌ 모든 예약 기록 조회 ",description = " 인증 받은 유저 자신의 모든 예약 조회")
     @GetMapping("/user-history/{userId}") // URI 재구성
-    ResponseEntity<List<ReservationDto>> getAllReservationsByUser(@PathVariable Long userId) {
+    ResponseEntity<List<ReservationDto>> lookUpAllHistory(@PathVariable Long userId) {
 
         List<ReservationDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
                 .stream()
@@ -53,20 +54,19 @@ public class ReservationController {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
     }
-
-
-    @Operation(summary = "reservation 룸 업데이트", description = "해당 reservation id의 룸 업데이트 API")
+    // todo 수정 예정
+    @Operation(summary = "❌ 예약 수정 방 변경", description = " 본인이 예약한 정보(방)을 수정")
     @PutMapping("/{reservationId}/room")
-    ResponseEntity<ReservationDto> updateRoomReservation(@PathVariable Long reservationId,
+    ResponseEntity<ReservationDto> editReservationByRoom(@PathVariable Long reservationId,
                                                      @RequestBody ReservationRoomDto reservationDto) {
         Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
         ReservationDto reservation = reservationService.dtoFrom(updateReservation);
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
-
-    @Operation(summary = "reservation 시간 업데이트", description = "해당 reservation id의 시간 업데이트 API")
+    // todo 수정 예정
+    @Operation(summary = "❌ 예약 수정 시간 업데이트", description = "본인이 예약한 정보(시간)을 수정")
     @PutMapping("/{reservationId}/time")
-    ResponseEntity<ReservationDto> updateTimeReservation(@PathVariable Long reservationId,
+    ResponseEntity<ReservationDto> editReservationByTime(@PathVariable Long reservationId,
                                                      @RequestBody ReservationTimeDto reservationDto) {
         Reservation updateReservation = reservationService.updateTimeReservation(reservationId, reservationDto);
         ReservationDto reservation = reservationService.dtoFrom(updateReservation);

@@ -1,10 +1,8 @@
 server:
     port: 8081
 spring:
-    #    profiles:
-    #        active: dev
     datasource:
-        url: jdbc:mysql://localhost:3306/hufs-reservation-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        url: jdbc:mysql://localhost:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
         username: root
         password: 1234
 
@@ -13,9 +11,8 @@ spring:
     jpa:
         show-sql: true
         open-in-view: true
-        #        generate-ddl: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: create
         properties:
             hibernate:
                 format_sql: true # SQL을 보기 좋게 포맷팅
@@ -23,11 +20,17 @@ spring:
         init:
             mode: always
             encoding: utf-8
+    jwt: # openssl rand -hex 32 ( HS256 )
+        secret: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
 
-    jwt:
-        secret: c5cd8d2de13f4bffcef40e6dfacbd35ddcaf47ce29351c799cbb9d3c1c5818e2
-        accessExpire: 604800000 # 7일 -> ms
-        refreshExpire: 7776000000 # 90일 -> ms
+        access:
+            expiration: 604800000  # 7일 -> ms
+#            header: Authorization
+
+        refresh:
+            expiration: 7776000000 # 90일 -> ms
+#            header: Authorization-refresh
+
 #    flyway:
 #        enabled: true
 #        baseline-on-migrate: true
@@ -35,3 +38,20 @@ spring:
 #        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
 #        user: root
 #        password: 1234
+
+logging:
+    level:
+        com:
+            test:
+                studyroomreservationsystem:
+                    security:
+                        jwt:
+                            TRACE
+#                    apicontroller:
+#                        auth:
+#                            TRACE
+
+        org:
+            springframework:
+                security: TRACE
+
