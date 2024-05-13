@@ -34,7 +34,7 @@ public class UserRepositoryTest {
     void save() {
         // given
         User user = new User();
-        user.setLoginId("hwangbbang9");
+        user.setUsername("hwangbbang9");
         user.setPassword("1234");
         user.setSerial("202103769");
         user.setIsAdmin(true);
@@ -46,28 +46,28 @@ public class UserRepositoryTest {
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getUserId()).isNotNull();
 
-        assertThat(savedUser.getLoginId()).isEqualTo(user.getLoginId());
+        assertThat(savedUser.getUsername()).isEqualTo(user.getUsername());
         assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
         assertThat(savedUser.getSerial()).isEqualTo(user.getSerial());
         assertThat(savedUser.getIsAdmin()).isEqualTo(user.getIsAdmin());
     }
 
     @Test
-    void findByLoginId() {
+    void findByUsername() {
         // given
         User user = new User();
-        user.setLoginId("hwangbbang9");
+        user.setUsername("hwangbbang9");
         user.setPassword("1234");
         user.setSerial("202103769");
         user.setIsAdmin(true);
 
         // when
         userRepository.save(user);
-        User foundUser = userRepository.findByLoginId(user.getLoginId()).orElse(null);
+        User foundUser = userRepository.findByUsername(user.getUsername()).orElse(null);
 
         // then
         assertThat(foundUser).isNotNull();
-        assertThat(foundUser.getLoginId()).isEqualTo(user.getLoginId());
+        assertThat(foundUser.getUsername()).isEqualTo(user.getUsername());
     }
 //    @Test
 //    void saveDuplicateLoginId() {
@@ -77,7 +77,7 @@ public class UserRepositoryTest {
     void checkUniqueLoginId() {
         // given
         User user1 = new User();
-        user1.setLoginId("hwangbbang9");
+        user1.setUsername("hwangbbang9");
         user1.setPassword("1234");
         user1.setSerial("202103769");
         user1.setIsAdmin(true);
@@ -85,7 +85,7 @@ public class UserRepositoryTest {
         userRepository.save(user1);
         // when
         User user2 = new User();
-        user2.setLoginId("hwangbbang9");
+        user2.setUsername("hwangbbang9");
         user2.setPassword("0000");
         user2.setSerial("123456789");
         user2.setIsAdmin(false);
@@ -98,7 +98,7 @@ public class UserRepositoryTest {
     void testUniqueSerial() {
         // given
         User user1 = new User();
-        user1.setLoginId("hwangbbang9");
+        user1.setUsername("hwangbbang9");
         user1.setPassword("1234");
         user1.setSerial("202103769");
         user1.setIsAdmin(true);
@@ -106,7 +106,7 @@ public class UserRepositoryTest {
         userRepository.save(user1);
         // when
         User user2 = new User();
-        user2.setLoginId("admin");
+        user2.setUsername("admin");
         user2.setPassword("0000");
         user2.setSerial("202103769");
         user2.setIsAdmin(false);

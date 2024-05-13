@@ -22,8 +22,8 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Optional<User> findByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId);
+    public Optional<User> findByUsername(String loginId) {
+        return userRepository.findByUsername(loginId);
     }
 
     @Override
@@ -34,6 +34,11 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Optional<User> findBySerial(String serial) {
         return userRepository.findBySerial(serial);
+    }
+
+    @Override
+    public Boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     @Override

@@ -1,7 +1,8 @@
-package com.test.studyroomreservationsystem.dto.user;
+package com.test.studyroomreservationsystem.security.dto;
 
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,32 +11,31 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class UserDto { // CR dto
-    private String loginId;
+    private String username;
+    @NotNull(message = "패스워드가 비어 있습니다")
     private String password;
     private String serial;
     private Boolean isAdmin;
-    private String userName;
+    @NotNull(message = "이름이 비어 있습니다")
+    private String name;
 
 
-// of :  Dto -> Entity
-// from :  Entity -> Dto
-
-
-    public UserDto(String loginId, String password, String serial, Boolean isAdmin, String userName) {
-        this.loginId = loginId;
+    // of :  Dto -> Entity
+    public UserDto(String username, String password, String serial, Boolean isAdmin, String name) {
+        this.username = username;
         this.password = password;
         this.serial = serial;
         this.isAdmin = isAdmin;
-        this.userName = userName;
+        this.name = name;
     }
-
+    // from :  Entity -> Dto
     public User toEntity() {
         return User.builder()
-                .loginId(loginId)
+                .username(username)
                 .password(password)
                 .serial(serial)
                 .isAdmin(isAdmin)
-                .userName(userName)
+                .name(name)
                 .build();
     }
 }

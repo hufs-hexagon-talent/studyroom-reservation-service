@@ -10,27 +10,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserUpdateDto { // U dto
-    private String loginId;
+    private String username;
     private String password;
     private String serial;
     private Boolean isAdmin;
-    private String userName;
+    private String name;
 
-    public UserUpdateDto(String loginId, String password, String serial, Boolean isAdmin, String userName) {
-        this.loginId = loginId;
+    public UserUpdateDto(String username, String password, String serial, Boolean isAdmin, String name) {
+        this.username = username;
         this.password = password;
         this.serial = serial;
         this.isAdmin = isAdmin;
-        this.userName = userName;
+        this.name = name;
     }
 
     public User toEntity() {
         return User.builder()
-                .loginId(loginId)
+                .username(username)
                 .password(password)
                 .serial(serial)
                 .isAdmin(isAdmin)
-                .userName(userName)
+                .name(name)
                 .build();
     }
 }

@@ -7,9 +7,11 @@ import java.util.Optional;
 
 public interface UserDao {
         User save(User user);
-        Optional<User> findByLoginId(String loginId);
+        Optional<User> findByUsername(String username);
         Optional<User> findById(Long userId);
         Optional<User> findBySerial(String serial);
+
+        Boolean existsByUsername(String username);
         List<User> findAll();
         void deleteById(Long userId);
 }

@@ -48,7 +48,7 @@ public class ReservationRepositoryTest {
         this.room = roomRepository.save(room);
 
         User user = new User();
-        user.setLoginId("hwangbbang");
+        user.setUsername("hwangbbang");
         user.setPassword("1234");
         user.setSerial("202103769");
         user.setIsAdmin(true);
@@ -62,7 +62,7 @@ public class ReservationRepositoryTest {
         reservation.setRoom(room);
         reservation.setReservationStartTime(reservationStartTime);
         reservation.setReservationEndTime(reservationEndTime);
-        reservation.setState(ReservationState.RESERVATION);
+        reservation.setState(ReservationState.RESERVED);
         return reservation;
     }
     @BeforeEach
@@ -156,7 +156,7 @@ public class ReservationRepositoryTest {
 
         assertThat(foundReservations)
                 .extracting("state")
-                .containsOnly(ReservationState.RESERVATION);
+                .containsOnly(ReservationState.RESERVED);
     }
     @Test
     void notOkTestFindOverlappingReservations() {

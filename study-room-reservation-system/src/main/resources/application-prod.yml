@@ -13,4 +13,3 @@ spring:
         properties:
             hibernate:
                 format_sql: true # SQL을 보기 좋게 포맷팅
-

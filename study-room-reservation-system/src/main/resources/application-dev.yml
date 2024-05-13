@@ -1,0 +1,32 @@
+server:
+    port: 8081
+spring:
+    datasource:
+        url: ${ SPRING_DATASOURCE_URL }
+        username: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        show-sql: true
+        open-in-view: true
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                format_sql: true # SQL을 보기 좋게 포맷팅
+
+    jwt:
+        secret: c5cd8d2de13f4bffcef40e6dfacbd35ddcaf47ce29351c799cbb9d3c1c5818e2
+        accessExpire: 604800000 # 7일 -> ms
+        refreshExpire: 7776000000 # 90일 -> ms
+
+
+#    flyway:
+#        enabled: true
+#        baseline-on-migrate: true
+#        baseline-version: 1
+#        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
+#        user: root
+#        password: 1234
+
