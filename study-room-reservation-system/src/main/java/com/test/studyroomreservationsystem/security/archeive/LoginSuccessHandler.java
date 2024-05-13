@@ -5,7 +5,7 @@
 //import com.test.studyroomreservationsystem.domain.entity.User;
 //import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 //import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
-//import com.test.studyroomreservationsystem.security.dto.LoginReseponseDto;
+//import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
 //import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
 //import com.test.studyroomreservationsystem.service.exception.UserNotFoundException;
 //import jakarta.servlet.http.Cookie;
@@ -71,7 +71,7 @@
 //        // 응답 바디 생성 및 쓰기
 //        Map<String, Object> tokenResponse = createResponseBody(username, accessToken, refreshToken, expiresAt);
 //
-//        LoginReseponseDto loginReseponseDto = LoginReseponseDto.builder()
+//        LoginResponseDto loginReseponseDto = LoginResponseDto.builder()
 //                .username(username)
 //                .accessToken(accessToken)
 //                .refreshToken(refreshToken)
