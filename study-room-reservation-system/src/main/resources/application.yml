@@ -12,7 +12,7 @@ spring:
         show-sql: true
         open-in-view: true
         hibernate:
-            ddl-auto: create
+            ddl-auto: update
         properties:
             hibernate:
                 format_sql: true # SQL을 보기 좋게 포맷팅
@@ -25,7 +25,7 @@ spring:
 
         access:
             expiration: 604800000  # 7일 -> ms
-#            header: Authorization
+            header: Authorization
 
         refresh:
             expiration: 7776000000 # 90일 -> ms

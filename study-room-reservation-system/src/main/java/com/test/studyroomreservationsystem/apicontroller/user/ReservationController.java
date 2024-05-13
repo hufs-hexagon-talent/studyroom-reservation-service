@@ -6,6 +6,7 @@ import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,10 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
     // todo 수정 예정
-    @Operation(summary = "❌ 예약 생성", description = "인증 받은 유저 사용자 예약 생성")
+    @Operation(summary = "❌ 예약 생성",
+            description = "인증 받은 유저 사용자 예약 생성",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @PostMapping
     ResponseEntity<ReservationDto> reserveProcess(@RequestBody ReservationDto reservationDto) {
         Reservation createdReservation = reservationService.createReservation(reservationDto);
@@ -35,7 +39,10 @@ public class ReservationController {
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
     // todo 수정 예정
-    @Operation(summary = "❌ 예약 조회", description = " 인증 받은 유저 자신의 현재 예약 조회")
+    @Operation(summary = "❌ 예약 조회",
+            description = " 인증 받은 유저 자신의 현재 예약 조회",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @GetMapping("/{reservationId}")
     ResponseEntity<ReservationDto> lookUpRecent(@PathVariable Long reservationId) {
         Reservation foundReservation = reservationService.findReservationById(reservationId);
@@ -44,7 +51,10 @@ public class ReservationController {
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     // todo 수정 예정
-    @Operation(summary = "❌ 모든 예약 기록 조회 ",description = " 인증 받은 유저 자신의 모든 예약 조회")
+    @Operation(summary = "❌ 모든 예약 기록 조회 ",
+            description = " 인증 받은 유저 자신의 모든 예약 조회",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @GetMapping("/user-history/{userId}") // URI 재구성
     ResponseEntity<List<ReservationDto>> lookUpAllHistory(@PathVariable Long userId) {
 
@@ -55,7 +65,10 @@ public class ReservationController {
         return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
     }
     // todo 수정 예정
-    @Operation(summary = "❌ 예약 수정 방 변경", description = " 본인이 예약한 정보(방)을 수정")
+    @Operation(summary = "❌ 예약 수정 방 변경",
+            description = " 본인이 예약한 정보(방)을 수정",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @PutMapping("/{reservationId}/room")
     ResponseEntity<ReservationDto> editReservationByRoom(@PathVariable Long reservationId,
                                                      @RequestBody ReservationRoomDto reservationDto) {
@@ -64,7 +77,10 @@ public class ReservationController {
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
     // todo 수정 예정
-    @Operation(summary = "❌ 예약 수정 시간 업데이트", description = "본인이 예약한 정보(시간)을 수정")
+    @Operation(summary = "❌ 예약 수정 시간 업데이트",
+            description = "본인이 예약한 정보(시간)을 수정",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @PutMapping("/{reservationId}/time")
     ResponseEntity<ReservationDto> editReservationByTime(@PathVariable Long reservationId,
                                                      @RequestBody ReservationTimeDto reservationDto) {

@@ -5,6 +5,7 @@ import com.test.studyroomreservationsystem.security.dto.UserDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
 @RequestMapping("/admin/users")
+
 public class AdminUserController {
     private final UserService userService;
     @Autowired
@@ -24,14 +26,10 @@ public class AdminUserController {
         this.userService = userService;
     }
 
-//    @Operation(summary = "user 생성", description = "user 생성하는 API")
-//    @PostMapping
-//    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-//        User createdUser = userService.createUser(userDto);
-//        UserDto user = userService.dtoFrom(createdUser);
-//        return new ResponseEntity<>(user, HttpStatus.CREATED);
-//    }
-    @Operation(summary = "✅ 특정 회원 정보 조회", description = "username, password, isAdmin, name, serial 반환")
+    @Operation(summary = "✅ 특정 회원 정보 조회",
+            description = "username, password, isAdmin, name, serial 반환",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
@@ -39,7 +37,10 @@ public class AdminUserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @Operation(summary = "✅ 모든 회원 정보 조회", description = "모든 user 조회 API")
+    @Operation(summary = "✅ 모든 회원 정보 조회",
+            description = "모든 user 조회 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userService.findAllUsers()
@@ -48,15 +49,10 @@ public class AdminUserController {
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 
-    @Operation(summary = "❌ 특정 회원 정보 수정", description = "해당 user id의 정보 업데이트 API")
-    @PutMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
-        User updatedUser = userService.updateUser(userId, userUpdateDto);
-        UserDto user = userService.dtoFrom(updatedUser);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @Operation(summary = "✅ 특정 회원 삭제", description = "해당 user id의 정보 삭제 API")
+    @Operation(summary = "✅ 특정 회원 삭제",
+            description = "해당 user id의 정보 삭제 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);

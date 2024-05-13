@@ -5,6 +5,7 @@ import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomO
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,10 @@ public class AdminRoomOperationPolicyScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @Operation(summary = "schedule 생성", description = "스케쥴 생성(상세설명 추후 추가)")
+    @Operation(summary = "schedule 생성",
+            description = "스케쥴 생성(상세설명 추후 추가)",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @PostMapping
      ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
 
@@ -37,7 +41,10 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(createdScheduleDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "schedule 조회", description = "스케쥴 조회")
+    @Operation(summary = "schedule 조회",
+            description = "스케쥴 조회",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @GetMapping("/{roomOperationPolicyScheduleId}")
      ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
 
@@ -50,7 +57,10 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
     }
 
-    @Operation(summary = "현재로 부터 미래까지 운영 예정인 방들 조회", description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회")
+    @Operation(summary = "현재로 부터 미래까지 운영 예정인 방들 조회",
+            description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @GetMapping("/available")
      ResponseEntity<List<RoomOperationPolicyScheduleDto>> getAvailableRoomsGroupedByDate() {
 
@@ -64,7 +74,10 @@ public class AdminRoomOperationPolicyScheduleController {
     }
 
 
-    @Operation(summary = "schedule 업데이트", description = "해당 스케쥴 업데이트")
+    @Operation(summary = "schedule 업데이트",
+            description = "해당 스케쥴 업데이트",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @PutMapping("/{roomOperationPolicyScheduleId}")
     ResponseEntity<RoomOperationPolicyScheduleDto>
     updateSchedule(@PathVariable Long roomOperationPolicyScheduleId,
@@ -79,7 +92,10 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "schedule 삭제", description = "해당 schedule id의 정보 삭제 API")
+    @Operation(summary = "schedule 삭제",
+            description = "해당 schedule id의 정보 삭제 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
     @DeleteMapping("/{roomOperationPolicyScheduleId}")
      ResponseEntity<Void> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
         scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
