@@ -13,3 +13,14 @@ spring:
         properties:
             hibernate:
                 format_sql: true # SQL을 보기 좋게 포맷팅
+    jwt: # openssl rand -hex 32 ( HS256 )
+        secret: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
+        header: Authorization
+        access:
+            expiration: 604800000  # 7일 -> ms
+            #            expiration: 1  # test 용
+            category: access # jwt 의 헤더
+
+        refresh:
+            expiration: 7776000000 # 90일 -> ms
+            category: refresh # jwt 의 헤더

@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
 import com.test.studyroomreservationsystem.security.dto.UserDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
@@ -24,4 +25,6 @@ public interface UserService {
                 .name(user.getName())
                 .build();
     }
+
+
 }
