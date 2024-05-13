@@ -1,21 +1,18 @@
 package com.test.studyroomreservationsystem.security.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 //@Builder
 public class LoginResponseDto {
     private final String token_type = "bearer";
-    private String accessToken;
-    private String refreshToken;
+    private final String access_token;
+    private final String refresh_token;
 
-    public LoginResponseDto() {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+    public LoginResponseDto(String accessToken, String refreshToken) {
+        this.access_token = accessToken;
+        this.refresh_token = refreshToken;
     }
-
-
 }
 
 // access_token	              String	사용자 액세스 토큰 값
