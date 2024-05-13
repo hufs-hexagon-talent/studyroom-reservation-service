@@ -1,13 +1,17 @@
 package com.test.studyroomreservationsystem.config;
 
-import com.test.studyroomreservationsystem.security.jwt.CustomLogoutFilter;
+//import com.test.studyroomreservationsystem.security.jwt.CustomLogoutFilter;
+import com.test.studyroomreservationsystem.security.CustomUserDetailsService;
 import com.test.studyroomreservationsystem.security.jwt.JWTFilter;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
 import com.test.studyroomreservationsystem.security.jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,11 +32,38 @@ import java.util.Collections;
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+    private final String jwtAccessCategory;
+    private final String jwtRefreshCategory;
+    private final String jwtHeader;
+    private final Long accessTokenExpiration;
+    private final Long refreshTokenExpiration;
+    private final CustomUserDetailsService userDetailsService;
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
+                          JWTUtil jwtUtil,
+                          @Value("${spring.jwt.access.category}") String jwtAccessCategory,
+                          @Value("${spring.jwt.refresh.category}") String jwtRefreshCategory,
+                          @Value("${spring.jwt.header}") String jwtHeader,
+                          @Value("${spring.jwt.access.expiration}") Long accessTokenExpiration,
+                          @Value("${spring.jwt.refresh.expiration}") Long refreshTokenExpiration,
+                          CustomUserDetailsService userDetailsService
+    ) {
+
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+
+        this.jwtAccessCategory = jwtAccessCategory;
+        this.jwtRefreshCategory = jwtRefreshCategory;
+        this.jwtHeader = jwtHeader;
+        this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshTokenExpiration = refreshTokenExpiration;
+        this.userDetailsService = userDetailsService;
     }
 
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+    }
     //AuthenticationManager Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {return configuration.getAuthenticationManager();}
@@ -60,8 +91,8 @@ public class SecurityConfig {
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
 
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("access"));
+//                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+//                        configuration.setExposedHeaders(Collections.singletonList("access"));
 
                         return configuration;
                     }
@@ -76,30 +107,38 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()   // Swagger UI와 API 문서 경로 허용
-                    .requestMatchers("/reissue","/login","/user/sign-up").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
-                    .requestMatchers("/user/**").hasRole("USER")                          // User 용 API 2는 유저 인증 받아야함
+                    .requestMatchers("/reissue","/auth/login","/users/sign-up").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
+                    .requestMatchers("/users/**").hasRole("USER")                          // User 용 API 2는 유저 인증 받아야함
                     .requestMatchers("/admin/**").hasRole("ADMIN")                        // Admin 용 API 는 어드민 인증 받아야함
                     .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
-
+        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration),
+                jwtUtil,
+                jwtAccessCategory,
+                jwtRefreshCategory,
+                accessTokenExpiration,
+                refreshTokenExpiration);
+        loginFilter.setFilterProcessesUrl("/auth/login");
         // JWT 필터 검증 추가
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-
+                .addFilterBefore(new JWTFilter(
+                            jwtUtil,
+                            jwtHeader,
+                            jwtAccessCategory,
+                            userDetailsService), LoginFilter.class);
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        http
-                .addFilterBefore(logoutFilter(), LogoutFilter.class);
+                .addFilter(loginFilter);
+//        http
+//                .addFilterBefore(logoutFilter(), LogoutFilter.class);
         http
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션을 사용하지 않음
 
         return http.build();
     }
 
-    @Bean
-    CustomLogoutFilter logoutFilter()throws Exception {
-        return new CustomLogoutFilter(jwtUtil);
-
-    }
+//    @Bean
+//    CustomLogoutFilter logoutFilter()throws Exception {
+//        return new CustomLogoutFilter(jwtUtil);
+//    }
 
 }

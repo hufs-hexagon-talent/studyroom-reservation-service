@@ -27,7 +27,7 @@ public class CustomUserDetails implements UserDetails {
             @Override
             public String getAuthority() {
                 log.trace("[디버깅용 테스트] : {}",user.getIsAdmin());
-                return user.getIsAdmin() ? "ADMIN" : "USER";
+                return "ROLE_" + (user.getIsAdmin() ? "ADMIN" : "USER");
             }
         });
 
