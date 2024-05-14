@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
 import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -118,7 +117,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.trace("로그인 성공 핸들러  : [디버깅용 테스트]  {}",auth.getAuthority());
         log.trace("로그인 성공 핸들러  : JWT 토큰을 생성합니다. ");
 
-
+        // todo : JWT 생성 재사용 해야하니 분리, 파라미터? 값을  username, role 을 넘김
         // JWT 토큰 생성
         String accessToken = jwtUtil.createJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
         String refreshToken = jwtUtil.createJwt(jwtRefreshCategory, username, role, refreshTokenExpiration * 1000);
@@ -129,7 +128,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.trace("access 토큰 : {}", accessToken);
         log.trace("refresh 토큰 : {}", refreshToken);
 
-
         // 응답 설정
         //      response header
         response.setStatus(HttpStatus.OK.value());
@@ -139,7 +137,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //      response body
         PrintWriter writer = response.getWriter();
         writer.print(objectMapper.writeValueAsString(loginResponse));
-
 
         // 로그 출력
         log.trace("로그인 성공 핸들러  : [response 확인] {}",response.getStatus());

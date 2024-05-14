@@ -73,7 +73,10 @@ public class JWTFilter extends OncePerRequestFilter {
             PrintWriter writer = response.getWriter();
             writer.print("{\"message\": \"Access token expired\"}"); // todo : dto 로 제대로 응답 dto 만들어!!
 //            writer.flush(); // 변경 사항을 즉시 반영
-            // todo : 만료시 엑세스 토큰과 리프레시 토큰을 reissue 해줘야 함 (refresh)
+            // todo :  만료시 엑세스 토큰과 리프레시 토큰을 reissue 해줘야 함 (refresh)
+            // todo :  /refresh 는 body 에 request refresh token 이 온다.
+            // todo :  login response (기존 꺼) 를 보내줌
+
             return;
         }
         // jwt 토큰이 access 인지 확인 (발급시 페이 로드에 명시)

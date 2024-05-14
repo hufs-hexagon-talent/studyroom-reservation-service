@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class CorsConfig{
@@ -24,7 +25,7 @@ public class CorsConfig{
         config.addAllowedOriginPattern("*"); // 허용할 URL
         config.addAllowedHeader("*"); // 허용할 Header
         config.addAllowedMethod("*"); // 허용할 Http Method
-        config.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
+        config.setExposedHeaders(List.of("Authorization"));
         source.registerCorsConfiguration("/**", config); // 모든 Url에 대해 설정한 CorsConfiguration 등록
         return new CorsFilter(source);
     }

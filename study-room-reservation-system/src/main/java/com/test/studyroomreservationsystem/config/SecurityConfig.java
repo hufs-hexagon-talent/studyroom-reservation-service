@@ -1,6 +1,5 @@
 package com.test.studyroomreservationsystem.config;
 
-//import com.test.studyroomreservationsystem.security.jwt.CustomLogoutFilter;
 import com.test.studyroomreservationsystem.security.CustomUserDetailsService;
 import com.test.studyroomreservationsystem.security.jwt.JWTFilter;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
@@ -91,9 +90,6 @@ public class SecurityConfig {
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
 
-//                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-//                        configuration.setExposedHeaders(Collections.singletonList("access"));
-
                         return configuration;
                     }
                 }));
@@ -107,7 +103,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()   // Swagger UI와 API 문서 경로 허용
-                    .requestMatchers("/reissue","/auth/login","/users/sign-up").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
+                    .requestMatchers("/auth/refresh","/auth/login","/users/sign-up").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
                     .requestMatchers("/users/**").hasRole("USER")                          // User 용 API 2는 유저 인증 받아야함
                     .requestMatchers("/admin/**").hasRole("ADMIN")                        // Admin 용 API 는 어드민 인증 받아야함
                     .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
@@ -128,17 +124,12 @@ public class SecurityConfig {
                             userDetailsService), LoginFilter.class);
         http
                 .addFilter(loginFilter);
-//        http
-//                .addFilterBefore(logoutFilter(), LogoutFilter.class);
+
         http
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션을 사용하지 않음
 
         return http.build();
     }
 
-//    @Bean
-//    CustomLogoutFilter logoutFilter()throws Exception {
-//        return new CustomLogoutFilter(jwtUtil);
-//    }
 
 }

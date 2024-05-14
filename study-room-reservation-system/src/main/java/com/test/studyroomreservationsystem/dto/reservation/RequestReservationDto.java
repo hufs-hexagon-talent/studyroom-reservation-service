@@ -14,16 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @NoArgsConstructor
-public class ReservationDto { // CR
-    private Long userId;
+public class RequestReservationDto { // CR
     private Long roomId;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private ReservationState state;
 
 
-    public ReservationDto(Long userId, Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationState state) {
-        this.userId = userId;
+    public RequestReservationDto( Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationState state) {
         this.roomId = roomId;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;

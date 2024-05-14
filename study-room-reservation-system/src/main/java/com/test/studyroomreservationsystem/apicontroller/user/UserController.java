@@ -1,10 +1,13 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
+import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.reservation.RequestReservationDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
 import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
+import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,9 +25,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final ReservationService reservationService;
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ReservationService reservationService) {
         this.userService = userService;
+        this.reservationService = reservationService;
     }
     @Operation(summary = "✅ 회원가입",
             description = "아이디, 비밀번호, 학번, 이름",
@@ -42,17 +47,11 @@ public class UserController {
     // todo 수정 예정,request시 헤더에 Authorization 에 access token 보내야함
     @GetMapping("/user")
     public ResponseEntity<UserInfoResponseDto> getUserById(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUser().getUserId());
-        log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUser().getName());
-        log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUser().getSerial());
-        log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getAuthorities());
-        log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUsername());
 
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
 
     @Operation(summary = "❌ 자신의 정보 수정",
             description = "본인 정보 업데이트 API",
@@ -60,9 +59,24 @@ public class UserController {
     // todo 수정 예정
     @PutMapping("/user/{userId}")
     public ResponseEntity<UserInfoResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
+
         User updatedUser = userService.updateUser(userId, userUpdateDto);
         UserInfoResponseDto user = userService.dtoFrom(updatedUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    // todo Reservation Controller 로 옮기기
+    @Operation(summary = "✅ 자신의 예약 생성",
+            description = "인증 받은 유저 사용자 예약 생성",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @PostMapping("/user/reservation")
+    ResponseEntity<RequestReservationDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                         @RequestBody RequestReservationDto requestReservationDto) {
+        Reservation createdReservation = reservationService.createReservation(requestReservationDto, currentUser.getUser());
+        RequestReservationDto reservation = reservationService.dtoFrom(createdReservation);
+
+        return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
 
 

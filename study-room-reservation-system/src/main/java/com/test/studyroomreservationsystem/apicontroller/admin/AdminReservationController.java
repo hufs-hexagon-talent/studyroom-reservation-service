@@ -1,20 +1,9 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
-import com.test.studyroomreservationsystem.domain.entity.Reservation;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
 import com.test.studyroomreservationsystem.service.ReservationService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 //@Tag(name = "Admin", description = "[관리자]")
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
