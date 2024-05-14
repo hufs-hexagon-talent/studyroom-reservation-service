@@ -1,9 +1,8 @@
 package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
-import com.test.studyroomreservationsystem.security.dto.UserDto;
+import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 
 
@@ -16,10 +15,9 @@ public interface UserService {
     List<User> findAllUsers();
     User updateUser(Long userId, UserUpdateDto userUpdateDto);
     void deleteUser(Long userId);
-    default UserDto dtoFrom(User user) {
-        return UserDto.builder()
+    default UserInfoResponseDto dtoFrom(User user) {
+        return UserInfoResponseDto.builder()
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .serial(user.getSerial())
                 .isAdmin(user.getIsAdmin())
                 .name(user.getName())

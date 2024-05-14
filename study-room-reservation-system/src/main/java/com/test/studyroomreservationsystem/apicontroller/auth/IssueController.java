@@ -1,7 +1,5 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
-import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.dto.UserDto;
 import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,8 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 @Tag(name = "Auth", description = "인증 관련")
 @RestController
 @Slf4j

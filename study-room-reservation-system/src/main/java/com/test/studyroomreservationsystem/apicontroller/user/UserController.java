@@ -3,7 +3,7 @@ package com.test.studyroomreservationsystem.apicontroller.user;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
-import com.test.studyroomreservationsystem.security.dto.UserDto;
+import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +41,7 @@ public class UserController {
 
     // todo 수정 예정,request시 헤더에 Authorization 에 access token 보내야함
     @GetMapping("/user")
-    public ResponseEntity<UserDto> getUserById(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    public ResponseEntity<UserInfoResponseDto> getUserById(@AuthenticationPrincipal CustomUserDetails currentUser) {
         log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUser().getUserId());
         log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUser().getName());
         log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUser().getSerial());
@@ -49,7 +49,7 @@ public class UserController {
         log.trace("컨트롤러 진입 : [현재 유저 정보] = {}", currentUser.getUsername());
 
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
-        UserDto user = userService.dtoFrom(foundUser);
+        UserInfoResponseDto user = userService.dtoFrom(foundUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -59,9 +59,9 @@ public class UserController {
             security = {@SecurityRequirement(name = "JWT")})
     // todo 수정 예정
     @PutMapping("/user/{userId}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
+    public ResponseEntity<UserInfoResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
         User updatedUser = userService.updateUser(userId, userUpdateDto);
-        UserDto user = userService.dtoFrom(updatedUser);
+        UserInfoResponseDto user = userService.dtoFrom(updatedUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

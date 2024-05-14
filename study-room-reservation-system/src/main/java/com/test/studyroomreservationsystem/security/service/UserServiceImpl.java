@@ -2,17 +2,14 @@ package com.test.studyroomreservationsystem.security.service;
 
 import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.dto.UserDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.service.exception.UsernameAlreadyExistsException;
-import com.test.studyroomreservationsystem.service.exception.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

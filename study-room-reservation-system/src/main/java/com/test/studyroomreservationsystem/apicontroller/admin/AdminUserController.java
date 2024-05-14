@@ -1,8 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.dto.UserDto;
-import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
+import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,9 +30,9 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<UserInfoResponseDto> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
-        UserDto user = userService.dtoFrom(foundUser);
+        UserInfoResponseDto user = userService.dtoFrom(foundUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -42,8 +41,8 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> users = userService.findAllUsers()
+    public ResponseEntity<List<UserInfoResponseDto>> getAllUsers() {
+        List<UserInfoResponseDto> users = userService.findAllUsers()
                 .stream().map(userService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(users,HttpStatus.OK);
