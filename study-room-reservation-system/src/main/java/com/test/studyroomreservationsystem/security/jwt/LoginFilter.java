@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.studyroomreservationsystem.security.dto.ErrorResponseDto;
 import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
 import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
 import jakarta.servlet.ServletException;
@@ -60,18 +61,25 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response) throws AuthenticationException{
+                                                HttpServletResponse response) throws AuthenticationException {
         log.trace("2차 필터(Login Filter) : [attemptAuthentication] 들어왔습니다.");
 
         //HTTP 메서드 방식은 POST, json 타입의 데이터로만 로그인을 진행한다.
         if (!isPost(request)){
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
             // todo : response 바디에 error 메시지 담아서 응답
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(), "Unsupported Method : " + request.getMethod());
+            writeResponse(response, errorResponse);
+
             throw new AuthenticationServiceException("Unsupported Method : " + request.getMethod());
         }
         if (!isApplicationJson(request)){
             response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+
             // todo : response 바디에 error 메시지 담아서 응답
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), "Unsupported Media Type: " + request.getContentType());
+            writeResponse(response, errorResponse);
             throw new AuthenticationServiceException("Unsupported Media Type: " + request.getContentType());
         }
         LoginRequestDto loginRequestDto;
@@ -81,14 +89,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
             log.trace("2차 필터(Login Filter) : [파싱 에러] request 파싱 에러");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
             // todo : response 바디에 error 메시지 담아서 응답
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Error parsing login request");
+            writeResponse(response, errorResponse);
             throw new AuthenticationServiceException("Error parsing login request ", e);
         }
         // 정상적으로 request 파싱
-        log.trace("2차 필터(Login Filter) : [파싱 성공] request 파싱 성공");
+//        log.trace("2차 필터(Login Filter) : [파싱 성공] request 파싱 성공");
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
-        log.trace("2차 필터(Login Filter) : [인증 시도] {} 가 인증 시도 ", username);
+//        log.trace("2차 필터(Login Filter) : [인증 시도] {} 가 인증 시도 ", username);
 
 
         //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
@@ -99,6 +110,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 그럼 매니저가 로그인 처리를 하고 성공하면 successfulAuthentication 메소드 실행
         return authenticationManager.authenticate(authToken);
     }
+
     //로그인 성공 핸들러 : 로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
@@ -117,7 +129,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.trace("로그인 성공 핸들러  : [디버깅용 테스트]  {}",auth.getAuthority());
         log.trace("로그인 성공 핸들러  : JWT 토큰을 생성합니다. ");
 
-        // todo : JWT 생성 재사용 해야하니 분리, 파라미터? 값을  username, role 을 넘김
         // JWT 토큰 생성
         String accessToken = jwtUtil.createJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
         String refreshToken = jwtUtil.createJwt(jwtRefreshCategory, username, role, refreshTokenExpiration * 1000);
@@ -127,6 +138,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.trace("로그인 성공 핸들러  : JWT 토큰이 생성 되었습니다. ");
         log.trace("access 토큰 : {}", accessToken);
         log.trace("refresh 토큰 : {}", refreshToken);
+
 
         // 응답 설정
         //      response header
@@ -148,7 +160,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              AuthenticationException failed) {
+                                              AuthenticationException failed) throws IOException {
         log.info("[ 로그인 실패 핸들러 작동 ]");
         if (response.getStatus() != HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE &&
                 response.getStatus() != HttpServletResponse.SC_NOT_FOUND &&
@@ -156,8 +168,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         {
             // 기본적으로 401 Unauthorized 응답
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.UNAUTHORIZED.getReasonPhrase(), "Unauthenticated , Failed to find user");
+            writeResponse(response, errorResponse);
         }
+
     }
+
 
     private boolean isPost(HttpServletRequest request) {
         if(HttpMethod.POST.toString().equals(request.getMethod())) {
@@ -172,5 +188,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             return true;
         }
         return false;
+    }
+
+    private void writeResponse(HttpServletResponse response, ErrorResponseDto errorResponse) {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            writer.print(objectMapper.writeValueAsString(errorResponse));
+            writer.flush();  // 데이터를 클라이언트에게 즉시 전송
+        } catch (IOException e) {
+            log.error("응답 쓰기 중 에러 발생", e);
+        } finally {
+            if (writer != null) {
+                writer.close();  // PrintWriter를 안전하게 닫음
+            }
+        }
     }
 }
