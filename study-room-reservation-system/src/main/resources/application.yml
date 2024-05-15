@@ -9,7 +9,7 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
 
     jpa:
-        show-sql: true
+        show-sql: false
         open-in-view: true
         hibernate:
             ddl-auto: update
