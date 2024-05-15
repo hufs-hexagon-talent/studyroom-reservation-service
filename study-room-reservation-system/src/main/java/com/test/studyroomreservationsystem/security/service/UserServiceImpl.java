@@ -2,7 +2,7 @@ package com.test.studyroomreservationsystem.security.service;
 
 import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
+import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.service.exception.UsernameAlreadyExistsException;
@@ -71,14 +71,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User updateUser(Long userId, UserUpdateDto userUpdateDto) {
+    public User updateUser(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
         User userEntity = findUserById(userId);
 
-        userEntity.setUsername(userUpdateDto.getUsername());
-        userEntity.setPassword(userUpdateDto.getPassword());
-        userEntity.setSerial(userUpdateDto.getSerial());
-        userEntity.setIsAdmin(userUpdateDto.getIsAdmin());
-        userEntity.setName(userUpdateDto.getName());
+        userEntity.setUsername(userInfoUpdateRequestDto.getUsername());
+        userEntity.setPassword(userInfoUpdateRequestDto.getPassword());
+        userEntity.setSerial(userInfoUpdateRequestDto.getSerial());
+        userEntity.setIsAdmin(userInfoUpdateRequestDto.getIsAdmin());
+        userEntity.setName(userInfoUpdateRequestDto.getName());
 
         return userDao.save(userEntity);
     }

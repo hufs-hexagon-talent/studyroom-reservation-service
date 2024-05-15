@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Builder
-public class UserUpdateDto { // U dto
+public class UserInfoUpdateRequestDto { // U dto
     private String username;
     private String password;
     private String serial;
     private Boolean isAdmin;
     private String name;
 
-    public UserUpdateDto(String username, String password, String serial, Boolean isAdmin, String name) {
+    public UserInfoUpdateRequestDto(String username, String password, String serial, Boolean isAdmin, String name) {
         this.username = username;
         this.password = password;
         this.serial = serial;

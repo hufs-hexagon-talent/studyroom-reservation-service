@@ -4,7 +4,7 @@ import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
 import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
-import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
+import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -52,10 +52,10 @@ public class UserController {
             description = "본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     // todo 수정 예정
-    @PutMapping("/user/{userId}")
-    public ResponseEntity<UserInfoResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
+    @PatchMapping("/user")
+    public ResponseEntity<UserInfoResponseDto> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser, @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 
-        User updatedUser = userService.updateUser(userId, userUpdateDto);
+        User updatedUser = userService.updateUser(currentUser.getUser().getUserId(), userInfoUpdateRequestDto);
         UserInfoResponseDto user = userService.dtoFrom(updatedUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
