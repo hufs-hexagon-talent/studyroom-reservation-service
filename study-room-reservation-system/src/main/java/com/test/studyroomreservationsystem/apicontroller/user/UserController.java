@@ -40,9 +40,8 @@ public class UserController {
             description = "본인 정보 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
 
-    // todo 수정 예정,request시 헤더에 Authorization 에 access token 보내야함
     @GetMapping("/user")
-    public ResponseEntity<UserInfoResponseDto> getUserById(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    public ResponseEntity<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
