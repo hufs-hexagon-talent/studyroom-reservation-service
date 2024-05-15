@@ -18,14 +18,12 @@ public class RequestReservationDto { // CR
     private Long roomId;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
-    private ReservationState state;
 
 
-    public RequestReservationDto( Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime, ReservationState state) {
+    public RequestReservationDto( Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.roomId = roomId;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.state = state;
     }
     public Reservation toEntity(User user, Room room) {
         return Reservation.builder()
@@ -33,7 +31,7 @@ public class RequestReservationDto { // CR
                 .room(room)
                 .reservationStartTime(startDateTime)
                 .reservationEndTime(endDateTime)
-                .state(state)
+                .state(ReservationState.RESERVED)
                 .build();
     }
 

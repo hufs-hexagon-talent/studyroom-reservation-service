@@ -13,6 +13,7 @@ import java.util.List;
 public interface ReservationService {
     Reservation createReservation(RequestReservationDto requestReservationDto, User user);
     Reservation findReservationById(Long reservationId);
+    Reservation findRecentReservationByUserId(Long userId);
     List<Reservation> findAllReservation();
     List<Reservation> findAllReservationByUser(Long userId);
     Reservation updateReservation(Long reservationId , RequestReservationDto requestReservationDto);
@@ -27,7 +28,6 @@ public interface ReservationService {
                 .roomId(reservation.getRoom().getRoomId())
                 .startDateTime(reservation.getReservationStartTime())
                 .endDateTime(reservation.getReservationEndTime())
-                .state(reservation.getState())
                 .build();
     }
 }

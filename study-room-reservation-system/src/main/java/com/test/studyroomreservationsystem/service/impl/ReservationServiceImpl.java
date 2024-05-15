@@ -1,7 +1,6 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.ReservationDao;
-import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
@@ -40,7 +39,6 @@ public class ReservationServiceImpl implements ReservationService {
         Long roomId = requestReservationDto.getRoomId();
         LocalDateTime startDateTime = requestReservationDto.getStartDateTime();
         LocalDateTime endDateTime = requestReservationDto.getEndDateTime();
-        ReservationState state = requestReservationDto.getState();
 
         // 예약 가능 여부 확인 로직
 
@@ -62,6 +60,11 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation findReservationById(Long reservationId) {
         return reservationDao.findById(reservationId)
                 .orElseThrow(()->new ReservationNotFoundException(reservationId));
+    }
+    @Override
+    public Reservation findRecentReservationByUserId(Long userId) {
+        return reservationDao.findRecentByUserId(userId)
+                .orElseThrow(() -> new ReservationNotFoundException("Recent reservation not found for user " + userId));
     }
 
     @Override
@@ -100,7 +103,6 @@ public class ReservationServiceImpl implements ReservationService {
 
         reservation.setReservationStartTime(requestReservationDto.getStartDateTime());
         reservation.setReservationEndTime(requestReservationDto.getEndDateTime());
-        reservation.setState(requestReservationDto.getState());
 
         return reservationDao.save(reservation);
     }

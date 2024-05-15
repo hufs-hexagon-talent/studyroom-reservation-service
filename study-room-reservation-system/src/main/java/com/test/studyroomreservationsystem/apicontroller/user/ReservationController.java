@@ -4,6 +4,7 @@ import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.dto.reservation.RequestReservationDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
+import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,28 +29,30 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
     // todo 수정 예정
-//    @Operation(summary = "\uD83D\uDEA7 예약 생성",
-//            description = "인증 받은 유저 사용자 예약 생성",
-//            security = {@SecurityRequirement(name = "JWT")}
-//    )
-//    @PostMapping
-//    ResponseEntity<ReservationDto> reserveProcess(@RequestBody ReservationDto reservationDto) {
-//        Reservation createdReservation = reservationService.createReservation(reservationDto);
-//        ReservationDto reservation = reservationService.dtoFrom(createdReservation);
-//
-//        return new ResponseEntity<>(reservation, HttpStatus.CREATED);
-//    }
-    // todo 수정 예정
-    @Operation(summary = "❌ 예약 조회",
-            description = " 인증 받은 유저 자신의 현재 예약 조회",
+
+    @Operation(summary = "✅ 자신의 예약 생성",
+            description = "인증 받은 유저 사용자 예약 생성",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/{reservationId}")
-    ResponseEntity<RequestReservationDto> lookUpRecent(@PathVariable Long reservationId) {
-        Reservation foundReservation = reservationService.findReservationById(reservationId);
-        RequestReservationDto reservation = reservationService.dtoFrom(foundReservation);
+    @PostMapping("/user/reservation")
+    ResponseEntity<RequestReservationDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                         @RequestBody RequestReservationDto requestReservationDto) {
+        Reservation createdReservation = reservationService.createReservation(requestReservationDto, currentUser.getUser());
+        RequestReservationDto reservation = reservationService.dtoFrom(createdReservation);
 
-        return new ResponseEntity<>(reservation, HttpStatus.OK);
+        return new ResponseEntity<>(reservation, HttpStatus.CREATED);
+    }
+    @Operation(summary = "✅ 자신의 최근 예약 조회",
+            description = " 인증 받은 유저의 자신의 최근(현재) 예약 조회 ",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @GetMapping("/user/reservation")
+    ResponseEntity<RequestReservationDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
+        RequestReservationDto reservationDto = reservationService.dtoFrom(recentReservation);
+
+
+        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
     // todo 수정 예정
     @Operation(summary = "❌ 모든 예약 기록 조회 ",

@@ -29,6 +29,11 @@ public class ReservationDaoImpl implements ReservationDao {
     }
 
     @Override
+    public Optional<Reservation> findRecentByUserId(Long userId) {
+        return reservationRepository.findTopByUserUserIdOrderByReservationStartTimeDesc(userId);
+    }
+
+    @Override
     public List<Reservation> findAll() {
         return reservationRepository.findAll();
     }

@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ReservationDao {
     Reservation save(Reservation reservation);
     Optional<Reservation> findById(Long reservationId);
+    Optional<Reservation> findRecentByUserId(Long userId);
     List<Reservation> findAll();
     Optional<List<Reservation>> findAllByUser(User user);
     void deleteById(Long reservationId);

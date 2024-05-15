@@ -1,13 +1,10 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
-import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.reservation.RequestReservationDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
 import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserUpdateDto;
-import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,11 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final ReservationService reservationService;
+
     @Autowired
-    public UserController(UserService userService, ReservationService reservationService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.reservationService = reservationService;
     }
     @Operation(summary = "✅ 회원가입",
             description = "아이디, 비밀번호, 학번, 이름",
@@ -64,20 +60,4 @@ public class UserController {
         UserInfoResponseDto user = userService.dtoFrom(updatedUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
-    // todo Reservation Controller 로 옮기기
-    @Operation(summary = "✅ 자신의 예약 생성",
-            description = "인증 받은 유저 사용자 예약 생성",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
-    @PostMapping("/user/reservation")
-    ResponseEntity<RequestReservationDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                         @RequestBody RequestReservationDto requestReservationDto) {
-        Reservation createdReservation = reservationService.createReservation(requestReservationDto, currentUser.getUser());
-        RequestReservationDto reservation = reservationService.dtoFrom(createdReservation);
-
-        return new ResponseEntity<>(reservation, HttpStatus.CREATED);
-    }
-
-
 }
