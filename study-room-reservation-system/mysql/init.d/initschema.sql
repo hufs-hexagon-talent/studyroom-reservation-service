@@ -1,12 +1,3 @@
-create table refresh
-(
-    id         bigint auto_increment
-        primary key,
-    expiration varchar(255) null,
-    refresh    varchar(255) null,
-    username   varchar(255) null
-);
-
 create table room
 (
     room_id   bigint auto_increment
