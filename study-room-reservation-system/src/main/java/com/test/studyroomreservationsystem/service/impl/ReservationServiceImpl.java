@@ -4,7 +4,7 @@ import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.reservation.RequestReservationDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
@@ -35,10 +35,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     
     @Override
-    public Reservation createReservation(RequestReservationDto requestReservationDto, User user) {
-        Long roomId = requestReservationDto.getRoomId();
-        LocalDateTime startDateTime = requestReservationDto.getStartDateTime();
-        LocalDateTime endDateTime = requestReservationDto.getEndDateTime();
+    public Reservation createReservation(ReservationRequestDto reservationRequestDto, User user) {
+        Long roomId = reservationRequestDto.getRoomId();
+        LocalDateTime startDateTime = reservationRequestDto.getStartDateTime();
+        LocalDateTime endDateTime = reservationRequestDto.getEndDateTime();
 
         // 예약 가능 여부 확인 로직
 
@@ -47,7 +47,7 @@ public class ReservationServiceImpl implements ReservationService {
             // 에약 불가
             throw new ReservationNotPossibleException(roomId);
         }
-        Reservation reservationEntity = requestReservationDto.toEntity(
+        Reservation reservationEntity = reservationRequestDto.toEntity(
                 user,
                 roomService.findRoomById(roomId)
         );
@@ -81,10 +81,10 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Reservation updateReservation(Long reservationId, RequestReservationDto requestReservationDto) {
-        Long roomId = requestReservationDto.getRoomId();
-        LocalDateTime startDateTime = requestReservationDto.getStartDateTime();
-        LocalDateTime endDateTime = requestReservationDto.getEndDateTime();
+    public Reservation updateReservation(Long reservationId, ReservationRequestDto reservationRequestDto) {
+        Long roomId = reservationRequestDto.getRoomId();
+        LocalDateTime startDateTime = reservationRequestDto.getStartDateTime();
+        LocalDateTime endDateTime = reservationRequestDto.getEndDateTime();
         // 예약 가능 여부 확인 로직
 
         boolean isAvailable = isReservationAvailable(roomId,startDateTime,endDateTime);
@@ -98,11 +98,11 @@ public class ReservationServiceImpl implements ReservationService {
 //        User user = userService.findUserById(requestReservationDto.getUserId());
 //        reservation.setUser(user);
 
-        Room room = roomService.findRoomById(requestReservationDto.getRoomId());
+        Room room = roomService.findRoomById(reservationRequestDto.getRoomId());
         reservation.setRoom(room);
 
-        reservation.setReservationStartTime(requestReservationDto.getStartDateTime());
-        reservation.setReservationEndTime(requestReservationDto.getEndDateTime());
+        reservation.setReservationStartTime(reservationRequestDto.getStartDateTime());
+        reservation.setReservationEndTime(reservationRequestDto.getEndDateTime());
 
         return reservationDao.save(reservation);
     }

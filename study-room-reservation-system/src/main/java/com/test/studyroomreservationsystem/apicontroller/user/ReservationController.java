@@ -1,9 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
-import com.test.studyroomreservationsystem.dto.reservation.RequestReservationDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,10 +33,10 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/user/reservation")
-    ResponseEntity<RequestReservationDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                         @RequestBody RequestReservationDto requestReservationDto) {
-        Reservation createdReservation = reservationService.createReservation(requestReservationDto, currentUser.getUser());
-        RequestReservationDto reservation = reservationService.dtoFrom(createdReservation);
+    ResponseEntity<ReservationRequestDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                         @RequestBody ReservationRequestDto reservationRequestDto) {
+        Reservation createdReservation = reservationService.createReservation(reservationRequestDto, currentUser.getUser());
+        ReservationRequestDto reservation = reservationService.dtoFrom(createdReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
@@ -47,51 +45,53 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/user/reservation")
-    ResponseEntity<RequestReservationDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<ReservationRequestDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
-        RequestReservationDto reservationDto = reservationService.dtoFrom(recentReservation);
+        ReservationRequestDto reservationDto = reservationService.dtoFrom(recentReservation);
 
 
         return new ResponseEntity<>(reservationDto, HttpStatus.OK);
     }
+
     // todo 수정 예정
     @Operation(summary = "❌ 모든 예약 기록 조회 ",
             description = " 인증 받은 유저 자신의 모든 예약 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/user-history/{userId}") // URI 재구성
-    ResponseEntity<List<RequestReservationDto>> lookUpAllHistory(@PathVariable Long userId) {
+    ResponseEntity<List<ReservationRequestDto>> lookUpAllHistory(@PathVariable Long userId) {
 
-        List<RequestReservationDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
+        List<ReservationRequestDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
                 .stream()
                 .map(reservationService::dtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
     }
+
     // todo 수정 예정
-    @Operation(summary = "❌ 예약 수정 방 변경",
-            description = " 본인이 예약한 정보(방)을 수정",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
-    @PutMapping("/{reservationId}/room")
-    ResponseEntity<RequestReservationDto> editReservationByRoom(@PathVariable Long reservationId,
-                                                                @RequestBody ReservationRoomDto reservationDto) {
-        Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
-        RequestReservationDto reservation = reservationService.dtoFrom(updateReservation);
-        return new ResponseEntity<>(reservation, HttpStatus.OK);
-    }
-    // todo 수정 예정
-    @Operation(summary = "❌ 예약 수정 시간 업데이트",
-            description = "본인이 예약한 정보(시간)을 수정",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
-    @PutMapping("/{reservationId}/time")
-    ResponseEntity<RequestReservationDto> editReservationByTime(@PathVariable Long reservationId,
-                                                                @RequestBody ReservationTimeDto reservationDto) {
-        Reservation updateReservation = reservationService.updateTimeReservation(reservationId, reservationDto);
-        RequestReservationDto reservation = reservationService.dtoFrom(updateReservation);
-                return new ResponseEntity<>(reservation, HttpStatus.OK);
-    }
+//    @Operation(summary = "❌ 예약 수정 방 변경",
+//            description = " 본인이 예약한 정보(방)을 수정",
+//            security = {@SecurityRequirement(name = "JWT")}
+//    )
+//    @PutMapping("/{reservationId}/room")
+//    ResponseEntity<RequestReservationDto> editReservationByRoom(@PathVariable Long reservationId,
+//                                                                @RequestBody ReservationRoomDto reservationDto) {
+//        Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
+//        RequestReservationDto reservation = reservationService.dtoFrom(updateReservation);
+//        return new ResponseEntity<>(reservation, HttpStatus.OK);
+//    }
+//    // todo 수정 예정
+//    @Operation(summary = "❌ 예약 수정 시간 업데이트",
+//            description = "본인이 예약한 정보(시간)을 수정",
+//            security = {@SecurityRequirement(name = "JWT")}
+//    )
+//    @PutMapping("/{reservationId}/time")
+//    ResponseEntity<RequestReservationDto> editReservationByTime(@PathVariable Long reservationId,
+//                                                                @RequestBody ReservationTimeDto reservationDto) {
+//        Reservation updateReservation = reservationService.updateTimeReservation(reservationId, reservationDto);
+//        RequestReservationDto reservation = reservationService.dtoFrom(updateReservation);
+//                return new ResponseEntity<>(reservation, HttpStatus.OK);
+//    }
     //    메인 API → 날짜 주면, 각 방에서 어떤 예약들이 있는지 (전체 방에 대해서)
 
 }
