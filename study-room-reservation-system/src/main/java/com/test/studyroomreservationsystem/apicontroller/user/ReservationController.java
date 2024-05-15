@@ -54,14 +54,14 @@ public class ReservationController {
     }
 
     // todo 수정 예정
-    @Operation(summary = "❌ 모든 예약 기록 조회 ",
+    @Operation(summary = "✅ 자신의 모든 예약 기록 조회 ",
             description = " 인증 받은 유저 자신의 모든 예약 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/user-history/{userId}") // URI 재구성
-    ResponseEntity<List<ReservationRequestDto>> lookUpAllHistory(@PathVariable Long userId) {
+    @GetMapping("/user/reservations")
+    ResponseEntity<List<ReservationRequestDto>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
-        List<ReservationRequestDto> reservationsByUser = reservationService.findAllReservationByUser(userId)
+        List<ReservationRequestDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
                 .stream()
                 .map(reservationService::dtoFrom)
                 .collect(Collectors.toList());
