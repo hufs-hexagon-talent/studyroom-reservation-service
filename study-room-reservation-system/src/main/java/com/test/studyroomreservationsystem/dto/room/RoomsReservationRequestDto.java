@@ -1,5 +1,7 @@
 package com.test.studyroomreservationsystem.dto.room;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -8,7 +10,8 @@ import java.time.LocalDate;
 public class RoomsReservationRequestDto {
     private final LocalDate date;
 
-    public RoomsReservationRequestDto(LocalDate date) {
+    @JsonCreator
+    public RoomsReservationRequestDto(@JsonProperty("date") LocalDate date) {
         this.date = date;
     }
 }
