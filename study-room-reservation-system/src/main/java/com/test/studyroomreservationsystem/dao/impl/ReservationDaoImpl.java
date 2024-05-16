@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 @Repository
@@ -52,10 +53,5 @@ public class ReservationDaoImpl implements ReservationDao {
     public List<Reservation> findOverlappingReservations(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return reservationRepository.findOverlappingReservations(roomId, startDateTime, endDateTime);
     }
-
-//    @Override
-//    public List<Reservation> findAllReservationsByDate(LocalDate date) {
-//        return reservationRepository.findAllReservationsByDate(date);
-//    }
 
 }

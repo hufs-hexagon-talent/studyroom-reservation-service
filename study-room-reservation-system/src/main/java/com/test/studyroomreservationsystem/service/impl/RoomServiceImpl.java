@@ -1,11 +1,14 @@
 package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.dao.RoomDao;
 import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
+import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
+import com.test.studyroomreservationsystem.dto.room.RoomsReservationResponseDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
@@ -16,29 +19,28 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Service
 public class RoomServiceImpl implements RoomService {
     private final RoomDao roomDao;
+    private final ReservationDao reservationDao;
     private final RoomOperationPolicyScheduleDao scheduleDao;
     @Autowired
 
-    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleDao scheduleDao) {
+    public RoomServiceImpl(RoomDao roomDao, ReservationDao reservationDao, RoomOperationPolicyScheduleDao scheduleDao) {
         this.roomDao = roomDao;
+        this.reservationDao = reservationDao;
         this.scheduleDao = scheduleDao;
     }
-
-
 
     @Override
     public Room createRoom(RoomDto roomDto) {
         Room roomEntity = roomDto.toEntity();
         return roomDao.save(roomEntity);
     }
-
-
 
     @Override
     public Room findRoomById(Long roomId) {
@@ -94,5 +96,33 @@ public class RoomServiceImpl implements RoomService {
 
 
         return !operationStartTime.isAfter(reservationStartTime) && !operationEndTime.isBefore(reservationEndTime);
+    }
+
+    @Override
+    public List<RoomsReservationResponseDto> getRoomReservationsByDate(LocalDate date) {
+        List<Room> rooms = roomDao.findAll();
+        ArrayList<RoomsReservationResponseDto> responseList = new ArrayList<>();
+
+        for (Room room : rooms) {
+            // todo : 해당 날짜의 운영시간이 모두 같다면 위로 올리자
+            RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
+                    .orElseThrow(
+                            () -> new RoomPolicyNotFoundException(room.getRoomId(), date)
+                    );
+
+            LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
+            LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
+            LocalDateTime operationStartDateTime = date.atTime(operationStartTime);
+            LocalDateTime operationEndDateTime = date.atTime(operationEndTime);
+
+            // 각 룸의 예약들
+            List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
+            List<RoomsReservationResponseDto.TimeRange> reservationTimes
+                    = reservations.stream()
+                    .map(reservation -> new RoomsReservationResponseDto.TimeRange(reservation.getReservationStartTime(), reservation.getReservationEndTime()))
+                    .toList();
+            responseList.add(new RoomsReservationResponseDto(room.getRoomId(), reservationTimes));
+        }
+        return responseList;
     }
 }

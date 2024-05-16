@@ -5,6 +5,7 @@ import com.test.studyroomreservationsystem.domain.entity.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +18,4 @@ public interface ReservationDao {
     void deleteById(Long reservationId);
     List<Reservation> findOverlappingReservations(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
-//    List<Reservation> findAllReservationsByDate(LocalDate date);
 }
