@@ -102,9 +102,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()   // Swagger UI와 API 문서 경로 허용
-                    .requestMatchers("/auth/refresh","/auth/login","/users/sign-up").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
-                    .requestMatchers("/users/**").hasRole("USER")                          // User 용 API 2는 유저 인증 받아야함
-                    .requestMatchers("/admin/**").hasRole("ADMIN")                        // Admin 용 API 는 어드민 인증 받아야함
+                    .requestMatchers(
+                            "/auth/refresh",
+                            "/auth/login",
+                            "/users/sign-up",
+                            "/rooms").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
+                    .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")    // User 용 API 2는 유저 인증 받아야함
+                    .requestMatchers("/admin/**").hasRole("ADMIN")           // Admin 용 API 는 어드민 인증 받아야함
                     .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
         LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration),
