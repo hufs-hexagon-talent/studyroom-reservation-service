@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
+import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

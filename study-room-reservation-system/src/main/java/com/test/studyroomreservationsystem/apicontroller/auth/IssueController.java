@@ -1,6 +1,6 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
-import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
+import com.test.studyroomreservationsystem.dto.auth.LoginRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

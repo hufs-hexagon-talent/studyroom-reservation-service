@@ -1,8 +1,8 @@
 package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
-import com.test.studyroomreservationsystem.security.dto.UserInfoResponseDto;
+import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
+import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 
 

@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.security.dto;
+package com.test.studyroomreservationsystem.dto.auth;
 
 import lombok.Builder;
 import lombok.Getter;

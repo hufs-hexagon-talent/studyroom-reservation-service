@@ -1,7 +1,5 @@
-package com.test.studyroomreservationsystem.security.dto;
+package com.test.studyroomreservationsystem.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.test.studyroomreservationsystem.domain.entity.User;
 import lombok.*;
 
 

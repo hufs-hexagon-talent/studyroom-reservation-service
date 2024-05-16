@@ -1,9 +1,9 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
 
-import com.test.studyroomreservationsystem.security.dto.ErrorResponseDto;
-import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
-import com.test.studyroomreservationsystem.security.dto.RefreshRequestDto;
+import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
+import com.test.studyroomreservationsystem.dto.auth.RefreshRequestDto;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;

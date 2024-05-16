@@ -4,8 +4,8 @@
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.test.studyroomreservationsystem.domain.entity.User;
 //import com.test.studyroomreservationsystem.domain.repository.UserRepository;
-//import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
-//import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
+//import com.test.studyroomreservationsystem.dto.auth.LoginRequestDto;
+//import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 //import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
 //import com.test.studyroomreservationsystem.service.exception.UserNotFoundException;
 //import jakarta.servlet.http.Cookie;

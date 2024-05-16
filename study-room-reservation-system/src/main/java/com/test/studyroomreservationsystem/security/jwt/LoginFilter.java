@@ -1,9 +1,9 @@
 package com.test.studyroomreservationsystem.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.studyroomreservationsystem.security.dto.ErrorResponseDto;
-import com.test.studyroomreservationsystem.security.dto.LoginRequestDto;
-import com.test.studyroomreservationsystem.security.dto.LoginResponseDto;
+import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.auth.LoginRequestDto;
+import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

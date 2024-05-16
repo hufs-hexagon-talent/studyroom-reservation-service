@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.security.dto;
+package com.test.studyroomreservationsystem.dto.user;
 
 
 import com.test.studyroomreservationsystem.domain.entity.User;

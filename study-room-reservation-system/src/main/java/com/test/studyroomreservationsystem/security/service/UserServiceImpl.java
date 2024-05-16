@@ -3,7 +3,7 @@ package com.test.studyroomreservationsystem.security.service;
 import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
-import com.test.studyroomreservationsystem.security.dto.SingUpRequestDto;
+import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.service.exception.UsernameAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.exception.UserNotFoundException;
