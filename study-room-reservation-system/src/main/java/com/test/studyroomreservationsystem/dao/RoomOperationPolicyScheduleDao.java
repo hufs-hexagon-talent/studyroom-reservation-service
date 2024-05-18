@@ -13,5 +13,5 @@ public interface RoomOperationPolicyScheduleDao {
     List<RoomOperationPolicySchedule> findAll();
     void deleteById(Long roomScheduleId);
     Optional<RoomOperationPolicySchedule> findByRoomAndPolicyApplicationDate(Room room, LocalDate policyDate);
-    List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDate(LocalDate today);
+    List<LocalDate> findAvailableRoomsGroupedByDate(LocalDate today);
 }

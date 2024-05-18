@@ -32,12 +32,12 @@ public interface RoomOperationPolicyScheduleRepository extends JpaRepository<Roo
     // ( 레포지토리 계층)
     // 메인 API → 금일 기점으로 미래까지, 어떤방들을 이용할 수 있는지? 단,방들을 날짜로 묶어(Group by) 응답
     @Query(
-            "SELECT this " +
+            "SELECT DISTINCT this.policyApplicationDate " +
             "FROM RoomOperationPolicySchedule this " +
             "WHERE this.policyApplicationDate >= :startDate " +
-            "GROUP BY this.policyApplicationDate"
+            "ORDER BY this.policyApplicationDate"
     )
-    List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDate(@Param("startDate") LocalDate startDate);
+    List<LocalDate> findAvailableRoomsGroupedByDate(@Param("startDate") LocalDate startDate);
 
 
 }

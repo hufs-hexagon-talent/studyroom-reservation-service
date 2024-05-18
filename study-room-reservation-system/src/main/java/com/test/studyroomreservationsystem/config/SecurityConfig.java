@@ -106,6 +106,7 @@ public class SecurityConfig {
                             "/auth/refresh",
                             "/auth/login",
                             "/users/sign-up",
+                            "/schedules/available",
                             "/rooms").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
                     .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")    // User 용 API 2는 유저 인증 받아야함
                     .requestMatchers("/admin/**").hasRole("ADMIN")           // Admin 용 API 는 어드민 인증 받아야함

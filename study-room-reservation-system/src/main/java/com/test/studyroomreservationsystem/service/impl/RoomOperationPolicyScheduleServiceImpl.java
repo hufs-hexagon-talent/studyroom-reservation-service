@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService {
@@ -90,19 +91,17 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
 
         return scheduleDao.save(schedule);
     }
-    @Override
-    public Optional<RoomOperationPolicySchedule> findByRoomIdAndPolicyDate(Long roomId, LocalDate policyDate) {
-        Room room = roomDao.findById(roomId)
-                .orElseThrow(() -> new RoomNotFoundException(roomId));
-        return scheduleDao.findByRoomAndPolicyApplicationDate(room, policyDate);
-    }
+
 
 
     @Override
-    public List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDateFromToday() {
+    public List<LocalDate> getAvailableDatesFromToday() {
         LocalDate today = LocalDate.now();
         return scheduleDao.findAvailableRoomsGroupedByDate(today);
     }
+
+
+
     public boolean isExistSchedule(Long roomId , LocalDate date) {
         Room room = roomDao.findById(roomId).orElseThrow(
                 () -> new RoomNotFoundException(roomId));
