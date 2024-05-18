@@ -26,7 +26,7 @@ public class AdminRoomOperationPolicyScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @Operation(summary = "schedule 생성",
+    @Operation(summary = "✅ schedule 생성",
             description = "스케쥴 생성(상세설명 추후 추가)",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -40,8 +40,11 @@ public class AdminRoomOperationPolicyScheduleController {
                 = scheduleService.dtoFrom(createdSchedule);
         return new ResponseEntity<>(createdScheduleDto, HttpStatus.CREATED);
     }
+    // todo : 날짜를 주어지면 해당 날짜의 모든 방의 정책을 조회
 
-    @Operation(summary = "schedule 조회",
+
+
+    @Operation(summary = "❌ schedule 조회",
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -57,7 +60,7 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
     }
 
-    @Operation(summary = "현재로 부터 미래까지 운영 예정인 방들 조회",
+    @Operation(summary = "❌ 현재로 부터 미래까지 운영 예정인 방들 조회",
             description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -92,7 +95,7 @@ public class AdminRoomOperationPolicyScheduleController {
         return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "schedule 삭제",
+    @Operation(summary = "✅ schedule 삭제",
             description = "해당 schedule id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )

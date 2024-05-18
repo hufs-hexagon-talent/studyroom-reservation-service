@@ -27,7 +27,7 @@ public class AdminRoomController {
         this.roomService = roomService;
     }
 
-    @Operation(summary = "room 생성",
+    @Operation(summary = "✅ room 생성",
             description = "room 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -49,7 +49,7 @@ public class AdminRoomController {
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
 
-    @Operation(summary = "모든 room 조회",
+    @Operation(summary = "✅ 모든 room 조회",
             description = "모든 room 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -75,7 +75,7 @@ public class AdminRoomController {
 
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
-    @Operation(summary = "room 삭제",
+    @Operation(summary = "✅ room 삭제",
             description = "해당 room id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
