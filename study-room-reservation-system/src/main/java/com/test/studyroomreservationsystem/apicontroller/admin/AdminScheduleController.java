@@ -12,17 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
 @RequestMapping("/admin/schedules")
-public class AdminRoomOperationPolicyScheduleController {
+public class AdminScheduleController {
     private final RoomOperationPolicyScheduleServiceImpl scheduleService;
 
     @Autowired
-    AdminRoomOperationPolicyScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
+    public AdminScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
         this.scheduleService = scheduleService;
     }
 
@@ -58,22 +55,6 @@ public class AdminRoomOperationPolicyScheduleController {
                 = scheduleService.dtoFrom(foundSchedule);
 
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
-    }
-
-    @Operation(summary = "❌ 현재로 부터 미래까지 운영 예정인 방들 조회",
-            description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
-    @GetMapping("/available")
-     ResponseEntity<List<RoomOperationPolicyScheduleDto>> getAvailableRoomsGroupedByDate() {
-
-        List<RoomOperationPolicyScheduleDto> availableRooms
-                = scheduleService.findAvailableRoomsGroupedByDateFromToday()
-                .stream()
-                .map(scheduleService::dtoFrom)
-                .collect(Collectors.toList());
-
-        return new ResponseEntity<>(availableRooms, HttpStatus.OK);
     }
 
 

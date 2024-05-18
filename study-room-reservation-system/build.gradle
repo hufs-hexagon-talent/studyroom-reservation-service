@@ -40,13 +40,13 @@ dependencies {
 // migration
 //	implementation 'org.flywaydb:flyway-mysql'
 
-	testImplementation 'org.projectlombok:lombok:1.18.28'
+// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	testAnnotationProcessor 'org.projectlombok:lombok'
 
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.projectlombok:lombok:1.18.28'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }

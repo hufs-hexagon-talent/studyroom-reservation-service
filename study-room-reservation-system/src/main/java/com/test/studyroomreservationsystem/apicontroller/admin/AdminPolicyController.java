@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @Tag(name = "RoomOperationPolicy", description = "Room 운영 정책 관련 API")
 @RestController
 @RequestMapping("/admin/policies")
-public class AdminRoomOperationPolicyController {
+public class AdminPolicyController {
     private final RoomOperationPolicyService roomOperationPolicyService;
     @Autowired
-    public AdminRoomOperationPolicyController(RoomOperationPolicyService roomOperationPolicyService) {
+    public AdminPolicyController(RoomOperationPolicyService roomOperationPolicyService) {
         this.roomOperationPolicyService = roomOperationPolicyService;
     }
     @Operation(summary = "RoomOperationPolicy 생성",

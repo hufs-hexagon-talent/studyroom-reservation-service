@@ -45,7 +45,7 @@ public class RoomOperationPolicyScheduleDaoImpl implements RoomOperationPolicySc
     }
 
     @Override
-    public List<RoomOperationPolicySchedule> findAvailableRoomsGroupedByDate(LocalDate today) {
+    public List<LocalDate> findAvailableRoomsGroupedByDate(LocalDate today) {
         return scheduleRepository.findAvailableRoomsGroupedByDate(today);
     }
 }
