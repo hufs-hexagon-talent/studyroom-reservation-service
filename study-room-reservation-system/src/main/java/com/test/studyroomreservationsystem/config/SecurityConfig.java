@@ -101,16 +101,43 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable); // HTTP Basic 비활성화
         http
                 .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()   // Swagger UI와 API 문서 경로 허용
-                    .requestMatchers(
-                            "/auth/refresh",
-                            "/auth/login",
-                            "/users/sign-up",
-                            "/schedules/available",
-                            "/rooms").permitAll() // [로그인], [회원가입] ,[엑세스 재발급] 인증 없이 허용
-                    .requestMatchers("/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")    // User 용 API 2는 유저 인증 받아야함
-                    .requestMatchers("/admin/**").hasRole("ADMIN")           // Admin 용 API 는 어드민 인증 받아야함
-                    .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
+                    // Swagger
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**").permitAll()  
+                    // Auth
+                        .requestMatchers(
+                                "/auth/refresh",
+                                "/auth/login").permitAll()
+                    // User
+                        .requestMatchers(
+                                "/users/sign-up").permitAll()
+                        .requestMatchers(
+                                "/users/me").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(
+                                "/users/**").hasRole("ADMIN")
+
+                    // Reservation
+                        .requestMatchers("/reservations/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+
+                    // PolicySchedule
+                        .requestMatchers(
+                                "/schedules/available-dates").permitAll()
+                        .requestMatchers(
+                                "/schedules/**").hasRole("ADMIN")
+
+                    // Room
+                        .requestMatchers(
+                                "/rooms/reservations/by-date").permitAll()
+                        .requestMatchers(
+                                "/rooms/**").hasRole("ADMIN")
+                    // Policy
+
+                        .requestMatchers(
+                                "/policies/**").hasRole("ADMIN")
+
+
+                        .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
         LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration),
                 jwtUtil,
