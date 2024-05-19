@@ -86,8 +86,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
         } catch (IOException e) {
-
             log.trace("2차 필터(Login Filter) : [파싱 에러] request 파싱 에러");
+
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
             // todo : response 바디에 error 메시지 담아서 응답

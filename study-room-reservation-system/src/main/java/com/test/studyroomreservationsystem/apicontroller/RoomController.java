@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,7 +23,7 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @PostMapping()
+    @GetMapping
     @Operation(summary = "✅해당 날짜 모든룸 예약 상태 확인 ", description = "")
     ResponseEntity<List<RoomsReservationResponseDto>> getRoomReservationsByDate(@RequestBody RoomsReservationRequestDto roomsRequestDto) {
         LocalDate date = roomsRequestDto.getDate();
