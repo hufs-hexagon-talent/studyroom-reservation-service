@@ -76,8 +76,8 @@ public class ReissueController {
 
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
-        String accessToken = jwtUtil.createJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
-        String refreshToken = jwtUtil.createJwt(jwtRefreshCategory, username, role, refreshTokenExpiration * 1000);
+        String accessToken = jwtUtil.createAccessJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
+        String refreshToken = jwtUtil.createRefreshJwt(jwtRefreshCategory, username, refreshTokenExpiration * 1000);
         LoginResponseDto loginResponse = new LoginResponseDto(accessToken, refreshToken);
 
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);

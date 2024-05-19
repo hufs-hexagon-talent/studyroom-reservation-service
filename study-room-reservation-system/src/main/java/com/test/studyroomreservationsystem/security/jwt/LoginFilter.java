@@ -130,8 +130,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         log.trace("로그인 성공 핸들러  : JWT 토큰을 생성합니다. ");
 
         // JWT 토큰 생성
-        String accessToken = jwtUtil.createJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
-        String refreshToken = jwtUtil.createJwt(jwtRefreshCategory, username, role, refreshTokenExpiration * 1000);
+        String accessToken = jwtUtil.createAccessJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
+        String refreshToken = jwtUtil.createRefreshJwt(jwtRefreshCategory, username, refreshTokenExpiration * 1000);
         // LoginResponseDto 객체 생성
         LoginResponseDto loginResponse = new LoginResponseDto(accessToken, refreshToken);
 
