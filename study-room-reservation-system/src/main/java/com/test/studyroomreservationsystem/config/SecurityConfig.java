@@ -104,7 +104,7 @@ public class SecurityConfig {
                     // Swagger
                         .requestMatchers(
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**").permitAll()  
+                                "/v3/api-docs/**").permitAll()
                     // Auth
                         .requestMatchers(
                                 "/auth/refresh",
@@ -122,15 +122,15 @@ public class SecurityConfig {
 
                     // PolicySchedule
                         .requestMatchers(
-                                "/schedules/available-dates").permitAll()
-                        .requestMatchers(
                                 "/schedules/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/schedules/available-dates").permitAll()
 
                     // Room
                         .requestMatchers(
-                                "/rooms/reservations/by-date").permitAll()
-                        .requestMatchers(
                                 "/rooms/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/rooms/reservations/by-date").permitAll()
                     // Policy
 
                         .requestMatchers(

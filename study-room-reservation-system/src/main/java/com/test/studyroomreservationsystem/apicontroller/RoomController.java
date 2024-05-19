@@ -24,7 +24,7 @@ public class RoomController {
     }
 
     @GetMapping("/reservations/by-date")
-    @Operation(summary = "✅해당 날짜 모든룸 예약 상태 확인 ", description = "")
+    @Operation(summary = "❌해당 날짜 모든룸 예약 상태 확인 ", description = "")
     ResponseEntity<List<RoomsReservationResponseDto>> getRoomReservationsByDate(@RequestBody RoomsReservationRequestDto roomsRequestDto) {
         LocalDate date = roomsRequestDto.getDate();
         List<RoomsReservationResponseDto> reservationsResponseDto = roomService.getRoomReservationsByDate(date);
