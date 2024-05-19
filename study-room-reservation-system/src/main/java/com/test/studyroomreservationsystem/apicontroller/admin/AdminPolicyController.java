@@ -16,18 +16,18 @@ import java.util.stream.Collectors;
 
 @Tag(name = "RoomOperationPolicy", description = "Room 운영 정책 관련 API")
 @RestController
-@RequestMapping("/admin/policies")
+@RequestMapping("/policies")
 public class AdminPolicyController {
     private final RoomOperationPolicyService roomOperationPolicyService;
     @Autowired
     public AdminPolicyController(RoomOperationPolicyService roomOperationPolicyService) {
         this.roomOperationPolicyService = roomOperationPolicyService;
     }
-    @Operation(summary = "RoomOperationPolicy 생성",
+    @Operation(summary = "✅[관리자] RoomOperationPolicy 생성",
             description = "RoomOperationPolicy를 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PostMapping
+    @PostMapping("/policy")
     public ResponseEntity<RoomOperationPolicyDto> createPolicy(@RequestBody RoomOperationPolicyDto policyDto) {
 
         RoomOperationPolicy createdPolicy = roomOperationPolicyService.createPolicy(policyDto);
@@ -35,17 +35,17 @@ public class AdminPolicyController {
 
         return new ResponseEntity<>(policy, HttpStatus.CREATED);
     }
-    @Operation(summary = "RoomOperationPolicy 조회",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 조회",
             description = "RoomOperationPolicy id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/{roomOperationPolicyId}")
+    @GetMapping("/policy")
     public ResponseEntity<RoomOperationPolicyDto> getPolicy(@PathVariable Long roomOperationPolicyId) {
         RoomOperationPolicy foundPolicy = roomOperationPolicyService.findPolicyById(roomOperationPolicyId);// dto 로 전환
         RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(foundPolicy);
         return new ResponseEntity<>(policy, HttpStatus.OK);
     }
-    @Operation(summary = "모든 RoomOperationPolicy 조회",
+    @Operation(summary = "✅[관리자] 모든 RoomOperationPolicy 조회",
             description = "모든 RoomOperationPolicy 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -57,11 +57,11 @@ public class AdminPolicyController {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(policies, HttpStatus.OK);
     }
-    @Operation(summary = "RoomOperationPolicy 정보 업데이트",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 정보 업데이트",
             description = "해당 RoomOperationPolicy id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PutMapping("/{roomOperationPolicyId}")
+    @PutMapping("/policy")
     public ResponseEntity<RoomOperationPolicyDto> updatePolicy(@PathVariable Long roomOperationPolicyId,
                                                                      @RequestBody RoomOperationPolicyUpdateDto policyDto) {
         RoomOperationPolicy updatedPolicy = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, policyDto);
@@ -69,11 +69,11 @@ public class AdminPolicyController {
 
         return new ResponseEntity<>(policy, HttpStatus.OK);
     }
-    @Operation(summary = "RoomOperationPolicy 삭제",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 삭제",
             description = "해당 RoomOperationPolicy id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @DeleteMapping("/{roomOperationPolicyId}")
+    @DeleteMapping("/policy")
     public ResponseEntity<Void> deletePolicy(@PathVariable Long roomOperationPolicyId) {
         roomOperationPolicyService.deletePolicy(roomOperationPolicyId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

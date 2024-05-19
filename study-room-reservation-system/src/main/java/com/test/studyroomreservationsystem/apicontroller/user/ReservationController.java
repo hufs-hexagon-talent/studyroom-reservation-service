@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
-@RequestMapping("/users/reservations")
+@RequestMapping("/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
 
@@ -32,7 +32,7 @@ public class ReservationController {
             description = "인증 받은 유저 사용자 예약 생성",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PostMapping("/user/reservation")
+    @PostMapping
     ResponseEntity<ReservationRequestDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                          @RequestBody ReservationRequestDto reservationRequestDto) {
         Reservation createdReservation = reservationService.createReservation(reservationRequestDto, currentUser.getUser());
@@ -44,7 +44,7 @@ public class ReservationController {
             description = " 인증 받은 유저의 자신의 최근(현재) 예약 조회 ",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/user/reservation")
+    @GetMapping("/me/latest")
     ResponseEntity<ReservationRequestDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
         ReservationRequestDto reservationDto = reservationService.dtoFrom(recentReservation);
@@ -58,7 +58,7 @@ public class ReservationController {
             description = " 인증 받은 유저 자신의 모든 예약 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/user/reservations")
+    @GetMapping("/me")
     ResponseEntity<List<ReservationRequestDto>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
         List<ReservationRequestDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())

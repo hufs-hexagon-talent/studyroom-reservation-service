@@ -40,7 +40,7 @@ public class UserController {
             description = "본인 정보 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
 
-    @GetMapping("/user")
+    @GetMapping("/me")
     public ResponseEntity<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
@@ -52,7 +52,7 @@ public class UserController {
             description = "본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     // todo 수정 예정
-    @PatchMapping("/user")
+    @PatchMapping("/me")
     public ResponseEntity<UserInfoResponseDto> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser, @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 
         User updatedUser = userService.updateUser(currentUser.getUser().getUserId(), userInfoUpdateRequestDto);

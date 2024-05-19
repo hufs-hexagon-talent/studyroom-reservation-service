@@ -23,11 +23,11 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @Operation(summary = "✅ 현재로 부터 미래까지 운영 예정인 방들 조회",
+    @Operation(summary = "✅ 현재로 부터 미래까지 운영 정책이 설정된 방이 있는 날짜를 조회",
             description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회"
 //            security = {@SecurityRequirement(name = "")}
     )
-    @GetMapping("/available")
+    @GetMapping("/available-dates")
     public ResponseEntity<List<LocalDate>> getAvailableDatesFromToday() {
         List<LocalDate> availableDates = scheduleService.getAvailableDatesFromToday();
         return new ResponseEntity<>(availableDates, HttpStatus.OK);

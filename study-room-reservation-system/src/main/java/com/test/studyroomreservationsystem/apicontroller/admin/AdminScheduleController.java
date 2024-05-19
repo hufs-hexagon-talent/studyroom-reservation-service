@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
-@RequestMapping("/admin/schedules")
+@RequestMapping("/schedules")
 public class AdminScheduleController {
     private final RoomOperationPolicyScheduleServiceImpl scheduleService;
 
@@ -23,11 +23,11 @@ public class AdminScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @Operation(summary = "✅ schedule 생성",
+    @Operation(summary = "✅[관리자] schedule 생성",
             description = "스케쥴 생성(상세설명 추후 추가)",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PostMapping
+    @PostMapping("/schedule")
      ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
 
         RoomOperationPolicySchedule createdSchedule
@@ -41,11 +41,11 @@ public class AdminScheduleController {
 
 
 
-    @Operation(summary = "❌ schedule 조회",
+    @Operation(summary = "❌[관리자] schedule 조회",
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/{roomOperationPolicyScheduleId}")
+    @GetMapping("/schedule")
      ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
 
         RoomOperationPolicySchedule foundSchedule
@@ -58,11 +58,11 @@ public class AdminScheduleController {
     }
 
 
-    @Operation(summary = "schedule 업데이트",
+    @Operation(summary = "❌[관리자] schedule 업데이트",
             description = "해당 스케쥴 업데이트",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PutMapping("/{roomOperationPolicyScheduleId}")
+    @PutMapping("/schedule")
     ResponseEntity<RoomOperationPolicyScheduleDto>
     updateSchedule(@PathVariable Long roomOperationPolicyScheduleId,
                    @RequestBody RoomOperationPolicyScheduleUpdateDto scheduleUpdateDto) {
@@ -76,11 +76,11 @@ public class AdminScheduleController {
         return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "✅ schedule 삭제",
+    @Operation(summary = "❌[관리자] schedule 삭제",
             description = "해당 schedule id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @DeleteMapping("/{roomOperationPolicyScheduleId}")
+    @DeleteMapping("/schedule")
      ResponseEntity<Void> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
         scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

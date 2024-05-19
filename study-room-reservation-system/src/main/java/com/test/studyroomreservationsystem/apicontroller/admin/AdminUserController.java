@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "User", description = "사용자 관련 API")
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping("/users")
 
 public class AdminUserController {
     private final UserService userService;
@@ -25,18 +25,19 @@ public class AdminUserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "✅ 특정 회원 정보 조회",
+    // todo :  request param -> json request
+    @Operation(summary = "❌ [관리자] 특정 회원 정보 조회",
             description = "username, password, isAdmin, name, serial 반환",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/{userId}")
+    @GetMapping("/user")
     public ResponseEntity<UserInfoResponseDto> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @Operation(summary = "✅ 모든 회원 정보 조회",
+    @Operation(summary = "✅ [관리자] 모든 회원 정보 조회",
             description = "모든 user 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -48,11 +49,12 @@ public class AdminUserController {
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
 
-    @Operation(summary = "✅ 특정 회원 삭제",
+    // todo :  request param -> json request
+    @Operation(summary = "❌ [관리자] 특정 회원 삭제",
             description = "해당 user id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/user")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
