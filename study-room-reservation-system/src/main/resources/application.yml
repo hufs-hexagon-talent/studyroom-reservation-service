@@ -45,13 +45,14 @@ logging:
         com:
             test:
                 studyroomreservationsystem:
-                    security:
-                        jwt:
-                            TRACE
+#                    security:
+#                        jwt:
+#                            TRACE
                     apicontroller:
-                        user:
                             TRACE
+                    service:
+                        impl: TRACE
 
-        org:
-            springframework:
-                security: DEBUG
+#        org:
+#            springframework:
+#                security: DEBUG

@@ -2,29 +2,36 @@ package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationResponseDto;
+import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.ReservationService;
+import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
+    private final RoomService roomService;
 
     @Autowired
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(ReservationService reservationService, RoomService roomService) {
         this.reservationService = reservationService;
+        this.roomService = roomService;
     }
     // todo 수정 예정
 
@@ -36,7 +43,7 @@ public class ReservationController {
     ResponseEntity<ReservationRequestDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                          @RequestBody ReservationRequestDto reservationRequestDto) {
         Reservation createdReservation = reservationService.createReservation(reservationRequestDto, currentUser.getUser());
-        ReservationRequestDto reservation = reservationService.dtoFrom(createdReservation);
+        ReservationRequestDto reservation = reservationService.requestDtoFrom(createdReservation);
 
         return new ResponseEntity<>(reservation, HttpStatus.CREATED);
     }
@@ -45,9 +52,9 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me/latest")
-    ResponseEntity<ReservationRequestDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<ReservationResponseDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
-        ReservationRequestDto reservationDto = reservationService.dtoFrom(recentReservation);
+        ReservationResponseDto reservationDto = reservationService.responseDtoFrom(recentReservation);
 
 
         return new ResponseEntity<>(reservationDto, HttpStatus.OK);
@@ -59,11 +66,11 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me")
-    ResponseEntity<List<ReservationRequestDto>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<List<ReservationResponseDto>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
-        List<ReservationRequestDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
+        List<ReservationResponseDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
                 .stream()
-                .map(reservationService::dtoFrom)
+                .map(reservationService::responseDtoFrom)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
     }
@@ -94,4 +101,17 @@ public class ReservationController {
 //    }
     //    메인 API → 날짜 주면, 각 방에서 어떤 예약들이 있는지 (전체 방에 대해서)
 
+
+        @Operation(summary = "✅ 해당 날짜 모든룸 예약 상태 확인 ",
+                description = "날짜를 받으면 모든 룸의 예약을 확인",
+                security = {})
+        @GetMapping("/by-date")
+//    @PostMapping("/reservations/by-date")
+//    ResponseEntity<List<RoomsReservationResponseDto>> getRoomReservationsByDate(@RequestParam("roomsReservationRequestDto") RoomsReservationRequestDto roomsReservationRequestDto) {
+        ResponseEntity<List<RoomsResponseDto>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
+            log.trace("DATE : {}",date);
+            List<RoomsResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
+
+            return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
+        }
 }

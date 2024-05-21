@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.security.service;
+package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
