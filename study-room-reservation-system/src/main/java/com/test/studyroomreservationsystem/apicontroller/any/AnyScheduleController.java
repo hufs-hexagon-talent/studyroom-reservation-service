@@ -1,9 +1,7 @@
-package com.test.studyroomreservationsystem.apicontroller;
+package com.test.studyroomreservationsystem.apicontroller.any;
 
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
 import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +14,9 @@ import java.util.List;
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
 @RequestMapping("/schedules")
-public class ScheduleController {
+public class AnyScheduleController {
     private final RoomOperationPolicyScheduleServiceImpl scheduleService;
-
-    public ScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
+    public AnyScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
         this.scheduleService = scheduleService;
     }
 

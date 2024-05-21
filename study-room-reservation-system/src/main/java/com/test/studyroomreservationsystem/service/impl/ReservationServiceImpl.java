@@ -4,10 +4,7 @@ import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationRoomDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationStateDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationTimeDto;
+import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.service.UserService;
@@ -145,6 +142,26 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservationById(Long reservationId) {
         reservationDao.deleteById(reservationId);
     }
+
+    @Override
+    public ReservationRequestDto requestDtoFrom(Reservation reservation) {
+        return ReservationRequestDto.builder()
+                .roomId(reservation.getRoom().getRoomId())
+                .startDateTime(reservation.getReservationStartTime())
+                .endDateTime(reservation.getReservationEndTime())
+                .build();
+    }
+
+    @Override
+    public ReservationResponseDto responseDtoFrom(Reservation reservation) {
+        return ReservationResponseDto.builder()
+                .roomId(reservation.getRoom().getRoomId())
+                .roomName(reservation.getRoom().getRoomName())
+                .startDateTime(reservation.getReservationStartTime())
+                .endDateTime(reservation.getReservationEndTime())
+                .build();
+    }
+
 
     private void validateRoomAvailability(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         boolean isOperating = isOperating(roomId, startDateTime, endDateTime);

@@ -6,4 +6,5 @@ import lombok.Getter;
 @Getter
 public class ReservationRoomDto {
     private Long roomId;
+    private String roomName;
 }

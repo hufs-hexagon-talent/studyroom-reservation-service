@@ -118,21 +118,23 @@ public class SecurityConfig {
                                 "/users/**").hasRole("ADMIN")
 
                     // Reservation
-                        .requestMatchers("/reservations/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(
+                                "/reservations/by-date/**").permitAll()
+                        .requestMatchers(
+                                "/reservations/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
                     // PolicySchedule
                         .requestMatchers(
-                                "/schedules/**").hasRole("ADMIN")
-                        .requestMatchers(
                                 "/schedules/available-dates").permitAll()
+                        .requestMatchers(
+                                "/schedules/**").hasRole("ADMIN")
 
                     // Room
                         .requestMatchers(
-                                "/rooms/**").hasRole("ADMIN")
+                                "/rooms/policy/by-date/**").permitAll()
                         .requestMatchers(
-                                "/rooms/reservations/by-date").permitAll()
+                                "/rooms/**").hasRole("ADMIN")
                     // Policy
-
                         .requestMatchers(
                                 "/policies/**").hasRole("ADMIN")
 
