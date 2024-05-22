@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
+import com.test.studyroomreservationsystem.dto.ApiResponse;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
@@ -28,14 +29,17 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/schedule")
-     ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
+     ResponseEntity<ApiResponse<RoomOperationPolicyScheduleDto>> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
 
         RoomOperationPolicySchedule createdSchedule
                 = scheduleService.createSchedule(scheduleDto);
 
         RoomOperationPolicyScheduleDto createdScheduleDto
                 = scheduleService.dtoFrom(createdSchedule);
-        return new ResponseEntity<>(createdScheduleDto, HttpStatus.CREATED);
+
+        ApiResponse<RoomOperationPolicyScheduleDto> response = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", createdScheduleDto);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     // todo : 날짜를 주어지면 해당 날짜의 모든 방의 정책을 조회
 

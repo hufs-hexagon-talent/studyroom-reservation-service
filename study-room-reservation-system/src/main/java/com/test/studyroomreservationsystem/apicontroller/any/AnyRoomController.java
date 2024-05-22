@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.any;
 
 import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseList;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,9 +30,11 @@ public class AnyRoomController {
             description = "날짜를 받으면 모든 룸의 정책에 따른 운영시간을 확인",
             security = {})
     @GetMapping("/policy/by-date")
-    ResponseEntity<ApiResponse<List<RoomsResponseDto>>> getRoomPolicyByDate(@RequestParam("date") LocalDate date) {
+    ResponseEntity<ApiResponse<ApiResponseList<RoomsResponseDto>>> getRoomPolicyByDate(@RequestParam("date") LocalDate date) {
         List<RoomsResponseDto> responseDtoList = roomService.getRoomsPolicyByDate(date);
-        ApiResponse<List<RoomsResponseDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", responseDtoList);
+
+        ApiResponseList<RoomsResponseDto> wrapped = new ApiResponseList<>(responseDtoList);
+        ApiResponse<ApiResponseList<RoomsResponseDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }

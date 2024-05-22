@@ -1,5 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
+import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseList;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
@@ -28,12 +30,12 @@ public class AdminPolicyController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/policy")
-    public ResponseEntity<RoomOperationPolicyDto> createPolicy(@RequestBody RoomOperationPolicyDto policyDto) {
+    public ResponseEntity<ApiResponse<RoomOperationPolicyDto>> createPolicy(@RequestBody RoomOperationPolicyDto policyDto) {
 
         RoomOperationPolicy createdPolicy = roomOperationPolicyService.createPolicy(policyDto);
         RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(createdPolicy);
-
-        return new ResponseEntity<>(policy, HttpStatus.CREATED);
+        ApiResponse<RoomOperationPolicyDto> response = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성되었습니다.", policy);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @Operation(summary = "❌[관리자] RoomOperationPolicy 조회",
             description = "RoomOperationPolicy id로 조회 API",
@@ -50,12 +52,17 @@ public class AdminPolicyController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping
-    public ResponseEntity<List<RoomOperationPolicyDto>> getAllPolices() {
+    public ResponseEntity<ApiResponse<ApiResponseList<RoomOperationPolicyDto>>> getAllPolices() {
         List<RoomOperationPolicyDto> policies = roomOperationPolicyService.findAllPolicies()
                 .stream()
                 .map(roomOperationPolicyService::dtoFrom)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(policies, HttpStatus.OK);
+
+        ApiResponseList<RoomOperationPolicyDto> wrapped = new ApiResponseList<>(policies);
+        ApiResponse<ApiResponseList<RoomOperationPolicyDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @Operation(summary = "❌[관리자] RoomOperationPolicy 정보 업데이트",
             description = "해당 RoomOperationPolicy id의 정보 업데이트 API",
