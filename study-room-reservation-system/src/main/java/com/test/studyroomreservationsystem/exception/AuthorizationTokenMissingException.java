@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service.exception;
+package com.test.studyroomreservationsystem.exception;
 
 public class AuthorizationTokenMissingException extends RuntimeException {
     public AuthorizationTokenMissingException(String claimsId) {

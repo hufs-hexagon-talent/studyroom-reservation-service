@@ -5,10 +5,13 @@ import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.reservation.*;
+import com.test.studyroomreservationsystem.exception.OverlappingReservationException;
+import com.test.studyroomreservationsystem.exception.ReservationHistoryNotFoundException;
+import com.test.studyroomreservationsystem.exception.ReservationNotFoundException;
+import com.test.studyroomreservationsystem.exception.RoomNotOperatingException;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.service.UserService;
-import com.test.studyroomreservationsystem.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

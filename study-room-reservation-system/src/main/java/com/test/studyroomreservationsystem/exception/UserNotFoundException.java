@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service.exception;
+package com.test.studyroomreservationsystem.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long userId) {

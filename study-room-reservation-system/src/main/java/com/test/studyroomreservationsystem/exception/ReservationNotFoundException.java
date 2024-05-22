@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service.exception;
+package com.test.studyroomreservationsystem.exception;
 
 public class ReservationNotFoundException extends RuntimeException {
     public ReservationNotFoundException(Long reservationId) {
