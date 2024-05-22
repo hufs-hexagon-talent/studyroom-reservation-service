@@ -3,7 +3,7 @@ package com.test.studyroomreservationsystem.config;
 import com.test.studyroomreservationsystem.security.CustomUserDetailsService;
 import com.test.studyroomreservationsystem.security.jwt.JWTFilter;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
-import com.test.studyroomreservationsystem.security.jwt.LoginFilter;
+//import com.test.studyroomreservationsystem.security.jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,8 +74,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-//        http
-//                .headers(.disable());
+
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
@@ -141,22 +140,16 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
-        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration),
-                jwtUtil,
-                jwtAccessCategory,
-                jwtRefreshCategory,
-                accessTokenExpiration,
-                refreshTokenExpiration);
-        loginFilter.setFilterProcessesUrl("/auth/login");
+
         // JWT 필터 검증 추가
         http
                 .addFilterBefore(new JWTFilter(
                             jwtUtil,
                             jwtHeader,
                             jwtAccessCategory,
-                            userDetailsService), LoginFilter.class);
-        http
-                .addFilter(loginFilter);
+                            userDetailsService), UsernamePasswordAuthenticationFilter.class);
+//        http
+//                .addFilter(loginFilter);
 
         http
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션을 사용하지 않음
