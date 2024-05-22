@@ -1,6 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
+import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseList;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationResponseDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
@@ -40,24 +42,24 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping
-    ResponseEntity<ReservationRequestDto> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
+    ResponseEntity<ApiResponse<ReservationRequestDto>> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                          @RequestBody ReservationRequestDto reservationRequestDto) {
         Reservation createdReservation = reservationService.createReservation(reservationRequestDto, currentUser.getUser());
         ReservationRequestDto reservation = reservationService.requestDtoFrom(createdReservation);
-
-        return new ResponseEntity<>(reservation, HttpStatus.CREATED);
+        ApiResponse<ReservationRequestDto> response = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", reservation);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @Operation(summary = "✅ 자신의 최근 예약 조회",
             description = " 인증 받은 유저의 자신의 최근(현재) 예약 조회 ",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me/latest")
-    ResponseEntity<ReservationResponseDto> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<ApiResponse<ReservationResponseDto>> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
         ReservationResponseDto reservationDto = reservationService.responseDtoFrom(recentReservation);
+        ApiResponse<ReservationResponseDto> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", reservationDto);
 
-
-        return new ResponseEntity<>(reservationDto, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // todo 수정 예정
@@ -66,13 +68,17 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me")
-    ResponseEntity<List<ReservationResponseDto>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<ApiResponse<ApiResponseList<ReservationResponseDto>>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
         List<ReservationResponseDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
                 .stream()
                 .map(reservationService::responseDtoFrom)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(reservationsByUser, HttpStatus.OK);
+
+        ApiResponseList<ReservationResponseDto> wrapped = new ApiResponseList<>(reservationsByUser);
+        ApiResponse<ApiResponseList<ReservationResponseDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // todo 수정 예정
@@ -106,12 +112,11 @@ public class ReservationController {
                 description = "날짜를 받으면 모든 룸의 예약을 확인",
                 security = {})
         @GetMapping("/by-date")
-//    @PostMapping("/reservations/by-date")
-//    ResponseEntity<List<RoomsReservationResponseDto>> getRoomReservationsByDate(@RequestParam("roomsReservationRequestDto") RoomsReservationRequestDto roomsReservationRequestDto) {
-        ResponseEntity<List<RoomsResponseDto>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
-            log.trace("DATE : {}",date);
+        ResponseEntity<ApiResponse<ApiResponseList<RoomsResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
             List<RoomsResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
 
-            return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
+            ApiResponseList<RoomsResponseDto> wrapped = new ApiResponseList<>(responseDtoList);
+            ApiResponse<ApiResponseList<RoomsResponseDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
 }

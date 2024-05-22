@@ -1,6 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseList;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,11 +44,17 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping
-    public ResponseEntity<List<UserInfoResponseDto>> getAllUsers() {
+    public ResponseEntity<ApiResponse<ApiResponseList<UserInfoResponseDto>>> getAllUsers() {
         List<UserInfoResponseDto> users = userService.findAllUsers()
                 .stream().map(userService::dtoFrom)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(users,HttpStatus.OK);
+
+        ApiResponseList<UserInfoResponseDto> wrapped = new ApiResponseList<>(users);
+
+        ApiResponse<ApiResponseList<UserInfoResponseDto>> response
+                = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     // todo :  request param -> json request

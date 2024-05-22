@@ -16,7 +16,7 @@ public interface RoomOperationPolicyScheduleService {
     List<LocalDate> getAvailableDatesFromToday();
     default RoomOperationPolicyScheduleDto dtoFrom(RoomOperationPolicySchedule schedule) {
         return RoomOperationPolicyScheduleDto.builder()
-                .roomOperationPolicyId(schedule.getRoomOperationPolicyScheduleId())
+                .roomOperationPolicyId(schedule.getRoomOperationPolicy().getRoomOperationPolicyId())
                 .roomId(schedule.getRoom().getRoomId())
                 .policyApplicationDate(schedule.getPolicyApplicationDate())
                 .build();

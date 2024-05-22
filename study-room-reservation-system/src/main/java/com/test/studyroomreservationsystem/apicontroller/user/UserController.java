@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.ApiResponse;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
@@ -31,9 +32,12 @@ public class UserController {
             description = "아이디, 비밀번호, 학번, 이름",
             security = {})
     @PostMapping("/sign-up")
-    public HttpStatus signUpProcess(@RequestBody SingUpRequestDto singUpRequestDto) {
-        userService.signUpProcess(singUpRequestDto);
-        return HttpStatus.CREATED;
+    public ResponseEntity<ApiResponse<UserInfoResponseDto>> signUpProcess(@RequestBody SingUpRequestDto singUpRequestDto) {
+        User createdUser = userService.signUpProcess(singUpRequestDto);
+        UserInfoResponseDto user = userService.dtoFrom(createdUser);
+
+        ApiResponse<UserInfoResponseDto> response = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", user);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     @Operation(summary = "✅ 자신의 정보 조회",
@@ -41,11 +45,13 @@ public class UserController {
             security = {@SecurityRequirement(name = "JWT")})
 
     @GetMapping("/me")
-    public ResponseEntity<UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    public ResponseEntity<ApiResponse<UserInfoResponseDto>> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+
+        ApiResponse<UserInfoResponseDto> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", user);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "❌ 자신의 정보 수정",

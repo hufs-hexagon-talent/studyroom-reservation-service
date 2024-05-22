@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
 
+import com.test.studyroomreservationsystem.dto.ApiResponse;
 import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.RefreshRequestDto;
@@ -79,10 +80,7 @@ public class ReissueController {
         String accessToken = jwtUtil.createAccessJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
         String refreshToken = jwtUtil.createRefreshJwt(jwtRefreshCategory, username, refreshTokenExpiration * 1000);
         LoginResponseDto loginResponse = new LoginResponseDto(accessToken, refreshToken);
-
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        ApiResponse<LoginResponseDto> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 발급 되었습니다.", loginResponse);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
-
-//eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IlJlZnJlc2gtVG9rZW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzE1Mzk3MTQ2LCJleHAiOjE3MTUzOTcxNDZ9._qGgq8shhHAMZEon1VguXv4f_he3jDOSK0N8gZIQOV0
-//eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IlJlZnJlc2gtVG9rZW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzE1Mzk3MTQ2LCJleHAiOjE3MTUzOTcxNDZ9._qGgq8shhHAMZEon1VguXv4f_he3jDOSK0N8gZIQOV0
