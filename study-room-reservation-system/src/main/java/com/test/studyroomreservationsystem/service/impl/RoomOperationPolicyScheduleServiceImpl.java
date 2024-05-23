@@ -9,16 +9,15 @@ import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomO
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
 import com.test.studyroomreservationsystem.service.RoomService;
-import com.test.studyroomreservationsystem.service.exception.RoomNotFoundException;
-import com.test.studyroomreservationsystem.service.exception.ScheduleAlreadyExistException;
-import com.test.studyroomreservationsystem.service.exception.ScheduleNotFoundException;
+import com.test.studyroomreservationsystem.exception.RoomNotFoundException;
+import com.test.studyroomreservationsystem.exception.ScheduleAlreadyExistException;
+import com.test.studyroomreservationsystem.exception.ScheduleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService {

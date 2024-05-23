@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service.exception;
+package com.test.studyroomreservationsystem.exception;
 
 public class SerialAlreadyExistsException extends RuntimeException {
     public SerialAlreadyExistsException(String serial) {

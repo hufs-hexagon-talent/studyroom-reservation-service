@@ -2,11 +2,10 @@ package com.test.studyroomreservationsystem.apicontroller.any;
 
 import com.test.studyroomreservationsystem.dto.ApiResponse;
 import com.test.studyroomreservationsystem.dto.ApiResponseList;
-import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
+import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +32,11 @@ public class AnyReservationController {
                 description = "날짜를 받으면 모든 룸의 예약을 확인",
                 security = {})
         @GetMapping("/by-date")
-        ResponseEntity<ApiResponse<ApiResponseList<RoomsResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
-            List<RoomsResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
+        ResponseEntity<ApiResponse<ApiResponseList<RoomsReservationResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
+            List<RoomsReservationResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
 
-            ApiResponseList<RoomsResponseDto> wrapped = new ApiResponseList<>(responseDtoList);
-            ApiResponse<ApiResponseList<RoomsResponseDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+            ApiResponseList<RoomsReservationResponseDto> wrapped = new ApiResponseList<>(responseDtoList);
+            ApiResponse<ApiResponseList<RoomsReservationResponseDto>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }

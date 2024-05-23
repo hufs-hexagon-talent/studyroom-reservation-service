@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Tag(name = "Auth", description = "인증 관련")
 @RestController
-public class ReissueController {
+public class RefreshController {
     private final JWTUtil jwtUtil;
     private final String jwtRefreshCategory;
     private final String jwtAccessCategory;
     private final Long accessTokenExpiration;
     private final Long refreshTokenExpiration;
 
-    public ReissueController(JWTUtil jwtUtil,
+    public RefreshController(JWTUtil jwtUtil,
                              @Value("${spring.jwt.refresh.category}") String jwtRefreshCategory,
                              @Value("${spring.jwt.access.category}") String jwtAccessCategory,
                              @Value("${spring.jwt.access.expiration}") Long accessTokenExpiration,

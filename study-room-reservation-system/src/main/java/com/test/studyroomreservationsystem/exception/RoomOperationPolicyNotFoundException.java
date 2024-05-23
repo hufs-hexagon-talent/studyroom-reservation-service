@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service.exception;
+package com.test.studyroomreservationsystem.exception;
 
 public class RoomOperationPolicyNotFoundException extends RuntimeException {
     public RoomOperationPolicyNotFoundException(Long policyId) {

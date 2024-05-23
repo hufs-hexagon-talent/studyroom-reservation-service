@@ -15,6 +15,7 @@ public interface RoomOperationPolicyService {
 
     default RoomOperationPolicyDto dtoFrom(RoomOperationPolicy roomOperationPolicy) {
         return RoomOperationPolicyDto.builder()
+                .policyId(roomOperationPolicy.getRoomOperationPolicyId())
                 .operationStartTime(roomOperationPolicy.getOperationStartTime())
                 .operationEndTime(roomOperationPolicy.getOperationEndTime())
                 .eachMaxMinute(roomOperationPolicy.getEachMaxMinute())

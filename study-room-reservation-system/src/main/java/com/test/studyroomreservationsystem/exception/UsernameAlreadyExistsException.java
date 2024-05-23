@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service.exception;
+package com.test.studyroomreservationsystem.exception;
 
 public class UsernameAlreadyExistsException extends RuntimeException {
     public UsernameAlreadyExistsException(String username) {

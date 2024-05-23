@@ -1,16 +1,15 @@
 package com.test.studyroomreservationsystem.security.jwt;
 
 
-import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.security.CustomUserDetails;
-import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.MalformedInputException;
 
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {
@@ -48,7 +47,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if (headerValue != null && headerValue.startsWith("Bearer ")) {
             headerValue = headerValue.substring(7).trim(); // "Bearer " 접두사 제거
         }
-        log.trace("Authorization : {}",headerValue);
+        log.trace("Authorization : {}", headerValue);
 
         // 토큰이 없다면 다음 필터로 넘김
         if (headerValue == null) {
@@ -63,54 +62,39 @@ public class JWTFilter extends OncePerRequestFilter {
             log.trace("1차 필터(JWT Filter) : access Token 만료 여부 확인을 시작합니다.");
             jwtUtil.isExpired(headerValue); // 만료시 ExpiredJwtException 발생
 
-        } catch (ExpiredJwtException e) {
-            log.error("1차 필터(JWT Filter) : accessToken 이 만료 되었습니다.");
-            //response status code
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json; charset=UTF-8");
+            String accessToken = headerValue;
 
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("{\"message\": \"Access token expired\"}"); // todo : dto 로 제대로 응답 dto 만들어!!
-//            writer.flush(); // 변경 사항을 즉시 반영
-            // todo :  만료시 엑세스 토큰과 리프레시 토큰을 reissue 해줘야 함 (refresh)
-            // todo :  /refresh 는 body 에 request refresh token 이 온다.
-            // todo :  login response (기존 꺼) 를 보내줌
+            // 헤더 값이 access 이며, 만료되지 않았을 때
+            String username = jwtUtil.getUsername(accessToken);
+            String role = jwtUtil.getRole(accessToken);
 
-            return;
-        }
-        // jwt 토큰이 access 인지 확인 (발급시 페이 로드에 명시)
-        String category = jwtUtil.getCategory(headerValue);
+            UserDetails customUserDetails = userDetailsService.loadUserByUsername(username);
 
-        if (!category.equals(jwtAccessCategory)) {
-            //response status code
-            log.error("JWT 이 엑세스 토큰이 아닙니다");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            //response body
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-            return;
+            filterChain.doFilter(request, response);
+        }  catch (ExpiredJwtException e) {
+            sendErrorResponse(response, "[Unauthorized] 인증 토큰이 만료 되었습니다.");
+        } catch (SignatureException e) {
+            sendErrorResponse(response, "[Unauthorized] 인증 토큰이 유효하지 않습니다.");
         }
 
-        String accessToken = headerValue;
 
-        log.trace("1차 필터(JWT Filter) : accessToken이 만료되지 않았습니다.");
-        // 헤더 값이 access 이며, 만료되지 않았을 때
-        String username = jwtUtil.getUsername(accessToken);
-        String role = jwtUtil.getRole(accessToken);
-        log.trace("1차 필터(JWT Filter) : jwt의 값 username = {}",username);
-        log.trace("1차 필터(JWT Filter) : jwt의 값 role = {}",role);
+    }
 
+    private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.UNAUTHORIZED.toString(),
+                message
+        );
+        String jsonResponse = mapper.writeValueAsString(errorResponse);
 
-
-        UserDetails customUserDetails = userDetailsService.loadUserByUsername(username);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
-
-
+        response.getWriter().write(jsonResponse);
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 }

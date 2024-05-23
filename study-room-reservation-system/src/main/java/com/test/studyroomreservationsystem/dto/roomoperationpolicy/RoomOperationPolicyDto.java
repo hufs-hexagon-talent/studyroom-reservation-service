@@ -8,21 +8,23 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 
 @Getter
-@NoArgsConstructor
 @Builder
 public class RoomOperationPolicyDto {
-    private LocalTime operationStartTime;
-    private LocalTime operationEndTime;
-    private Integer eachMaxMinute;
+    private final Long policyId;
+    private final LocalTime operationStartTime;
+    private final LocalTime operationEndTime;
+    private final Integer eachMaxMinute;
 
-
-    public RoomOperationPolicyDto(LocalTime operationStartTime, LocalTime operationEndTime, Integer eachMaxMinute) {
+    public RoomOperationPolicyDto(Long policyId, LocalTime operationStartTime, LocalTime operationEndTime, Integer eachMaxMinute) {
+        this.policyId = policyId;
         this.operationStartTime = operationStartTime;
         this.operationEndTime = operationEndTime;
         this.eachMaxMinute = eachMaxMinute;
     }
+
     public RoomOperationPolicy toEntity() {
         return RoomOperationPolicy.builder()
+                .roomOperationPolicyId(policyId)
                 .operationStartTime(operationStartTime)
                 .operationEndTime(operationEndTime)
                 .eachMaxMinute(eachMaxMinute)
