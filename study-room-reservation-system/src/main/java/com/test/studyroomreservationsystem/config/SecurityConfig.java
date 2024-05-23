@@ -1,11 +1,12 @@
 package com.test.studyroomreservationsystem.config;
 
 import com.test.studyroomreservationsystem.security.CustomUserDetailsService;
+import com.test.studyroomreservationsystem.security.JwtAccessDeniedHandler;
 import com.test.studyroomreservationsystem.security.jwt.JWTFilter;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
-//import com.test.studyroomreservationsystem.security.jwt.LoginFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +18,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -37,6 +38,11 @@ public class SecurityConfig {
     private final Long accessTokenExpiration;
     private final Long refreshTokenExpiration;
     private final CustomUserDetailsService userDetailsService;
+    @Qualifier("jwtAuthenticationEntryPoint")
+    private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
                           JWTUtil jwtUtil,
                           @Value("${spring.jwt.access.category}") String jwtAccessCategory,
@@ -44,7 +50,9 @@ public class SecurityConfig {
                           @Value("${spring.jwt.header}") String jwtHeader,
                           @Value("${spring.jwt.access.expiration}") Long accessTokenExpiration,
                           @Value("${spring.jwt.refresh.expiration}") Long refreshTokenExpiration,
-                          CustomUserDetailsService userDetailsService
+                          CustomUserDetailsService userDetailsService,
+                          AuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler
+
     ) {
 
         this.authenticationConfiguration = authenticationConfiguration;
@@ -56,6 +64,8 @@ public class SecurityConfig {
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
         this.userDetailsService = userDetailsService;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
 
@@ -148,8 +158,13 @@ public class SecurityConfig {
                             jwtHeader,
                             jwtAccessCategory,
                             userDetailsService), UsernamePasswordAuthenticationFilter.class);
-//        http
-//                .addFilter(loginFilter);
+
+        // 예외 처리
+        http
+                .exceptionHandling((exception) ->
+                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint) // customEntryPoint
+                                .accessDeniedHandler(jwtAccessDeniedHandler));          // customAccessDeniedHandler
+
 
         http
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션을 사용하지 않음

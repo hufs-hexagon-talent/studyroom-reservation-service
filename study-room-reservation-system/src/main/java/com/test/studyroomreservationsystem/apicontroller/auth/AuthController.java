@@ -33,10 +33,11 @@ public class AuthController {
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (AuthenticationServiceException e) {
-            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.UNAUTHORIZED.getReasonPhrase(), "Invalid credentials");
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.UNAUTHORIZED.toString(), "Invalid credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
-        } catch (AuthenticationException e) {
-            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Error parsing login request");
+        }
+        catch (AuthenticationException e) {
+            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.BAD_REQUEST.toString(), "Error parsing login request");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
         }
     }
