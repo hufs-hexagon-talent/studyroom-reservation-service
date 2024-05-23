@@ -13,7 +13,7 @@ import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.RoomNotFoundException;
-import com.test.studyroomreservationsystem.exception.RoomPolicyNotFoundException;
+import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
