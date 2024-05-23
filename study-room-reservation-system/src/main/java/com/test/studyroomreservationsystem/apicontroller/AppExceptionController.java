@@ -1,30 +1,47 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
+import com.test.studyroomreservationsystem.exception.reservation.PastReservationTimeException;
+import com.test.studyroomreservationsystem.exception.reservation.ReservationNotPossibleException;
+import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 @RestControllerAdvice
 public class AppExceptionController {
-
-    @ExceptionHandler(value = AuthenticationException.class)
-    public ResponseEntity<ErrorResponseDto> handleAuthenticationException(AuthenticationException ex) {
-        ErrorResponseDto errorResponse
-                = new ErrorResponseDto(HttpStatus.UNAUTHORIZED.toString(), "[Unauthorized] API에 접근하려면 인증이 필요합니다.");
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(RoomPolicyNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleRoomNotOperatingException(ReservationNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                "[Not operating]: " + ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleAuthenticationServiceException(AuthenticationServiceException ex) {
+    @ExceptionHandler(OverlappingReservationException.class)
+    public ResponseEntity<ErrorResponseDto> handleOverlappingReservationException(ReservationNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                "[Existing reservations]: " + ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(PastReservationTimeException.class)
+    public ResponseEntity<ErrorResponseDto> handlePastReservationTimeException(ReservationNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                "[Unable to reserve]: " + ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+        @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthenticationServiceException(Exception ex) {
         ErrorResponseDto errorResponse
                 = new ErrorResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "[Internal Server Error] 서비스에 문제가 발생했습니다.");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }
 
 /*
