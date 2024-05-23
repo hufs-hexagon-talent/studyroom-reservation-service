@@ -5,10 +5,9 @@ import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.reservation.*;
-import com.test.studyroomreservationsystem.exception.OverlappingReservationException;
-import com.test.studyroomreservationsystem.exception.ReservationHistoryNotFoundException;
-import com.test.studyroomreservationsystem.exception.ReservationNotFoundException;
-import com.test.studyroomreservationsystem.exception.RoomNotOperatingException;
+import com.test.studyroomreservationsystem.exception.*;
+import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
+import com.test.studyroomreservationsystem.exception.reservation.PastReservationTimeException;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.service.UserService;
@@ -133,7 +132,6 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDateTime startDateTime = reservation.getReservationStartTime();
         LocalDateTime endDateTime = reservation.getReservationEndTime();
 
-        // todo : 검증 하기
         validateRoomAvailability(roomId,startDateTime,endDateTime);
 
         reservation.setRoom(roomService.findRoomById(roomId));
@@ -168,18 +166,21 @@ public class ReservationServiceImpl implements ReservationService {
 
     private void validateRoomAvailability(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         boolean isOperating = isOperating(roomId, startDateTime, endDateTime);
-        boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
 
+        boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
+        boolean isFutureTime = isFutureTime(startDateTime, endDateTime);
         // 예약 가능 여부 확인 로직
-        boolean isRoomAvailable = isOperating && hasNoOverlappingReservations;
+        boolean isRoomAvailable = hasNoOverlappingReservations && isFutureTime;
 
         if (!isRoomAvailable) {
             // 예약 불가
-            if (!isOperating) {
-                throw new RoomNotOperatingException(roomId, startDateTime, endDateTime);
-            } else if (!hasNoOverlappingReservations) {
+            if (!hasNoOverlappingReservations) {
                 throw new OverlappingReservationException(roomId, startDateTime, endDateTime);
+            } else if (!isFutureTime) {
+                throw new PastReservationTimeException(startDateTime, endDateTime);
             }
+            // todo : 과거 시간 인 경우 예약 불가
+
 //            else if () {
 //
 //            }
@@ -196,8 +197,9 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDao.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
     }
 
-//    private boolean isOperating(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-//        // 예약
-//        return roomService.isRoomAvailable(roomId, startDateTime, endDateTime);
-//    }
+    private boolean isFutureTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // 과거 시간이 아닌지 확인
+        LocalDateTime now = LocalDateTime.now();
+        return startDateTime.isAfter(now) && endDateTime.isAfter(now);
+    }
 }
