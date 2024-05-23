@@ -28,7 +28,7 @@ public class AdminScheduleController {
             description = "스케쥴 생성(상세설명 추후 추가)",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PostMapping("/schedule")
+    @PostMapping()
      ResponseEntity<ApiResponse<RoomOperationPolicyScheduleDto>> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
 
         RoomOperationPolicySchedule createdSchedule

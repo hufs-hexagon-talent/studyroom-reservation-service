@@ -180,6 +180,9 @@ public class ReservationServiceImpl implements ReservationService {
             } else if (!hasNoOverlappingReservations) {
                 throw new OverlappingReservationException(roomId, startDateTime, endDateTime);
             }
+//            else if () {
+//
+//            }
         }
     }
 
@@ -193,4 +196,8 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDao.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
     }
 
+//    private boolean isOperating(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+//        // 예약
+//        return roomService.isRoomAvailable(roomId, startDateTime, endDateTime);
+//    }
 }

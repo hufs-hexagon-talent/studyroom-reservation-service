@@ -7,9 +7,10 @@ import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
+import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
-import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
+import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.RoomPolicyNotFoundException;
@@ -100,18 +101,18 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomsResponseDto> getRoomsReservationsByDate(LocalDate date) {
+    public List<RoomsReservationResponseDto> getRoomsReservationsByDate(LocalDate date) {
         List<Room> rooms = roomDao.findAll();
-        ArrayList<RoomsResponseDto> responseList = new ArrayList<>();
+        ArrayList<RoomsReservationResponseDto> responseList = new ArrayList<>();
 
         for (Room room : rooms) {
-            Long policyId = null;
-            List<RoomsResponseDto.TimeRange> reservationTimes = new ArrayList<>();
+            RoomOperationPolicy policy = null;
+            List<RoomsReservationResponseDto.TimeRange> reservationTimes = new ArrayList<>();
             try {
                 RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
                         .orElseThrow(() -> new RoomPolicyNotFoundException(room.getRoomId(), date));
 
-                policyId = schedule.getRoomOperationPolicy().getRoomOperationPolicyId();
+                policy = schedule.getRoomOperationPolicy();
                 LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
                 LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
                 LocalDateTime operationStartDateTime = date.atTime(operationStartTime);
@@ -120,13 +121,13 @@ public class RoomServiceImpl implements RoomService {
                 // 각 룸의 예약들
                 List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
                 reservationTimes = reservations.stream()
-                        .map(reservation -> new RoomsResponseDto.TimeRange(reservation.getReservationStartTime(), reservation.getReservationEndTime()))
+                        .map(reservation -> new RoomsReservationResponseDto.TimeRange(reservation.getReservationId(),reservation.getReservationStartTime(), reservation.getReservationEndTime()))
                         .toList();
                 log.trace("{}",reservationTimes);
             } catch (RoomPolicyNotFoundException e) {
                 // 정책이 없을 때는 policyId가 null로 유지됨
             }
-            responseList.add(new RoomsResponseDto(room.getRoomId(),room.getRoomName(),  policyId ,reservationTimes));
+            responseList.add(new RoomsReservationResponseDto(room.getRoomId(),room.getRoomName(),policy  ,reservationTimes));
         }
         return responseList;
     }
@@ -137,25 +138,18 @@ public class RoomServiceImpl implements RoomService {
         List<RoomsResponseDto> responseList = new ArrayList<>();
 
         for (Room room : rooms) {
-            Long policyId = null;
-            List<RoomsResponseDto.TimeRange> policyTimes = new ArrayList<>();
+            RoomOperationPolicy policy = null;
 
             try {
                 RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
                         .orElseThrow(() -> new RoomPolicyNotFoundException(room.getRoomId(), date));
 
-                policyId = schedule.getRoomOperationPolicy().getRoomOperationPolicyId();
-                LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
-                LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
-                LocalDateTime operationStartDateTime = date.atTime(operationStartTime);
-                LocalDateTime operationEndDateTime = date.atTime(operationEndTime);
-
-
-                policyTimes = List.of(new RoomsResponseDto.TimeRange(operationStartDateTime, operationEndDateTime));
+                policy = schedule.getRoomOperationPolicy();
+//                policyTimes = new RoomsResponseDto.TimeRange(operationStartDateTime, operationEndDateTime);
             } catch (RoomPolicyNotFoundException e) {
             // 정책이 없을 때는 policyId가 null로 유지됨
         }
-        responseList.add(new RoomsResponseDto(room.getRoomId(),room.getRoomName(),  policyId ,policyTimes));
+        responseList.add(new RoomsResponseDto(room.getRoomId(),room.getRoomName(), policy ));
     }
         return responseList;
     }
