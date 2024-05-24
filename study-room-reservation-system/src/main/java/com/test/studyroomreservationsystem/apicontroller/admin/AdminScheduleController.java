@@ -2,7 +2,8 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.ApiResponse;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,20 +30,19 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping()
-     ResponseEntity<ApiResponse<RoomOperationPolicyScheduleDto>> getScheduleById(@RequestBody RoomOperationPolicyScheduleDto scheduleDto) {
+     ResponseEntity<ApiResponse<ScheduleResponseDto>> getScheduleById(@RequestBody ScheduleRequestDto requestDto) {
 
         RoomOperationPolicySchedule createdSchedule
-                = scheduleService.createSchedule(scheduleDto);
+                = scheduleService.createSchedule(requestDto);
 
-        RoomOperationPolicyScheduleDto createdScheduleDto
+        ScheduleResponseDto createdScheduleDto
                 = scheduleService.dtoFrom(createdSchedule);
 
-        ApiResponse<RoomOperationPolicyScheduleDto> response = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", createdScheduleDto);
+        ApiResponse<ScheduleResponseDto> response
+                = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", createdScheduleDto);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-    // todo : 날짜를 주어지면 해당 날짜의 모든 방의 정책을 조회
-
 
 
     @Operation(summary = "❌[관리자] schedule 조회",
@@ -50,12 +50,12 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/schedule")
-     ResponseEntity<RoomOperationPolicyScheduleDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
+     ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
 
         RoomOperationPolicySchedule foundSchedule
                 = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
 
-        RoomOperationPolicyScheduleDto foundScheduleDto
+        ScheduleResponseDto foundScheduleDto
                 = scheduleService.dtoFrom(foundSchedule);
 
         return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
@@ -67,14 +67,14 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PutMapping("/schedule")
-    ResponseEntity<RoomOperationPolicyScheduleDto>
+    ResponseEntity<ScheduleResponseDto>
     updateSchedule(@PathVariable Long roomOperationPolicyScheduleId,
                    @RequestBody RoomOperationPolicyScheduleUpdateDto scheduleUpdateDto) {
 
         RoomOperationPolicySchedule updatedSchedule
                 = scheduleService.updateSchedule(roomOperationPolicyScheduleId, scheduleUpdateDto);
 
-        RoomOperationPolicyScheduleDto updatedScheduleDto
+        ScheduleResponseDto updatedScheduleDto
                 = scheduleService.dtoFrom(updatedSchedule);
 
         return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
