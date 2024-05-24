@@ -4,7 +4,8 @@ import com.test.studyroomreservationsystem.dao.RoomDao;
 import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
+import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
@@ -41,16 +42,16 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
 
 
     @Override
-    public RoomOperationPolicySchedule createSchedule(RoomOperationPolicyScheduleDto scheduleDto) {
-        Long roomOperationPolicyId = scheduleDto.getRoomOperationPolicyId();
-        Long roomId = scheduleDto.getRoomId();
-        LocalDate date = scheduleDto.getPolicyApplicationDate();
+    public RoomOperationPolicySchedule createSchedule(ScheduleRequestDto requestDto) {
+        Long roomOperationPolicyId = requestDto.getRoomOperationPolicyId();
+        Long roomId = requestDto.getRoomId();
+        LocalDate date = requestDto.getPolicyApplicationDate();
         // 어떤 날에 대한 스케쥴(운영시간)을 만들때, 그 날에 부여된 스케쥴이 없어야만 함
         if (isExistSchedule(roomId, date)) {
         // 예외 처리
             throw new ScheduleAlreadyExistException(roomId,date);
         }
-        RoomOperationPolicySchedule scheduleEntity = scheduleDto.toEntity(
+        RoomOperationPolicySchedule scheduleEntity = requestDto.toEntity(
                         roomService.findRoomById(roomId),
                         policyService.findPolicyById(roomOperationPolicyId)
         );
@@ -71,6 +72,8 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         scheduleDao.deleteById(roomScheduleId);
     }
 
+
+    // todo : 변경
     @Override
     public RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto) {
         RoomOperationPolicySchedule schedule = findScheduleById(scheduleId);

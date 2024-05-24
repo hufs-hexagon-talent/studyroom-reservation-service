@@ -12,13 +12,15 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @Builder
-public class RoomOperationPolicyScheduleDto {
+public class ScheduleResponseDto {
+    private Long roomOperationPolicyScheduleId;
     private Long roomId;
     private Long roomOperationPolicyId;
     private LocalDate policyApplicationDate;
 
 
-    public RoomOperationPolicyScheduleDto(Long roomId, Long roomOperationPolicyId, LocalDate policyApplicationDate) {
+    public ScheduleResponseDto(Long roomOperationPolicyScheduleId, Long roomId, Long roomOperationPolicyId, LocalDate policyApplicationDate) {
+        this.roomOperationPolicyScheduleId = roomOperationPolicyScheduleId;
         this.roomId = roomId;
         this.roomOperationPolicyId = roomOperationPolicyId;
         this.policyApplicationDate = policyApplicationDate;
@@ -26,6 +28,7 @@ public class RoomOperationPolicyScheduleDto {
 
     public RoomOperationPolicySchedule toEntity(Room room ,RoomOperationPolicy roomOperationPolicy) {
         return RoomOperationPolicySchedule.builder()
+                .roomOperationPolicyScheduleId(roomOperationPolicyScheduleId)
                 .room(room)
                 .roomOperationPolicy(roomOperationPolicy)
                 .policyApplicationDate(policyApplicationDate)
