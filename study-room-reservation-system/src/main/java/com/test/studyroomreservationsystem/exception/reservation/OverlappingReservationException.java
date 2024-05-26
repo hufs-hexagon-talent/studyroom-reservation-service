@@ -1,18 +1,19 @@
 package com.test.studyroomreservationsystem.exception.reservation;
 
+import com.test.studyroomreservationsystem.domain.entity.Room;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
 public class OverlappingReservationException extends RuntimeException implements ReservationNotPossibleException {
-    private final Long roomId;
+    private final Room room;
     private final LocalDateTime startDateTime;
     private final LocalDateTime endDateTime;
 
-    public OverlappingReservationException(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        super(" ID가 " + roomId + "인 방의 [" + startDateTime + " ~ " + endDateTime+"] 시간에 예약이 이미 존재합니다.");
-        this.roomId = roomId;
+    public OverlappingReservationException(Room room, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        super("현재 " + room.getRoomName() + "에 선택한 시간에 예약이 이미 존재합니다.");
+        this.room = room;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }
