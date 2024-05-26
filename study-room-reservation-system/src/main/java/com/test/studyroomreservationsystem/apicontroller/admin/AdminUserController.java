@@ -1,11 +1,15 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.ApiResponse;
-import com.test.studyroomreservationsystem.dto.ApiResponseList;
+import com.test.studyroomreservationsystem.dto.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Tag(name = "User", description = "사용자 관련 API")
@@ -28,15 +33,38 @@ public class AdminUserController {
     }
 
     // todo :  request param -> json request
-    @Operation(summary = "❌ [관리자] 특정 회원 정보 조회",
+    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
             description = "username, password, isAdmin, name, serial 반환",
-            security = {@SecurityRequirement(name = "JWT")}
+            security = {@SecurityRequirement(name = "JWT")},
+            responses = {
+                    @ApiResponse(responseCode = "201",
+                            description = "조회 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserInfoResponseDto.class)
+                            )),
+                    @ApiResponse(responseCode = "401",
+                            description = "인증 요구",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                            )),
+                    @ApiResponse(responseCode = "403",
+                            description = "권한 부족",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponseDto.class)
+                            ))
+
+            }
     )
-    @GetMapping("/user")
-    public ResponseEntity<UserInfoResponseDto> getUserById(@PathVariable Long userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> getUserById(@PathVariable Long userId) {
         User foundUser = userService.findUserById(userId);
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        ApiResponseDto<UserInfoResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", user);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "✅ [관리자] 모든 회원 정보 조회",
@@ -44,28 +72,30 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping
-    public ResponseEntity<ApiResponse<ApiResponseList<UserInfoResponseDto>>> getAllUsers() {
+    public ResponseEntity<ApiResponseDto<ApiResponseListDto<UserInfoResponseDto>>> getAllUsers() {
         List<UserInfoResponseDto> users = userService.findAllUsers()
                 .stream().map(userService::dtoFrom)
                 .collect(Collectors.toList());
 
-        ApiResponseList<UserInfoResponseDto> wrapped = new ApiResponseList<>(users);
+        ApiResponseListDto<UserInfoResponseDto> wrapped = new ApiResponseListDto<>(users);
 
-        ApiResponse<ApiResponseList<UserInfoResponseDto>> response
-                = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+        ApiResponseDto<ApiResponseListDto<UserInfoResponseDto>> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
 
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     // todo :  request param -> json request
-    @Operation(summary = "❌ [관리자] 특정 회원 삭제",
+    @Operation(summary = "✅ [관리자] 특정 회원 삭제",
             description = "해당 user id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @DeleteMapping("/user")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<ApiResponseDto<Objects>> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ApiResponseDto<Objects> response
+                = new ApiResponseDto<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
 
     }
 

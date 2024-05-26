@@ -49,8 +49,8 @@ logging:
                             TRACE
                     apicontroller:
                             TRACE
-#                    service:
-#                        impl: TRACE
+                    service:
+                        impl: TRACE
 
 #        org:
 #            springframework:

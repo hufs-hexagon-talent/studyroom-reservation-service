@@ -5,7 +5,7 @@ import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
-import com.test.studyroomreservationsystem.exception.RoomOperationPolicyNotFoundException;
+import com.test.studyroomreservationsystem.exception.notfound.PolicyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
     @Override
     public RoomOperationPolicy findPolicyById(Long policyId) {
         return policyDao.findById(policyId)
-                .orElseThrow(() -> new RoomOperationPolicyNotFoundException(policyId));
+                .orElseThrow(() -> new PolicyNotFoundException(policyId));
     }
 
     @Override
@@ -52,6 +52,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
 
     @Override
     public void deletePolicy(Long policyId) {
+        policyDao.findById(policyId).orElseThrow(() -> new PolicyNotFoundException(policyId));
         policyDao.deleteById(policyId);
     }
 

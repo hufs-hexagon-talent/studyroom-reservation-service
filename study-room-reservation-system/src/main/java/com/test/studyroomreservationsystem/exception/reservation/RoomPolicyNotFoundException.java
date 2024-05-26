@@ -1,16 +1,17 @@
 package com.test.studyroomreservationsystem.exception.reservation;
 
+import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.exception.reservation.ReservationNotPossibleException;
+import com.test.studyroomreservationsystem.service.UserService;
 
 import java.time.LocalDate;
 
 public class RoomPolicyNotFoundException extends RuntimeException implements ReservationNotPossibleException {
-    private final Long roomId;
+    private final Room room;
     private final LocalDate date;
-
-    public RoomPolicyNotFoundException(Long roomId, LocalDate date) {
-        super("Policy Not Found : ID가 " + roomId + "인 방의 " + date + " 날짜에 대한 운영 정책을 찾을 수 없습니다.");
-        this.roomId = roomId;
+    public RoomPolicyNotFoundException(Room room, LocalDate date) {
+        super("현재 " + room.getRoomName() + "은 " + date + " 에 운영을 하지 않습니다.");
+        this.room = room;
         this.date = date;
     }
 

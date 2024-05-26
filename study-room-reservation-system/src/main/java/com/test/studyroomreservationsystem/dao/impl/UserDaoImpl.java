@@ -37,9 +37,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
-    }
+    public Boolean existsByUsername(String username) {return userRepository.existsByUsername(username);}
+
+    @Override
+    public Boolean existsBySerial(String serial) {return userRepository.existsBySerial(serial);}
 
     @Override
     public List<User> findAll() {

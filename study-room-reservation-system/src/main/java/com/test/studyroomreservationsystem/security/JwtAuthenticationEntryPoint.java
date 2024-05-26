@@ -22,7 +22,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.UNAUTHORIZED.toString(),
-                "[Unauthorized] API에 접근하려면 인증이 필요합니다."
+                "API에 접근하려면 인증이 필요합니다."
         );
 
         ObjectMapper mapper = new ObjectMapper();

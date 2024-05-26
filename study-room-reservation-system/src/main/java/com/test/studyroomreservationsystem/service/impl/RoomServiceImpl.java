@@ -11,8 +11,9 @@ import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationRespo
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
+import com.test.studyroomreservationsystem.exception.reservation.OperationClosedException;
 import com.test.studyroomreservationsystem.service.RoomService;
-import com.test.studyroomreservationsystem.exception.RoomNotFoundException;
+import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,11 +72,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void deleteRoom(Long roomId) {
+        roomDao.findById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
         roomDao.deleteById(roomId);
     }
 
-    @Override // 룸이 운영시간인지?
-    public boolean isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    @Override // 룸이 운영을 하는지? && 운영이 종료 되었는지?
+    public void isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
 
         Room room = findRoomById(roomId);
         LocalDate date = startDateTime.toLocalDate();
@@ -84,7 +86,8 @@ public class RoomServiceImpl implements RoomService {
         RoomOperationPolicySchedule schedule
                 = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
                 .orElseThrow(
-                        () -> new RoomPolicyNotFoundException(roomId, date)
+                        // 운영이 하지 않음 (운영 정책 없음)
+                        () -> new RoomPolicyNotFoundException(room, date)
                 );
 
 
@@ -96,8 +99,10 @@ public class RoomServiceImpl implements RoomService {
         LocalTime reservationStartTime = startDateTime.toLocalTime();
         LocalTime reservationEndTime = endDateTime.toLocalTime();
 
+        if (operationStartTime.isAfter(reservationStartTime) && operationEndTime.isBefore(reservationEndTime)) {
+            throw new OperationClosedException(room, operationStartTime, operationEndTime);
+        }
 
-        return !operationStartTime.isAfter(reservationStartTime) && !operationEndTime.isBefore(reservationEndTime);
     }
 
     @Override
@@ -110,7 +115,7 @@ public class RoomServiceImpl implements RoomService {
             List<RoomsReservationResponseDto.TimeRange> reservationTimes = new ArrayList<>();
             try {
                 RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
-                        .orElseThrow(() -> new RoomPolicyNotFoundException(room.getRoomId(), date));
+                        .orElseThrow(() -> new RoomPolicyNotFoundException(room, date));
 
                 policy = schedule.getRoomOperationPolicy();
                 LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
@@ -142,7 +147,7 @@ public class RoomServiceImpl implements RoomService {
 
             try {
                 RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
-                        .orElseThrow(() -> new RoomPolicyNotFoundException(room.getRoomId(), date));
+                        .orElseThrow(() -> new RoomPolicyNotFoundException(room, date));
 
                 policy = schedule.getRoomOperationPolicy();
 //                policyTimes = new RoomsResponseDto.TimeRange(operationStartDateTime, operationEndDateTime);

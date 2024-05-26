@@ -1,6 +1,6 @@
-package com.test.studyroomreservationsystem.exception;
+package com.test.studyroomreservationsystem.exception.notfound;
 
-public class RoomNotFoundException extends RuntimeException {
+public class RoomNotFoundException extends RuntimeException implements NotFoundException{
     public RoomNotFoundException(Long roomId) {
         super("Room not found with id: " + roomId);
     }

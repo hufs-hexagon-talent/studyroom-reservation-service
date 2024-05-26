@@ -26,7 +26,6 @@ public class CustomUserDetails implements UserDetails {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                log.trace("[디버깅용 테스트] : {}",user.getIsAdmin());
                 return "ROLE_" + (user.getIsAdmin() ? "ADMIN" : "USER");
             }
         });
