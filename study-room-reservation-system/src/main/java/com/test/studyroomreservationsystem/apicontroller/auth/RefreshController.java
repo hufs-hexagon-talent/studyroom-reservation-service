@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
 
-import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.RefreshRequestDto;
@@ -80,7 +80,7 @@ public class RefreshController {
         String accessToken = jwtUtil.createAccessJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
         String refreshToken = jwtUtil.createRefreshJwt(jwtRefreshCategory, username, refreshTokenExpiration * 1000);
         LoginResponseDto loginResponse = new LoginResponseDto(accessToken, refreshToken);
-        ApiResponse<LoginResponseDto> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 발급 되었습니다.", loginResponse);
+        ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 발급 되었습니다.", loginResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
 
-import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginRequestDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -32,7 +31,7 @@ public class AuthController {
 
         try {
             LoginResponseDto loginResponse = authService.authenticate(loginRequestDto);
-            ApiResponse<LoginResponseDto> response = new ApiResponse<>(HttpStatus.OK.toString(), "로그인을 성공 하였습니다.", loginResponse);
+            ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "로그인을 성공 하였습니다.", loginResponse);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 

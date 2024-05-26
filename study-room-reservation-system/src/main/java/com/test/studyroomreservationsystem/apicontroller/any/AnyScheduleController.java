@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.any;
 
-import com.test.studyroomreservationsystem.dto.ApiResponse;
-import com.test.studyroomreservationsystem.dto.ApiResponseList;
+import com.test.studyroomreservationsystem.dto.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
 import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,11 +27,11 @@ public class AnyScheduleController {
 //            security = {@SecurityRequirement(name = "")}
     )
     @GetMapping("/available-dates")
-    public ResponseEntity<ApiResponse<ApiResponseList<LocalDate>>> getAvailableDatesFromToday() {
+    public ResponseEntity<ApiResponseDto<ApiResponseListDto<LocalDate>>> getAvailableDatesFromToday() {
         List<LocalDate> availableDates = scheduleService.getAvailableDatesFromToday();
 
-        ApiResponseList<LocalDate> wrapped = new ApiResponseList<>(availableDates);
-        ApiResponse<ApiResponseList<LocalDate>> response = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+        ApiResponseListDto<LocalDate> wrapped = new ApiResponseListDto<>(availableDates);
+        ApiResponseDto<ApiResponseListDto<LocalDate>> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

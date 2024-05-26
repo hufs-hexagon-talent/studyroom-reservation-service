@@ -148,7 +148,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = findReservationById(reservationId);
         User user = currentUser.getUser();
         if (!reservation.getUser().getUserId().equals(user.getUserId())) {
-            throw new UnauthorizedException();
+            throw new AccessDeniedException();
         }
         reservationDao.deleteById(reservationId);
     }

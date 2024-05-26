@@ -4,10 +4,10 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class ApiResponseList<T> {
+public class ApiResponseListDto<T> {
         private List<T> items;
 
-        public ApiResponseList(List<T> items) {
+        public ApiResponseListDto(List<T> items) {
             this.items = items;
         }
 

@@ -72,6 +72,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void deleteRoom(Long roomId) {
+        roomDao.findById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
         roomDao.deleteById(roomId);
     }
 

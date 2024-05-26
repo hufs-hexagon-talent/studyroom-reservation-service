@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.dto.ApiResponse;
+import com.test.studyroomreservationsystem.dto.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
@@ -30,7 +30,7 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping()
-     ResponseEntity<ApiResponse<ScheduleResponseDto>> getScheduleById(@RequestBody ScheduleRequestDto requestDto) {
+     ResponseEntity<ApiResponseDto<ScheduleResponseDto>> getScheduleById(@RequestBody ScheduleRequestDto requestDto) {
 
         RoomOperationPolicySchedule createdSchedule
                 = scheduleService.createSchedule(requestDto);
@@ -38,8 +38,8 @@ public class AdminScheduleController {
         ScheduleResponseDto createdScheduleDto
                 = scheduleService.dtoFrom(createdSchedule);
 
-        ApiResponse<ScheduleResponseDto> response
-                = new ApiResponse<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", createdScheduleDto);
+        ApiResponseDto<ScheduleResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", createdScheduleDto);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -50,15 +50,15 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{roomOperationPolicyScheduleId}")
-     ResponseEntity<ApiResponse<ScheduleResponseDto>> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
+     ResponseEntity<ApiResponseDto<ScheduleResponseDto>> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
 
         RoomOperationPolicySchedule foundSchedule
                 = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
 
         ScheduleResponseDto foundScheduleDto
                 = scheduleService.dtoFrom(foundSchedule);
-        ApiResponse<ScheduleResponseDto> response
-                = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", foundScheduleDto);
+        ApiResponseDto<ScheduleResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", foundScheduleDto);
 
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
@@ -87,10 +87,10 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{roomOperationPolicyScheduleId}")
-     ResponseEntity<ApiResponse<Void>> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
+     ResponseEntity<ApiResponseDto<Void>> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
         scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
-        ApiResponse<Void> response
-                = new ApiResponse<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
+        ApiResponseDto<Void> response
+                = new ApiResponseDto<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }

@@ -2,10 +2,8 @@ package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
 import com.test.studyroomreservationsystem.exception.ScheduleAlreadyExistException;
-import com.test.studyroomreservationsystem.exception.notfound.NotFoundException;
-import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
-import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
-import com.test.studyroomreservationsystem.exception.UnauthorizedException;
+import com.test.studyroomreservationsystem.exception.notfound.*;
+import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
 import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleException;
@@ -42,6 +40,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
     @ExceptionHandler(OperationClosedException.class)
     public ResponseEntity<ErrorResponseDto> handleOperationClosedException(ReservationNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -50,6 +49,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
+
     @ExceptionHandler(OverlappingReservationException.class)
     public ResponseEntity<ErrorResponseDto> handleOverlappingReservationException(ReservationNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -58,6 +58,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(PastReservationTimeException.class)
     public ResponseEntity<ErrorResponseDto> handlePastReservationTimeException(ReservationNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -66,8 +67,8 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponseDto> handleUnauthorizedException(UnauthorizedException ex) {
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.FORBIDDEN.toString(),
                   ex.getMessage()
@@ -83,6 +84,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
     @ExceptionHandler(ScheduleNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleScheduleNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -91,6 +93,23 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+    @ExceptionHandler(PolicyNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handlePolicyNotFoundException(NotFoundException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    @ExceptionHandler(RoomNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleRoomNotFoundException(NotFoundException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
 
     @ExceptionHandler(ScheduleAlreadyExistException.class)
     public ResponseEntity<ErrorResponseDto> handleScheduleAlreadyExistException(ScheduleAlreadyExistException ex) {
