@@ -5,14 +5,13 @@ import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
 import com.test.studyroomreservationsystem.service.RoomService;
-import com.test.studyroomreservationsystem.exception.RoomNotFoundException;
+import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.ScheduleAlreadyExistException;
-import com.test.studyroomreservationsystem.exception.ScheduleNotFoundException;
+import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

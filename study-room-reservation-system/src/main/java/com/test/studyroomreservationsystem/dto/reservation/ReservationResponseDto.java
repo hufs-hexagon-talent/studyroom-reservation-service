@@ -12,13 +12,15 @@ import java.time.LocalDateTime;
 @Getter
 
 public class ReservationResponseDto {
+    private Long reservationId;
     private Long roomId;
     private String roomName;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
     @Builder
-    public ReservationResponseDto(Long roomId, String roomName, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.reservationId = reservationId;
         this.roomId = roomId;
         this.roomName = roomName;
         this.startDateTime = startDateTime;
@@ -26,6 +28,7 @@ public class ReservationResponseDto {
     }
     public Reservation toEntity(User user, Room room) {
         return Reservation.builder()
+                .reservationId(reservationId)
                 .user(user)
                 .room(room)
                 .reservationStartTime(startDateTime)

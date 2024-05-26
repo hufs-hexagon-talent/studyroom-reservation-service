@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.exception;
+package com.test.studyroomreservationsystem.exception.notfound;
 
 public class ReservationHistoryNotFoundException extends RuntimeException {
     public ReservationHistoryNotFoundException(Long userId) {

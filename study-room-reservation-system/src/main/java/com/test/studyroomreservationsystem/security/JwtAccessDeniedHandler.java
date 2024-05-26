@@ -24,7 +24,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.FORBIDDEN.toString(),
-                "[Access Denied] : API에 접근하는 데 필요한 권한이 없습니다."
+                "API에 접근하는 데 필요한 권한이 없습니다."
         );
 
         ObjectMapper mapper = new ObjectMapper();

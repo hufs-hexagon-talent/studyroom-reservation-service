@@ -45,20 +45,22 @@ public class AdminScheduleController {
     }
 
 
-    @Operation(summary = "❌[관리자] schedule 조회",
+    @Operation(summary = "✅[관리자] schedule 조회",
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @GetMapping("/schedule")
-     ResponseEntity<ScheduleResponseDto> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
+    @GetMapping("/{roomOperationPolicyScheduleId}")
+     ResponseEntity<ApiResponse<ScheduleResponseDto>> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
 
         RoomOperationPolicySchedule foundSchedule
                 = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
 
         ScheduleResponseDto foundScheduleDto
                 = scheduleService.dtoFrom(foundSchedule);
+        ApiResponse<ScheduleResponseDto> response
+                = new ApiResponse<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", foundScheduleDto);
 
-        return new ResponseEntity<>(foundScheduleDto,HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 
@@ -80,14 +82,16 @@ public class AdminScheduleController {
         return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "❌[관리자] schedule 삭제",
+    @Operation(summary = "✅[관리자] schedule 삭제",
             description = "해당 schedule id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @DeleteMapping("/schedule")
-     ResponseEntity<Void> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
+    @DeleteMapping("/{roomOperationPolicyScheduleId}")
+     ResponseEntity<ApiResponse<Void>> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
         scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ApiResponse<Void> response
+                = new ApiResponse<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 }
 

@@ -1,10 +1,9 @@
-package com.test.studyroomreservationsystem.exception;
+package com.test.studyroomreservationsystem.exception.user;
 
-import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleException;
 
 public class SerialAlreadyExistsException extends RuntimeException implements SignUpNotPossibleException {
     public SerialAlreadyExistsException(String serial) {
-        super("Serial Number '" + serial + "' 가 이미 존재합니다." );
+        super("학번 :'" + serial + "'는 이미 존재하는 학번입니다." );
     }
 
     @Override
