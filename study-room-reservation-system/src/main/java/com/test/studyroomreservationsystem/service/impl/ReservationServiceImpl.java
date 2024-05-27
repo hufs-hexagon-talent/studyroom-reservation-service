@@ -1,29 +1,35 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.ReservationDao;
+import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.*;
 import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.exception.*;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
+import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
 import com.test.studyroomreservationsystem.exception.reservation.PastReservationTimeException;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationDao reservationDao;
     private final RoomService roomService;
     private final UserService userService;
     private final RoomOperationPolicyScheduleService scheduleService;
-
     @Autowired
 
     public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
@@ -177,7 +183,7 @@ public class ReservationServiceImpl implements ReservationService {
     private void validateRoomAvailability(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         boolean isFutureTime = isFutureTime(startDateTime, endDateTime);
         boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
-
+        boolean withinMaxReservationTime = isWithinMaxReservationTime(roomId, startDateTime, endDateTime);
         // 예약시간이 과거임
         if (!isFutureTime) {
             throw new PastReservationTimeException(startDateTime, endDateTime);
@@ -190,6 +196,11 @@ public class ReservationServiceImpl implements ReservationService {
         if (!hasNoOverlappingReservations) {
             throw new OverlappingReservationException(roomService.findRoomById(roomId), startDateTime, endDateTime);
         }
+        // todo : 예약 시간(each_max_minute) 초과 !
+        if (!withinMaxReservationTime) {
+            throw new ExceedingMaxReservationTimeException();
+        }
+
     }
 
 
@@ -207,5 +218,14 @@ public class ReservationServiceImpl implements ReservationService {
         // 과거 시간이 아닌지 확인
         LocalDateTime now = LocalDateTime.now();
         return startDateTime.isAfter(now) && endDateTime.isAfter(now);
+    }
+    private boolean isWithinMaxReservationTime(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Room room = roomService.findRoomById(roomId);
+        long reservationMinutes = Duration.between(startDateTime, endDateTime).toMinutes();
+        LocalDate date = endDateTime.toLocalDate();
+        RoomOperationPolicySchedule schedule = scheduleService.findScheduleByRoomAndDate(room, date);
+        Integer eachMaxMinute = schedule.getRoomOperationPolicy().getEachMaxMinute();
+
+        return reservationMinutes <= eachMaxMinute;
     }
 }

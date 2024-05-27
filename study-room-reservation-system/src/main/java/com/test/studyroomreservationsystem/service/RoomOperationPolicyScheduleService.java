@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.service;
 
+import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
@@ -14,6 +15,7 @@ public interface RoomOperationPolicyScheduleService {
     List<RoomOperationPolicySchedule> findAllSchedule();
     RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto);
     void deleteScheduleById(Long roomScheduleId);
+    RoomOperationPolicySchedule findScheduleByRoomAndDate(Room room, LocalDate date);
     List<LocalDate> getAvailableDatesFromToday();
     default ScheduleResponseDto dtoFrom(RoomOperationPolicySchedule schedule) {
         return ScheduleResponseDto.builder()
