@@ -25,25 +25,17 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "✅ 로그인 / 엑세스 토큰 발급", description = "로그인 (JWT Access-Token) ")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) {
-        // todo : 이미 아이디 존재하는 경우 예외 핸들링
-        // todo : 아이디는 일치하나 비밀번호가 틀린 경우 예외 핸들링
-        // todo : 비밀번호 재확인 추가
-
         try {
             LoginResponseDto loginResponse = authService.authenticate(loginRequestDto);
             ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "로그인을 성공 하였습니다.", loginResponse);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
 
-        } catch (AuthenticationServiceException e) {
-
-            ErrorResponseDto errorResponse
-                    = new ErrorResponseDto(HttpStatus.UNAUTHORIZED.toString(), "Invalid credentials");
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);}
+        }
         catch (AuthenticationException e) {
 
             ErrorResponseDto errorResponse
-                    = new ErrorResponseDto(HttpStatus.PRECONDITION_FAILED.toString(), "Error parsing login request");
+                    = new ErrorResponseDto(HttpStatus.PRECONDITION_FAILED.toString(), "ID 혹은 PW를 확인해 주세요.");
             return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);}
         }
     }

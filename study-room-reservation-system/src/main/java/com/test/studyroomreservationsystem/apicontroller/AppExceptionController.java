@@ -67,6 +67,15 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
+
+    @ExceptionHandler(ExceedingMaxReservationTimeException.class)
+    public ResponseEntity<ErrorResponseDto> handleExceedingMaxReservationTimeException(ReservationNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.PRECONDITION_FAILED.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+    }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(

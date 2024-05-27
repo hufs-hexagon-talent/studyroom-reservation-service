@@ -71,6 +71,13 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         scheduleDao.deleteById(roomScheduleId);
     }
 
+    @Override
+    public RoomOperationPolicySchedule findScheduleByRoomAndDate(Room room, LocalDate date) {
+        return scheduleDao.findByRoomAndPolicyApplicationDate(room, date).orElseThrow(
+                () -> new ScheduleNotFoundException(room,date)
+        );
+    }
+
 
     // todo : 변경
     @Override
@@ -100,7 +107,6 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         LocalDate today = LocalDate.now();
         return scheduleDao.findAvailableRoomsGroupedByDate(today);
     }
-
 
 
     public boolean isExistSchedule(Long roomId , LocalDate date) {
