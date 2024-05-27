@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 
@@ -15,11 +16,11 @@ public class ReservationResponseDto {
     private Long reservationId;
     private Long roomId;
     private String roomName;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private ZonedDateTime startDateTime;
+    private ZonedDateTime endDateTime;
 
     @Builder
-    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         this.reservationId = reservationId;
         this.roomId = roomId;
         this.roomName = roomName;

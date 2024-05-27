@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Getter
@@ -25,11 +26,11 @@ public class RoomsReservationResponseDto {
     @Getter
     public static class TimeRange {
         private final Long reservationId;
-        private final LocalDateTime startDateTime;
-        private final LocalDateTime endDateTime;
+        private final ZonedDateTime startDateTime;
+        private final ZonedDateTime endDateTime;
 
 
-        public TimeRange(Long reservationId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        public TimeRange(Long reservationId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
             this.reservationId = reservationId;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;

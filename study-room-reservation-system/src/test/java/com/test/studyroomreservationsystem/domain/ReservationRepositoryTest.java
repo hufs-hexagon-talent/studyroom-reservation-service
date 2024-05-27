@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +57,7 @@ public class ReservationRepositoryTest {
 
     }
 
-    private Reservation createReservation(LocalDateTime reservationStartTime, LocalDateTime reservationEndTime) {
+    private Reservation createReservation(ZonedDateTime reservationStartTime, ZonedDateTime reservationEndTime) {
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setRoom(room);
@@ -74,8 +75,8 @@ public class ReservationRepositoryTest {
     @Test
     void save() {
         // given
-        LocalDateTime reservationStartTIme = LocalDateTime.now();
-        LocalDateTime reservationEndTIme = reservationStartTIme.plusHours(1).plusMinutes(30);
+        ZonedDateTime reservationStartTIme = ZonedDateTime.now();
+        ZonedDateTime reservationEndTIme = reservationStartTIme.plusHours(1).plusMinutes(30);
 
         Reservation reservation = createReservation(reservationStartTIme, reservationEndTIme);
 
@@ -94,8 +95,8 @@ public class ReservationRepositoryTest {
     @Test
     void testFindAllByUser() {
         // given
-        LocalDateTime reservationStartTime = LocalDateTime.now();
-        LocalDateTime reservationEndTime = reservationStartTime.plusHours(1).plusMinutes(30);
+        ZonedDateTime reservationStartTime = ZonedDateTime.now();
+        ZonedDateTime reservationEndTime = reservationStartTime.plusHours(1).plusMinutes(30);
 
         Reservation reservation1 = createReservation(reservationStartTime, reservationEndTime);
 
@@ -123,23 +124,23 @@ public class ReservationRepositoryTest {
     @Test
     void okTestFindOverlappingReservations() {
         // given
-        LocalDateTime defaultTime = LocalDateTime.now();
+        ZonedDateTime defaultTime = ZonedDateTime.now();
 
-        LocalDateTime startTime1 =  defaultTime;
-        LocalDateTime endTime1 = defaultTime.plusHours(1);
+        ZonedDateTime startTime1 =  defaultTime;
+        ZonedDateTime endTime1 = defaultTime.plusHours(1);
         Reservation overlappingReservation1 = createReservation(startTime1, endTime1);
         reservationRepository.save(overlappingReservation1);
 
-        LocalDateTime startTime2 = defaultTime.plusHours(1);
-        LocalDateTime endTime2 = defaultTime.plusHours(1).plusMinutes(30);
+        ZonedDateTime startTime2 = defaultTime.plusHours(1);
+        ZonedDateTime endTime2 = defaultTime.plusHours(1).plusMinutes(30);
         Reservation overlappingReservation2 = createReservation(startTime2, endTime2);
         reservationRepository.save(overlappingReservation2);
 
         // overlappingReservation1 : 0 시간 ~ 1시간
         // overlappingReservation2 : 1 시간 ~ 1시간 30 분
         // assertionReservation  : 0 시간 ~ 2시간
-        LocalDateTime assertionStartTime = defaultTime;
-        LocalDateTime assertionEndTime = defaultTime.plusHours(2);
+        ZonedDateTime assertionStartTime = defaultTime;
+        ZonedDateTime assertionEndTime = defaultTime.plusHours(2);
 
         // when
         List<Reservation> foundReservations
@@ -163,22 +164,22 @@ public class ReservationRepositoryTest {
         // given
 
         // nonOverlappingReservation1 : 1 시간 ~ 1 시간 30
-        LocalDateTime defaultTime = LocalDateTime.now();
+        ZonedDateTime defaultTime = ZonedDateTime.now();
 
-        LocalDateTime startTime1 = defaultTime.plusHours(1);
-        LocalDateTime endTime1 = defaultTime.plusHours(1).plusMinutes(30);
+        ZonedDateTime startTime1 = defaultTime.plusHours(1);
+        ZonedDateTime endTime1 = defaultTime.plusHours(1).plusMinutes(30);
         Reservation nonOverlappingReservation1 = createReservation(startTime1, endTime1);
         reservationRepository.save(nonOverlappingReservation1);
 
         // nonOverlappingReservation2 : 0 시간 ~ 0 시간 30
-        LocalDateTime startTime2 = defaultTime.plusHours(0);
-        LocalDateTime endTime2 = defaultTime.plusMinutes(30);
+        ZonedDateTime startTime2 = defaultTime.plusHours(0);
+        ZonedDateTime endTime2 = defaultTime.plusMinutes(30);
         Reservation nonOverlappingReservation2 = createReservation(startTime2, endTime2);
         reservationRepository.save(nonOverlappingReservation2);
 
         // assertionReservation  : 0 시간 30 ~ 1 시간
-        LocalDateTime assertionStartTime = defaultTime.plusMinutes(30);
-        LocalDateTime assertionEndTime = defaultTime.plusHours(1);
+        ZonedDateTime assertionStartTime = defaultTime.plusMinutes(30);
+        ZonedDateTime assertionEndTime = defaultTime.plusHours(1);
 
         // when
         List<Reservation> foundReservations

@@ -46,7 +46,8 @@ public class ReservationController {
                                                                           @RequestBody ReservationRequestDto reservationRequestDto) {
         Reservation createdReservation = reservationService.createReservation(reservationRequestDto, currentUser.getUser());
         ReservationResponseDto reservation = reservationService.responseDtoFrom(createdReservation);
-        ApiResponseDto<ReservationResponseDto> response = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", reservation);
+        ApiResponseDto<ReservationResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", reservation);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @Operation(summary = "✅ 자신의 최근 예약 조회",
@@ -57,7 +58,8 @@ public class ReservationController {
     ResponseEntity<ApiResponseDto<ReservationResponseDto>> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
         ReservationResponseDto reservationDto = reservationService.responseDtoFrom(recentReservation);
-        ApiResponseDto<ReservationResponseDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", reservationDto);
+        ApiResponseDto<ReservationResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", reservationDto);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -75,8 +77,10 @@ public class ReservationController {
                 .map(reservationService::responseDtoFrom)
                 .collect(Collectors.toList());
 
-        ApiResponseListDto<ReservationResponseDto> wrapped = new ApiResponseListDto<>(reservationsByUser);
-        ApiResponseDto<ApiResponseListDto<ReservationResponseDto>> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+        ApiResponseListDto<ReservationResponseDto> wrapped
+                = new ApiResponseListDto<>(reservationsByUser);
+        ApiResponseDto<ApiResponseListDto<ReservationResponseDto>> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -90,7 +94,8 @@ public class ReservationController {
     public ResponseEntity<ApiResponseDto<Void>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                                   @PathVariable Long reservationId) {
         reservationService.deleteReservation(reservationId, currentUser);
-        ApiResponseDto<Void> response = new ApiResponseDto<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
+        ApiResponseDto<Void> response
+                = new ApiResponseDto<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 
@@ -102,8 +107,10 @@ public class ReservationController {
         ResponseEntity<ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
             List<RoomsReservationResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
 
-            ApiResponseListDto<RoomsReservationResponseDto> wrapped = new ApiResponseListDto<>(responseDtoList);
-            ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+            ApiResponseListDto<RoomsReservationResponseDto> wrapped
+                    = new ApiResponseListDto<>(responseDtoList);
+            ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>> response
+                    = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 

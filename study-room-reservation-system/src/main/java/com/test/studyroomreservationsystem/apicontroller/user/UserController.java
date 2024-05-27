@@ -57,7 +57,8 @@ public class UserController {
         User createdUser = userService.signUpProcess(singUpRequestDto);
         UserInfoResponseDto user = userService.dtoFrom(createdUser);
 
-        ApiResponseDto<UserInfoResponseDto> response = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", user);
+        ApiResponseDto<UserInfoResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", user);
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
@@ -87,7 +88,8 @@ public class UserController {
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
 
-        ApiResponseDto<UserInfoResponseDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", user);
+        ApiResponseDto<UserInfoResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", user);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -96,7 +98,8 @@ public class UserController {
             security = {@SecurityRequirement(name = "JWT")})
     // todo 수정 예정
     @PatchMapping("/me")
-    public ResponseEntity<UserInfoResponseDto> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser, @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+    public ResponseEntity<UserInfoResponseDto> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                          @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
 
         User updatedUser = userService.updateUser(currentUser.getUser().getUserId(), userInfoUpdateRequestDto);
         UserInfoResponseDto user = userService.dtoFrom(updatedUser);
