@@ -47,7 +47,6 @@ public class JWTFilter extends OncePerRequestFilter {
         if (headerValue != null && headerValue.startsWith("Bearer ")) {
             headerValue = headerValue.substring(7).trim(); // "Bearer " 접두사 제거
         }
-        log.trace("Authorization : {}", headerValue);
 
         // 토큰이 없다면 다음 필터로 넘김
         if (headerValue == null) {

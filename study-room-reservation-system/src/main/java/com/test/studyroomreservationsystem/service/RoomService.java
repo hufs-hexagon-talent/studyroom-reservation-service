@@ -7,7 +7,7 @@ import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface RoomService {
@@ -17,7 +17,7 @@ public interface RoomService {
     List<Room> findAllRoom();
     Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto);
     void deleteRoom(Long roomId);
-    void isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    void isRoomAvailable(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime);
     List<RoomsReservationResponseDto> getRoomsReservationsByDate(LocalDate date);
     List<RoomsResponseDto> getRoomsPolicyByDate(LocalDate date);
 

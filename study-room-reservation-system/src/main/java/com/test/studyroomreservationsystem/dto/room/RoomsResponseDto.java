@@ -4,9 +4,6 @@ import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Builder

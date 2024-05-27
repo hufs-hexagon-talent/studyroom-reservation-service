@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,6 @@ public class RoomServiceImpl implements RoomService {
     private final ReservationDao reservationDao;
     private final RoomOperationPolicyScheduleDao scheduleDao;
     @Autowired
-
     public RoomServiceImpl(RoomDao roomDao, ReservationDao reservationDao, RoomOperationPolicyScheduleDao scheduleDao) {
         this.roomDao = roomDao;
         this.reservationDao = reservationDao;
@@ -77,7 +77,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override // 룸이 운영을 하는지? && 운영이 종료 되었는지?
-    public void isRoomAvailable(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public void isRoomAvailable(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
 
         Room room = findRoomById(roomId);
         LocalDate date = startDateTime.toLocalDate();
@@ -120,8 +120,8 @@ public class RoomServiceImpl implements RoomService {
                 policy = schedule.getRoomOperationPolicy();
                 LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
                 LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
-                LocalDateTime operationStartDateTime = date.atTime(operationStartTime);
-                LocalDateTime operationEndDateTime = date.atTime(operationEndTime);
+                ZonedDateTime operationStartDateTime = ZonedDateTime.from(date.atTime(operationStartTime));
+                ZonedDateTime operationEndDateTime = ZonedDateTime.from(date.atTime(operationEndTime));
 
                 // 각 룸의 예약들
                 List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);

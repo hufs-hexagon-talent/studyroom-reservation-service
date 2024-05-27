@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +44,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation createReservation(ReservationRequestDto reservationRequestDto, User user) {
         Long roomId = reservationRequestDto.getRoomId();
-        LocalDateTime startDateTime = reservationRequestDto.getStartDateTime();
-        LocalDateTime endDateTime = reservationRequestDto.getEndDateTime();
+        ZonedDateTime startDateTime = reservationRequestDto.getStartDateTime();
+        ZonedDateTime endDateTime = reservationRequestDto.getEndDateTime();
 
         // 검증
         validateRoomAvailability(roomId, startDateTime, endDateTime);
@@ -90,8 +91,8 @@ public class ReservationServiceImpl implements ReservationService {
 
         // todo : 수정 요망
         Long roomId = reservationRequestDto.getRoomId();
-        LocalDateTime startDateTime = reservationRequestDto.getStartDateTime();
-        LocalDateTime endDateTime = reservationRequestDto.getEndDateTime();
+        ZonedDateTime startDateTime = reservationRequestDto.getStartDateTime();
+        ZonedDateTime endDateTime = reservationRequestDto.getEndDateTime();
         // 예약 가능 여부 확인 로직
 
         validateRoomAvailability(roomId, startDateTime, endDateTime);
@@ -113,8 +114,8 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = findReservationById(reservationId);
 
         Long roomId = reservation.getRoom().getRoomId();
-        LocalDateTime startDateTime = timeDto.getStartDateTime();
-        LocalDateTime endDateTime = timeDto.getEndDateTime();
+        ZonedDateTime startDateTime = timeDto.getStartDateTime();
+        ZonedDateTime endDateTime = timeDto.getEndDateTime();
 
         // 검증
         validateRoomAvailability(roomId, startDateTime, endDateTime);
@@ -139,8 +140,8 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = findReservationById(reservationId);
 
         Long roomId = roomDto.getRoomId();
-        LocalDateTime startDateTime = reservation.getReservationStartTime();
-        LocalDateTime endDateTime = reservation.getReservationEndTime();
+        ZonedDateTime startDateTime = reservation.getReservationStartTime();
+        ZonedDateTime endDateTime = reservation.getReservationEndTime();
 
         validateRoomAvailability(roomId, startDateTime, endDateTime);
 
@@ -180,7 +181,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-    private void validateRoomAvailability(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    private void validateRoomAvailability(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         boolean isFutureTime = isFutureTime(startDateTime, endDateTime);
         boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
         boolean withinMaxReservationTime = isWithinMaxReservationTime(roomId, startDateTime, endDateTime);
@@ -204,22 +205,22 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-    private void isOperating(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    private void isOperating(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         // 룸이 운영을 하는지? && 운영이 종료 되었는지?
         roomService.isRoomAvailable(roomId, startDateTime, endDateTime);
     }
 
-    private boolean isRoomNotOverlapping(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    private boolean isRoomNotOverlapping(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         // 다른 예약과 겹치지 않는지 확인
         return reservationDao.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
     }
 
-    private boolean isFutureTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    private boolean isFutureTime(ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         // 과거 시간이 아닌지 확인
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
         return startDateTime.isAfter(now) && endDateTime.isAfter(now);
     }
-    private boolean isWithinMaxReservationTime(Long roomId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    private boolean isWithinMaxReservationTime(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
         Room room = roomService.findRoomById(roomId);
         long reservationMinutes = Duration.between(startDateTime, endDateTime).toMinutes();
         LocalDate date = endDateTime.toLocalDate();
