@@ -18,18 +18,7 @@ public class RoomsResponseDto {
         this.roomId = roomId;
         this.roomName = roomName;
         this.policy = policy;
-//        this.timeline = timeline;
     }
-//    @Getter
-//    public static class TimeRange {
-//        private final LocalDateTime startDateTime;
-//        private final LocalDateTime endDateTime;
-//
-//
-//        public TimeRange( LocalDateTime startDateTime, LocalDateTime endDateTime) {
-//            this.startDateTime = startDateTime;
-//            this.endDateTime = endDateTime;
-//       }
 }
 
 

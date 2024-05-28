@@ -4,7 +4,7 @@ import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.User;
 
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +15,6 @@ public interface ReservationDao {
     List<Reservation> findAll();
     Optional<List<Reservation>> findAllByUser(User user);
     void deleteById(Long reservationId);
-    List<Reservation> findOverlappingReservations(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime);
+    List<Reservation> findOverlappingReservations(Long roomId, Instant startDateTime, Instant endDateTime);
 
 }

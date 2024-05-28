@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Getter @Setter
 @Entity
@@ -29,16 +29,16 @@ public class Reservation {
     private Room room;
 
     @Column(name="reservation_start_time")
-    private ZonedDateTime reservationStartTime;
+    private Instant reservationStartTime;
 
     @Column(name="reservation_end_time")
-    private ZonedDateTime reservationEndTime;
+    private Instant reservationEndTime;
 
     @Enumerated(EnumType.STRING)
     private ReservationState state; // RESERVED, VISITED, NOSHOW
 
     @Builder
-    public Reservation(Long reservationId, User user, Room room, ZonedDateTime reservationStartTime, ZonedDateTime reservationEndTime, ReservationState state) {
+    public Reservation(Long reservationId, User user, Room room, Instant reservationStartTime, Instant reservationEndTime, ReservationState state) {
         this.reservationId = reservationId;
         this.user = user;
         this.room = room;

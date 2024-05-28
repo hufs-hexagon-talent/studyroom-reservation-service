@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +19,8 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             "WHERE r.room.roomId = :roomId AND (r.reservationStartTime < :endTime AND r.reservationEndTime > :startTime)"
     )
     List<Reservation> findOverlappingReservations( @Param("roomId") Long roomId,
-                                                  @Param("startTime") ZonedDateTime startTime,
-                                                  @Param("endTime") ZonedDateTime endTime
+                                                  @Param("startTime") Instant startTime,
+                                                  @Param("endTime") Instant endTime
     );
 
     Optional<List<Reservation>> findAllByUser(User user);

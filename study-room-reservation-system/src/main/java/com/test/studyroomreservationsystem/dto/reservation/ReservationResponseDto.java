@@ -7,8 +7,7 @@ import com.test.studyroomreservationsystem.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Getter
 
@@ -16,11 +15,11 @@ public class ReservationResponseDto {
     private Long reservationId;
     private Long roomId;
     private String roomName;
-    private ZonedDateTime startDateTime;
-    private ZonedDateTime endDateTime;
+    private Instant startDateTime;
+    private Instant endDateTime;
 
     @Builder
-    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, Instant startDateTime, Instant endDateTime) {
         this.reservationId = reservationId;
         this.roomId = roomId;
         this.roomName = roomName;

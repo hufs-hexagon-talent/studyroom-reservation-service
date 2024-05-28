@@ -19,10 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,10 +74,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override // 룸이 운영을 하는지? && 운영이 종료 되었는지?
-    public void isRoomAvailable(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public void isRoomAvailable(Long roomId, Instant startDateTime, Instant endDateTime) {
 
         Room room = findRoomById(roomId);
-        LocalDate date = startDateTime.toLocalDate();
+        LocalDate date = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
 
         // 룸과 날짜로 정책 찾기
         RoomOperationPolicySchedule schedule
@@ -96,8 +93,8 @@ public class RoomServiceImpl implements RoomService {
         LocalTime operationStartTime = roomOperationPolicy.getOperationStartTime();
         LocalTime operationEndTime = roomOperationPolicy.getOperationEndTime();
 
-        LocalTime reservationStartTime = startDateTime.toLocalTime();
-        LocalTime reservationEndTime = endDateTime.toLocalTime();
+        LocalTime reservationStartTime = startDateTime.atZone(ZoneOffset.UTC).toLocalTime();
+        LocalTime reservationEndTime = endDateTime.atZone(ZoneOffset.UTC).toLocalTime();
 
         if (operationStartTime.isAfter(reservationStartTime) && operationEndTime.isBefore(reservationEndTime)) {
             throw new OperationClosedException(room, operationStartTime, operationEndTime);
@@ -120,8 +117,8 @@ public class RoomServiceImpl implements RoomService {
                 policy = schedule.getRoomOperationPolicy();
                 LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
                 LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
-                ZonedDateTime operationStartDateTime = ZonedDateTime.from(date.atTime(operationStartTime));
-                ZonedDateTime operationEndDateTime = ZonedDateTime.from(date.atTime(operationEndTime));
+                Instant operationStartDateTime = Instant.from(date.atTime(operationStartTime));
+                Instant operationEndDateTime = Instant.from(date.atTime(operationEndTime));
 
                 // 각 룸의 예약들
                 List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
