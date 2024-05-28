@@ -83,29 +83,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-    @Override
-    public Reservation updateReservation(Long reservationId, ReservationRequestDto reservationRequestDto) {
-
-        // todo : 수정 요망
-        Long roomId = reservationRequestDto.getRoomId();
-        Instant startDateTime = reservationRequestDto.getStartDateTime();
-        Instant endDateTime = reservationRequestDto.getEndDateTime();
-        // 예약 가능 여부 확인 로직
-
-        validateRoomAvailability(roomId, startDateTime, endDateTime);
-        // todo : 더이상 dto 에 userId 없으니 변경해야함
-        Reservation reservation = findReservationById(reservationId);
-
-        Room room = roomService.findRoomById(reservationRequestDto.getRoomId());
-        reservation.setRoom(room);
-
-        reservation.setReservationStartTime(reservationRequestDto.getStartDateTime());
-        reservation.setReservationEndTime(reservationRequestDto.getEndDateTime());
-
-        return reservationDao.save(reservation);
-    }
-
-
+    
 
     @Override
     public void deleteReservation(Long reservationId, CustomUserDetails currentUser) {
