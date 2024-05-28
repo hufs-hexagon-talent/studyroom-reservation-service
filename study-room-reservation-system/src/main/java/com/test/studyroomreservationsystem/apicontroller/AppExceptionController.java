@@ -1,7 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
-import com.test.studyroomreservationsystem.exception.ScheduleAlreadyExistException;
+import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
+import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
@@ -35,10 +36,10 @@ public class AppExceptionController {
     @ExceptionHandler(RoomPolicyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotOperatingException(ReservationNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(OperationClosedException.class)
@@ -76,6 +77,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -85,6 +87,7 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
+
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleReservationNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -93,35 +96,33 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
-
     @ExceptionHandler(ScheduleNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleScheduleNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(PolicyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handlePolicyNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(RoomNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-
     @ExceptionHandler(ScheduleAlreadyExistException.class)
-    public ResponseEntity<ErrorResponseDto> handleScheduleAlreadyExistException(ScheduleAlreadyExistException ex) {
+    public ResponseEntity<ErrorResponseDto> handleScheduleAlreadyExistException(AdministrativeException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.CONFLICT.toString(),
                 ex.getMessage()

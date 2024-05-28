@@ -10,7 +10,7 @@ import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleSe
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
-import com.test.studyroomreservationsystem.exception.ScheduleAlreadyExistException;
+import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

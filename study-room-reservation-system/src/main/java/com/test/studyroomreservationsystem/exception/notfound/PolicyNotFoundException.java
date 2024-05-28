@@ -4,4 +4,8 @@ public class PolicyNotFoundException extends RuntimeException implements NotFoun
     public PolicyNotFoundException(Long policyId) {
         super("RoomOperationPolicy not found with id: " + policyId);
     }
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
 }
