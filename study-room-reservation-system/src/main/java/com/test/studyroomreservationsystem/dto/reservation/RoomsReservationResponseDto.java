@@ -4,8 +4,7 @@ import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -26,11 +25,11 @@ public class RoomsReservationResponseDto {
     @Getter
     public static class TimeRange {
         private final Long reservationId;
-        private final ZonedDateTime startDateTime;
-        private final ZonedDateTime endDateTime;
+        private final Instant startDateTime;
+        private final Instant endDateTime;
 
 
-        public TimeRange(Long reservationId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+        public TimeRange(Long reservationId, Instant startDateTime, Instant endDateTime) {
             this.reservationId = reservationId;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;

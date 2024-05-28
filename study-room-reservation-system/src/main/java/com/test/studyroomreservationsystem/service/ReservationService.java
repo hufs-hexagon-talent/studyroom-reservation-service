@@ -14,10 +14,6 @@ public interface ReservationService {
     Reservation findRecentReservationByUserId(Long userId);
     List<Reservation> findAllReservation();
     List<Reservation> findAllReservationByUser(Long userId);
-    Reservation updateReservation(Long reservationId , ReservationRequestDto reservationRequestDto);
-    Reservation updateTimeReservation(Long reservationId , ReservationTimeDto timeDto);
-    Reservation updateStateReservation(Long reservationId , ReservationStateDto stateDto);
-    Reservation updateRoomReservation(Long reservationId , ReservationRoomDto roomDto);
     void deleteReservation(Long reservationId, CustomUserDetails currentUser);
 
     ReservationRequestDto requestDtoFrom(Reservation reservation);

@@ -6,7 +6,7 @@ import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 @Repository
@@ -48,7 +48,7 @@ public class ReservationDaoImpl implements ReservationDao {
     }
 
     @Override
-    public List<Reservation> findOverlappingReservations(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public List<Reservation> findOverlappingReservations(Long roomId, Instant startDateTime, Instant endDateTime) {
         return reservationRepository.findOverlappingReservations(roomId, startDateTime, endDateTime);
     }
 

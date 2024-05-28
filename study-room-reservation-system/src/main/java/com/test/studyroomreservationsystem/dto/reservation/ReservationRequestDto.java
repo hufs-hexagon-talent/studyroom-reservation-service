@@ -9,18 +9,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Getter
 @Builder
 @NoArgsConstructor
 public class ReservationRequestDto { // CR
     private Long roomId;
-    private ZonedDateTime startDateTime;
-    private ZonedDateTime endDateTime;
+    private Instant startDateTime;
+    private Instant endDateTime;
 
 
-    public ReservationRequestDto(Long roomId, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
+    public ReservationRequestDto(Long roomId, Instant startDateTime, Instant endDateTime) {
         this.roomId = roomId;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
