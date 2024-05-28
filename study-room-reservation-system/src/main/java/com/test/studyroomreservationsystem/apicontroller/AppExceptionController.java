@@ -36,10 +36,10 @@ public class AppExceptionController {
     @ExceptionHandler(RoomPolicyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotOperatingException(ReservationNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(OperationClosedException.class)
@@ -99,26 +99,26 @@ public class AppExceptionController {
     @ExceptionHandler(ScheduleNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleScheduleNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(PolicyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handlePolicyNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(RoomNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ScheduleAlreadyExistException.class)
