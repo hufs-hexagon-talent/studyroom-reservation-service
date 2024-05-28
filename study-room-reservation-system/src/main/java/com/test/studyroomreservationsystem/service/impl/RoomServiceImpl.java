@@ -112,14 +112,16 @@ public class RoomServiceImpl implements RoomService {
             List<RoomsReservationResponseDto.TimeRange> reservationTimes = new ArrayList<>();
             try {
                 RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
-                        .orElseThrow(() -> new RoomPolicyNotFoundException(room, date));
+                        .orElseThrow(
+                                () -> new RoomPolicyNotFoundException(room, date)
+                        );
 
                 policy = schedule.getRoomOperationPolicy();
                 LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
                 LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
-                Instant operationStartDateTime = Instant.from(date.atTime(operationStartTime));
-                Instant operationEndDateTime = Instant.from(date.atTime(operationEndTime));
 
+                Instant operationStartDateTime = date.atTime(operationStartTime).toInstant(ZoneOffset.UTC);
+                Instant operationEndDateTime = date.atTime(operationEndTime).toInstant(ZoneOffset.UTC);
                 // 각 룸의 예약들
                 List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
                 reservationTimes = reservations.stream()
