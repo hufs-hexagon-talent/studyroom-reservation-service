@@ -17,6 +17,12 @@ services:
     volumes:
       - ./study-room-reservation-system/mysql/init.d:/docker-entrypoint-initdb.d
 
+  hufs-reservation-redis:
+    image: redis:7.2.5
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
   hufs-reservation-service:
     build:
       context: .
@@ -28,6 +34,7 @@ services:
       - "8080:8080"
     depends_on:
       - hufs-reservation-db
+      - hufs-reservation-redis
     restart: unless-stopped
     command: [ "java", "-jar", "app.jar" ]
     environment:
