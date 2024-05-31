@@ -39,6 +39,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
+
     public String getValue(String key) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Object value = valueOperations.get(key);

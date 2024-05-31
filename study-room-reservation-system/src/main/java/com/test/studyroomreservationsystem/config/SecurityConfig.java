@@ -147,6 +147,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/policies/**").hasRole("ADMIN")
 
+                    // QR
+                        .requestMatchers(
+                                "/qr/**"
+                        ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
