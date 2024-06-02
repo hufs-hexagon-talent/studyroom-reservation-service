@@ -1,2 +1,8 @@
-package com.test.studyroomreservationsystem.apicontroller.admin;public class VerificationRequestDto {
+package com.test.studyroomreservationsystem.dto;
+
+import lombok.Getter;
+
+@Getter
+public class CheckInRequestDto {
+    private String verificationCode;
 }
