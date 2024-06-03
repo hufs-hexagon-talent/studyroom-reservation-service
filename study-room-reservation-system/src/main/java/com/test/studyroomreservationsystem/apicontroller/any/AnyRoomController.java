@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.any;
 
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;

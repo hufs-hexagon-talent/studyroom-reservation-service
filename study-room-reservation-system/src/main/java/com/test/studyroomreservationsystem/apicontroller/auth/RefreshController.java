@@ -1,8 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
 
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.RefreshRequestDto;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;

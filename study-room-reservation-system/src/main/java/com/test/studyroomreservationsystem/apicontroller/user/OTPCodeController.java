@@ -1,6 +1,6 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.QRCodeResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.QRCodeService;
@@ -36,7 +36,7 @@ public class OTPCodeController {
     @PostMapping
     public ResponseEntity<ApiResponseDto<QRCodeResponseDto>> generateVerificationCode(@AuthenticationPrincipal CustomUserDetails currentUser) {
         String verificationCode = qrCodeService.generateRandomString(8);
-        Duration expiration = Duration.ofSeconds(30);
+        Duration expiration = Duration.ofSeconds(45);
         redisService.setValues(verificationCode, currentUser.getUser().getUserId().toString(), expiration);
 
         Instant expiresAt = Instant.now().plus(expiration);

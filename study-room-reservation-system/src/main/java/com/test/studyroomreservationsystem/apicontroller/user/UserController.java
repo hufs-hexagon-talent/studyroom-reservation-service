@@ -1,10 +1,9 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
-import com.test.studyroomreservationsystem.exception.UnauthorizedException;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;

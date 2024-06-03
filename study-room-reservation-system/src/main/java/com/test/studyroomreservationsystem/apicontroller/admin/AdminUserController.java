@@ -1,9 +1,9 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,8 +94,8 @@ public class AdminUserController {
     public ResponseEntity<ApiResponseDto<Objects>> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         ApiResponseDto<Objects> response
-                = new ApiResponseDto<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 

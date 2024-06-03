@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.dto;
+package com.test.studyroomreservationsystem.dto.util;
 
 import lombok.Getter;
 

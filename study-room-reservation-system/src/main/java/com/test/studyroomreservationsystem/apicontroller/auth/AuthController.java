@@ -1,8 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller.auth;
 
 
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginRequestDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import com.test.studyroomreservationsystem.service.AuthService;
@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 

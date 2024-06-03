@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.any;
 
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +35,12 @@ public class AnyReservationController {
         ResponseEntity<ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
             List<RoomsReservationResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
 
-            ApiResponseListDto<RoomsReservationResponseDto> wrapped = new ApiResponseListDto<>(responseDtoList);
-            ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+            ApiResponseListDto<RoomsReservationResponseDto> wrapped
+                    = new ApiResponseListDto<>(responseDtoList);
+
+            ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>> response
+                    = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }

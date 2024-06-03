@@ -1,8 +1,8 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationResponseDto;
 import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 @Slf4j
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
@@ -91,12 +92,12 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/me/{reservationId}")
-    public ResponseEntity<ApiResponseDto<Void>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                  @PathVariable Long reservationId) {
+    public ResponseEntity<ApiResponseDto<Objects>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                     @PathVariable Long reservationId) {
         reservationService.deleteReservation(reservationId, currentUser);
-        ApiResponseDto<Void> response
-                = new ApiResponseDto<>(HttpStatus.NO_CONTENT.toString(), "정상적으로 삭제 되었습니다.", null);
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        ApiResponseDto<Objects> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //    메인 API → 날짜 주면, 각 방에서 어떤 예약들이 있는지 (전체 방에 대해서)
