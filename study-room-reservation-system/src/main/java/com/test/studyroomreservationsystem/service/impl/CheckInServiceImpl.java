@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dto.CheckInRequestDto;
 import com.test.studyroomreservationsystem.dto.CheckInResponseDto;
+import com.test.studyroomreservationsystem.exception.checkin.QRCodeExpiredException;
 import com.test.studyroomreservationsystem.service.CheckInService;
 import com.test.studyroomreservationsystem.service.RedisService;
 import com.test.studyroomreservationsystem.service.ReservationService;
@@ -22,8 +23,12 @@ public class CheckInServiceImpl implements CheckInService {
     @Override
     public CheckInResponseDto verifyCheckIn(CheckInRequestDto request) {
         String userId = redisService.getValue(request.getVerificationCode());
-        // 만약 비어있다면?
+        if (userId == null) {throw new QRCodeExpiredException();}
         // QR 코드 만료. -> 예외 처리
+
+
+
+
         // todo : request 를 roomID 으로 할 지 reservationID 로 할지 고민
         // -> 해당 과정들에서 예외 처리
         // 위에꺼 다 통과
