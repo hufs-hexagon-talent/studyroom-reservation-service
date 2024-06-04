@@ -1,6 +1,6 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.checkin.CheckInFailException;
@@ -80,6 +80,16 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
+
+    @ExceptionHandler(InvalidReservationTimeException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidReservationTimeException(ReservationNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.PRECONDITION_FAILED.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+    }
+
 
     @ExceptionHandler(QRCodeExpiredException.class)
     public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {

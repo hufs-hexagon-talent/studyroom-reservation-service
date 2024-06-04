@@ -1,6 +1,6 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.CheckInResponseDto;
 import com.test.studyroomreservationsystem.dto.CheckInRequestDto;
 import org.springframework.http.ResponseEntity;

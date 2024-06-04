@@ -2,8 +2,8 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomService;
@@ -86,9 +86,9 @@ public class AdminRoomController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId) {
+    public ResponseEntity<ApiResponseDto<Object> > deleteRoom(@PathVariable Long roomId) {
         roomService.deleteRoom(roomId);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ApiResponseDto<Object> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

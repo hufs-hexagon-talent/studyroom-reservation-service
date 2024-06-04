@@ -2,7 +2,7 @@ package com.test.studyroomreservationsystem.security.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
 
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {

@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
-import com.test.studyroomreservationsystem.dto.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.ApiResponseListDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
 import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
@@ -79,14 +79,16 @@ public class AdminPolicyController {
 
         return new ResponseEntity<>(policy, HttpStatus.OK);
     }
+
     @Operation(summary = "✅[관리자] RoomOperationPolicy 삭제",
             description = "해당 RoomOperationPolicy id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{roomOperationPolicyId}")
-    public ResponseEntity<Void> deletePolicy(@PathVariable Long roomOperationPolicyId) {
+    public ResponseEntity<Object> deletePolicy(@PathVariable Long roomOperationPolicyId) {
         roomOperationPolicyService.deletePolicy(roomOperationPolicyId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        ApiResponseDto<Object> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

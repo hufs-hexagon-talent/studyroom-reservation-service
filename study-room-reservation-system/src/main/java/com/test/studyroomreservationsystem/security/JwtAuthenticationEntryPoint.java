@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.studyroomreservationsystem.dto.ErrorResponseDto;
+import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

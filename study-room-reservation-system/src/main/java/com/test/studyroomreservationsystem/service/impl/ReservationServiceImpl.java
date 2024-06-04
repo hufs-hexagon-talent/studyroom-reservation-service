@@ -9,6 +9,7 @@ import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdI
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
+import com.test.studyroomreservationsystem.exception.reservation.InvalidReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
 import com.test.studyroomreservationsystem.exception.reservation.PastReservationTimeException;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
@@ -124,9 +125,16 @@ public class ReservationServiceImpl implements ReservationService {
         boolean isFutureTime = isFutureTime(startDateTime, endDateTime);
         boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
         boolean withinMaxReservationTime = isWithinMaxReservationTime(roomId, startDateTime, endDateTime);
+
+        boolean isInvalidReservationTime = (startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime));
         // 예약시간이 과거임
         if (!isFutureTime) {
             throw new PastReservationTimeException(startDateTime, endDateTime);
+        }
+        // 잘 못된 예약임
+// 잘못된 예약 시간인지 확인
+        if (isInvalidReservationTime) {
+            throw new InvalidReservationTimeException();
         }
 
         //  운영이 하지 않음 (운영 정책 없음), 운영이 종료 되었음 (운영 정책 있음)

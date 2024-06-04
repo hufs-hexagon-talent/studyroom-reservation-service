@@ -42,4 +42,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: "1234"
       SPRING_DATASOURCE_URL: "jdbc:mysql://hufs-reservation-db:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
       SPRING_DATASOURCE_USERNAME: "hwangbbang"
+      SPRING_REDIS_HOST: hufs-reservation-redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_JWT_SECRET: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
       SPRING_PROFILES_ACTIVE: prod

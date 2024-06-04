@@ -9,15 +9,15 @@ spring:
 
     data:
         redis:
-            host: redis
-            port: 6379
-
+            host: ${SPRING_REDIS_HOST}
+            port: ${SPRING_REDIS_PORT}
+#            password: ${SPRING_REDIS_PORT}
     jpa:
         show-sql: false
 #        properties:
 
     jwt: # openssl rand -hex 32 ( HS256 )
-        secret: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
+        secret: ${SPRING_JWT_SECRET}
         header: Authorization
         access:
             expiration: 604800000  # 7일 -> ms
