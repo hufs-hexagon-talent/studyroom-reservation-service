@@ -116,15 +116,3 @@ public class ReservationController {
         }
 
 }
-    // todo 수정 예정
-//    @Operation(summary = "❌ 예약 정보 변경",
-//            description = " 본인이 예약한 정보(방)을 수정",
-//            security = {@SecurityRequirement(name = "JWT")}
-//    )
-//    @PutMapping("/{reservationId}/room")
-//    ResponseEntity<RequestReservationDto> editReservationByRoom(@PathVariable Long reservationId,
-//                                                                @RequestBody ReservationRoomDto reservationDto) {
-//        Reservation updateReservation = reservationService.updateRoomReservation(reservationId, reservationDto);
-//        RequestReservationDto reservation = reservationService.dtoFrom(updateReservation);
-//        return new ResponseEntity<>(reservation, HttpStatus.OK);
-//    }

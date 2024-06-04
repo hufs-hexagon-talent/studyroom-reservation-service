@@ -1,10 +1,11 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.ReservationDao;
-import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.*;
 import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.exception.*;
+import com.test.studyroomreservationsystem.exception.invaildvalue.InvaildValueException;
+import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvaildValueException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -89,12 +89,16 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public void deleteReservation(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
+        if (reservation == null) {
+            throw new ReservationIdInvaildValueException(reservationId);
+        }
         User user = currentUser.getUser();
         if (!reservation.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException();
         }
         reservationDao.deleteById(reservationId);
     }
+
 
     @Override
     public ReservationRequestDto requestDtoFrom(Reservation reservation) {

@@ -3,6 +3,9 @@ package com.test.studyroomreservationsystem.apicontroller;
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
+import com.test.studyroomreservationsystem.exception.checkin.CheckInFailException;
+import com.test.studyroomreservationsystem.exception.checkin.QRCodeExpiredException;
+import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvaildValueException;
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
@@ -88,6 +91,15 @@ public class AppExceptionController {
     }
 
 
+    @ExceptionHandler(QRCodeExpiredException.class)
+    public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.GONE.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -95,6 +107,15 @@ public class AppExceptionController {
                   ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ReservationIdInvaildValueException.class)
+    public ResponseEntity<ErrorResponseDto> handleReservationIdInvaildValueException(ReservationIdInvaildValueException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 
