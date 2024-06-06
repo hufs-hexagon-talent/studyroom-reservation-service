@@ -19,6 +19,7 @@ public interface RoomService {
     void deleteRoom(Long roomId);
     void isRoomAvailable(Long roomId, Instant startDateTime, Instant endDateTime);
     List<RoomsReservationResponseDto> getRoomsReservationsByDate(LocalDate date);
+    List<RoomsReservationResponseDto> getReservationsByRoomsAndDate(LocalDate date, List<Long> roomIds);
     List<RoomsResponseDto> getRoomsPolicyByDate(LocalDate date);
 
 

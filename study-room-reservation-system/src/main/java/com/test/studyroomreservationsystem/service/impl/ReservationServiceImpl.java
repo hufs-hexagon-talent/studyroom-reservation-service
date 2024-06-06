@@ -10,13 +10,10 @@ import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoun
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.InvalidReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
-import com.test.studyroomreservationsystem.exception.reservation.PastReservationTimeException;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.*;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -31,19 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final UserService userService;
     private final RoomOperationPolicyScheduleService scheduleService;
 
-//    @Value("${spring.service.allowedEndMinute}")
-//    private Integer allowedEndMinute;
-//    @Value("${spring.service.allowedStartMinute}")
-//    private Integer allowedStartMinute;
-//
-//    private Duration allowedStartTime;
-//    private Duration allowedEndTime;
-//
-//    @PostConstruct
-//    public void init() {
-//        this.allowedStartTime = Duration.ofMinutes(allowedStartMinute);
-//        this.allowedEndTime = Duration.ofMinutes(allowedEndMinute);
-//    }
+
     @Autowired
     public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
         this.reservationDao = reservationDao;
@@ -133,10 +118,7 @@ public class ReservationServiceImpl implements ReservationService {
         if (!hasNoOverlappingReservations) {
             throw new OverlappingReservationException(roomService.findRoomById(roomId), startDateTime, endDateTime);
         }
-        // 예약 시간이 과거임
-//        if (isPastTime) {
-//            throw new PastReservationTimeException(startDateTime, endDateTime);
-//        }
+
         // 잘못된 예약 시간인지 확인
         if (isInvalidReservationTime) {
             throw new InvalidReservationTimeException();
@@ -164,13 +146,6 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservationMinutes <= eachMaxMinute;
     }
-
-//    private boolean isPastTime(Instant startDateTime) {
-//        // 과거 시간이 아닌지 확인 (allowedStartTime을 고려)
-//        Instant now = Instant.now();
-//        Instant allowedStartDateTime = now.minus(allowedStartTime);
-//        return startDateTime.isBefore(allowedStartDateTime);
-//    }
 
     @Override
     public ReservationRequestDto requestDtoFrom(Reservation reservation) {
