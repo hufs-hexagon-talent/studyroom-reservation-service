@@ -1,5 +1,5 @@
 package com.test.studyroomreservationsystem.service;
 
-public interface QRCodeService {
+public interface OTPCodeService {
     String generateRandomString(int length);
 }

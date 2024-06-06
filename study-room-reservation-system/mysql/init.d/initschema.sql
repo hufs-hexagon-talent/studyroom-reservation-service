@@ -52,7 +52,7 @@ create table reservation
     reservation_start_time datetime(6)                            null,
     room_id                bigint                                 null,
     user_id                bigint                                 null,
-    state                  enum ('RESERVED', 'VISITED', 'NOSHOW') null,
+    state                  enum ('NOT_VISITED', 'VISITED') null,
     constraint FKm4oimk0l1757o9pwavorj6ljg
         foreign key (user_id) references user (user_id),
     constraint FKm8xumi0g23038cw32oiva2ymw
@@ -95,8 +95,4 @@ VALUES
     (4, 1, '2024-05-11'),
     (5, 1, '2024-05-11'),
     (6, 1, '2024-05-11');
-
-INSERT INTO `service-db`.`reservation` (user_id, room_id, reservation_start_time, reservation_end_time, state)
-VALUES
-    (2, 1, '2024-05-04 09:00:00', '2024-05-11 10:00:00', 'RESERVED');
 

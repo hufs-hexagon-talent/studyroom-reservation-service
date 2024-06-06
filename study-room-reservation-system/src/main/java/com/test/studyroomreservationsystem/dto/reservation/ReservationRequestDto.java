@@ -19,7 +19,6 @@ public class ReservationRequestDto { // CR
     private Instant startDateTime;
     private Instant endDateTime;
 
-
     public ReservationRequestDto(Long roomId, Instant startDateTime, Instant endDateTime) {
         this.roomId = roomId;
         this.startDateTime = startDateTime;
@@ -31,7 +30,7 @@ public class ReservationRequestDto { // CR
                 .room(room)
                 .reservationStartTime(startDateTime)
                 .reservationEndTime(endDateTime)
-                .state(ReservationState.RESERVED)
+                .state(ReservationState.NOT_VISITED)
                 .build();
     }
 

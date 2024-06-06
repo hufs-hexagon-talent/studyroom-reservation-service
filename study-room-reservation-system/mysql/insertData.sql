@@ -27,24 +27,3 @@ VALUES
     ('306-4'),
     ('428-1'),
     ('428-2');
-
-INSERT INTO `service-db`.`room_operation_policy_schedule` (room_id, room_operation_policy_id, policy_application_date)
-VALUES
-
-    (1, 7, '2024-05-15'),
-    (2, 7, '2024-05-15'),
-    (3, 7, '2024-05-15'),
-    (4, 7, '2024-05-15'),
-    (5, 7, '2024-05-15'),
-    (6, 7, '2024-05-15'),
-
-    (1, 7, '2024-05-16'),
-    (2, 7, '2024-05-16'),
-    (3, 7, '2024-05-16'),
-    (4, 7, '2024-05-16'),
-    (5, 7, '2024-05-16'),
-    (6, 7, '2024-05-16');
-
-INSERT INTO `service-db`.`reservation` (user_id, room_id, reservation_start_time, reservation_end_time, state)
-VALUES
-    (2, 1, '2024-05-04 09:00:00', '2024-05-11 10:00:00', 'RESERVED');

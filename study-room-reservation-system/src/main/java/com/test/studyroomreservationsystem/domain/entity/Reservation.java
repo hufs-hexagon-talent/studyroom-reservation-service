@@ -35,7 +35,7 @@ public class Reservation {
     private Instant reservationEndTime;
 
     @Enumerated(EnumType.STRING)
-    private ReservationState state; // RESERVED, VISITED, NOSHOW
+    private ReservationState state; // NOT_VISITED, VISITED
 
     @Builder
     public Reservation(Long reservationId, User user, Room room, Instant reservationStartTime, Instant reservationEndTime, ReservationState state) {

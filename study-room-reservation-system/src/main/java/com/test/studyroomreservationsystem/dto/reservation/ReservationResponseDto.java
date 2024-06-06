@@ -33,7 +33,7 @@ public class ReservationResponseDto {
                 .room(room)
                 .reservationStartTime(startDateTime)
                 .reservationEndTime(endDateTime)
-                .state(ReservationState.RESERVED)
+                .state(ReservationState.NOT_VISITED)
                 .build();
     }
 

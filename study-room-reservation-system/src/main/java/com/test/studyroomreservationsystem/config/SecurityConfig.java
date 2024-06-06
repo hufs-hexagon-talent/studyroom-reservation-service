@@ -147,10 +147,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/policies/**").hasRole("ADMIN")
 
-                    // QR
+                    // otp
                         .requestMatchers(
-                                "/qr/**"
+                                "/otp/**"
                         ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                    // check-in
+                        .requestMatchers(
+                                "/check-in/**"
+                        ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") // todo : 추후 ROLE_USER 삭제
 
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );

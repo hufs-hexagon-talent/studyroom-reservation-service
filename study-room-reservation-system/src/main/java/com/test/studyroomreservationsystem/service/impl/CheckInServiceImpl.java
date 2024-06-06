@@ -1,44 +1,94 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dto.CheckInRequestDto;
-import com.test.studyroomreservationsystem.dto.CheckInResponseDto;
-import com.test.studyroomreservationsystem.exception.checkin.QRCodeExpiredException;
+import com.test.studyroomreservationsystem.dao.ReservationDao;
+import com.test.studyroomreservationsystem.domain.ReservationState;
+import com.test.studyroomreservationsystem.domain.entity.Reservation;
+import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.CheckInReservationDto;
+import com.test.studyroomreservationsystem.exception.checkin.KeyNotFoundException;
+import com.test.studyroomreservationsystem.exception.checkin.OTPExpiredException;
+import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
+import com.test.studyroomreservationsystem.exception.notfound.UserNotFoundException;
 import com.test.studyroomreservationsystem.service.CheckInService;
 import com.test.studyroomreservationsystem.service.RedisService;
 import com.test.studyroomreservationsystem.service.ReservationService;
+import com.test.studyroomreservationsystem.service.UserService;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CheckInServiceImpl implements CheckInService {
     private final RedisService redisService;
+    private final UserService userService;
     private final ReservationService reservationService;
+    private final ReservationDao reservationDao;
 
-    public CheckInServiceImpl(RedisService redisService, ReservationService reservationService) {
+    @Value("${spring.service.allowedEndMinute}")
+    private Integer allowedEndMinute;
+    @Value("${spring.service.allowedStartMinute}")
+    private Integer allowedStartMinute;
+
+    private Duration allowedStartTime;
+    private Duration allowedEndTime;
+
+    @PostConstruct
+    public void init() {
+        this.allowedStartTime = Duration.ofMinutes(allowedStartMinute);
+        this.allowedEndTime = Duration.ofMinutes(allowedEndMinute);
+    }
+
+    public CheckInServiceImpl(RedisService redisService, UserService userService, ReservationService reservationService, ReservationDao reservationDao) {
         this.redisService = redisService;
+        this.userService = userService;
         this.reservationService = reservationService;
+        this.reservationDao = reservationDao;
     }
 
     @Override
-    public CheckInResponseDto verifyCheckIn(CheckInRequestDto request) {
-        String userId = redisService.getValue(request.getVerificationCode());
-        if (userId == null) {throw new QRCodeExpiredException();}
-        // QR 코드 만료. -> 예외 처리
+    public List<CheckInReservationDto> verifyCheckIn(String verificationCode, List<Long> roomIds) {
+        try {
+            Long userId = Long.valueOf(redisService.getValue(verificationCode));
+            // 유저 검증
+            User user = userService.findUserById(userId);
 
+            // 예약시작 시간으로 부터 15분 전 후 인지?
+            Instant now = Instant.now();
+            Instant validStartTime = now.minus(allowedStartTime);
+            Instant validEndTime = now.plus(allowedEndTime);
 
+            List<Reservation> reservations
+                    = reservationService.findByUserIdAndRoomIdAndStartTimeBetween(userId, roomIds, validStartTime, validEndTime);
+            // 예약 시작 시간 가져옴
+            // 그렇다면, reservation 테이블의 해당 ID의 state 를 NOT_VISITED -> VISTIED 로 변경
+            if (reservations.isEmpty()) { throw new ReservationNotFoundException();}
 
+            for (Reservation reservation : reservations) {
+                reservation.setState(ReservationState.VISITED);
+                reservationDao.save(reservation);
+            }
+            return reservations.stream()
+                    .map(reservation -> CheckInReservationDto.builder()
+                            .reservationId(reservation.getReservationId())
+                            .userId(user.getUserId())
+                            .name(user.getName())
+                            .roomId(reservation.getRoom().getRoomId())
+                            .roomName(reservation.getRoom().getRoomName())
+                            .reservationStartTime(reservation.getReservationStartTime())
+                            .reservationEndTime(reservation.getReservationEndTime())
+                            .state(reservation.getState())
+                            .build())
+                    .collect(Collectors.toList());
 
-        // todo : request 를 roomID 으로 할 지 reservationID 로 할지 고민
-        // -> 해당 과정들에서 예외 처리
-        // 위에꺼 다 통과
-
-        Instant now = Instant.now();
-        // todo
-        // 예약 시작 시간 가져옴
-        // 예약시작 시간으로 부터 10분 전 후 인지?
-        // 그렇다면, reservation 테이블의 해당 ID의 state 를 RESERVED -> VISTIED 로 변경
-
-        return null;
+        } catch (KeyNotFoundException e) {
+            throw new OTPExpiredException();
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException();
+    }
     }
 }

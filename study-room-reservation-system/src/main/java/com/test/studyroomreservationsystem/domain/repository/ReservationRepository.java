@@ -27,4 +27,6 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     Optional<Reservation> findTopByUserUserIdOrderByReservationStartTimeDesc(Long userId);
 
+    Optional<List<Reservation>> findByUserUserIdAndRoomRoomIdInAndReservationStartTimeBetween(Long userId, List<Long> roomIds, Instant startTime, Instant endTime);
+
 }

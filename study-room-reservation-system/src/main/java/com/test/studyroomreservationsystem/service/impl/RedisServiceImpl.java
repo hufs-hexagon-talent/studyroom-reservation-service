@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.exception.checkin.KeyNotFoundException;
 import com.test.studyroomreservationsystem.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,8 +44,10 @@ public class RedisServiceImpl implements RedisService {
     public String getValue(String key) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Object value = valueOperations.get(key);
+        // todo : 존재하지 않는 KEY 에 대한 get을 할 수 없음
+
         if (value == null) {
-            return "";
+                throw new KeyNotFoundException();
         }
         return String.valueOf(value);
     }

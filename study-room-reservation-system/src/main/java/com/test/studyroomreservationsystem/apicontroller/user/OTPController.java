@@ -3,11 +3,12 @@ package com.test.studyroomreservationsystem.apicontroller.user;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.QRCodeResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
-import com.test.studyroomreservationsystem.service.QRCodeService;
+import com.test.studyroomreservationsystem.service.OTPCodeService;
 import com.test.studyroomreservationsystem.service.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,11 +21,16 @@ import java.time.Instant;
 @Tag(name = "OTP", description = "OTP 제공 관련 API")
 @RestController
 @RequestMapping("/otp")
-public class OTPCodeController {
+public class OTPController {
     private final RedisService redisService;
-    private final QRCodeService qrCodeService;
+    private final OTPCodeService qrCodeService;
 
-    public OTPCodeController(RedisService redisService, QRCodeService qrCodeService) {
+    @Value("${spring.service.otpTTL}")
+    private Integer otpTTL;
+    @Value("${spring.service.otpLength}")
+    private Integer otpLength;
+
+    public OTPController(RedisService redisService, OTPCodeService qrCodeService) {
         this.redisService = redisService;
         this.qrCodeService = qrCodeService;
     }
@@ -35,8 +41,8 @@ public class OTPCodeController {
     )
     @PostMapping
     public ResponseEntity<ApiResponseDto<QRCodeResponseDto>> generateVerificationCode(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        String verificationCode = qrCodeService.generateRandomString(8);
-        Duration expiration = Duration.ofSeconds(45);
+        String verificationCode = qrCodeService.generateRandomString(otpLength);
+        Duration expiration = Duration.ofSeconds(otpTTL);
         redisService.setValues(verificationCode, currentUser.getUser().getUserId().toString(), expiration);
 
         Instant expiresAt = Instant.now().plus(expiration);

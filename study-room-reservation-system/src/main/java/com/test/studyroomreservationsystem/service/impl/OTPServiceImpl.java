@@ -1,12 +1,12 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.service.QRCodeService;
+import com.test.studyroomreservationsystem.service.OTPCodeService;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
-public class QRCodeServiceImpl implements QRCodeService {
+public class OTPServiceImpl implements OTPCodeService {
 
     @Override
     public String generateRandomString(int length) {

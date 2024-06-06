@@ -4,7 +4,8 @@ import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.checkin.CheckInFailException;
-import com.test.studyroomreservationsystem.exception.checkin.QRCodeExpiredException;
+import com.test.studyroomreservationsystem.exception.checkin.KeyNotFoundException;
+import com.test.studyroomreservationsystem.exception.checkin.OTPExpiredException;
 import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvaildValueException;
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
@@ -14,6 +15,8 @@ import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleExcep
 import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
@@ -90,9 +93,17 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
 
-
-    @ExceptionHandler(QRCodeExpiredException.class)
+    @ExceptionHandler(KeyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
+    }
+
+    @ExceptionHandler(OTPExpiredException.class)
+    public ResponseEntity<ErrorResponseDto> handleOTPExpiredException(CheckInFailException ex ) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.GONE.toString(),
                 ex.getMessage()
@@ -145,6 +156,23 @@ public class AppExceptionController {
     }
     @ExceptionHandler(RoomNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotFoundException(NotFoundException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(NotFoundException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()

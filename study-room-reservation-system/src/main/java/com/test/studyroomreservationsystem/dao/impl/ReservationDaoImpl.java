@@ -52,4 +52,10 @@ public class ReservationDaoImpl implements ReservationDao {
         return reservationRepository.findOverlappingReservations(roomId, startDateTime, endDateTime);
     }
 
+    @Override
+    public Optional<List<Reservation>> findByUserIdAndRoomIdsAndStartTimeBetween(Long userId, List<Long> roomIds, Instant startDateTime, Instant endDateTime) {
+        return reservationRepository.findByUserUserIdAndRoomRoomIdInAndReservationStartTimeBetween(userId, roomIds, startDateTime, endDateTime);
+    }
+
+
 }

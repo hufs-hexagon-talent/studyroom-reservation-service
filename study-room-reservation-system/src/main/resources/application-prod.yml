@@ -12,6 +12,12 @@ spring:
             host: ${SPRING_REDIS_HOST}
             port: ${SPRING_REDIS_PORT}
 #            password: ${SPRING_REDIS_PORT}
+    service:
+        allowedStartMinute: 15
+        allowedEndMinute: 15
+        otpLength: 8
+        otpTTL: 300
+
     jpa:
         show-sql: false
 #        properties:

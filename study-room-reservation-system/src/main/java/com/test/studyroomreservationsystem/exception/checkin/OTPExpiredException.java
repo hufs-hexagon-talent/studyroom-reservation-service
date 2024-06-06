@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.exception.checkin;
 
-public class QRCodeExpiredException extends RuntimeException implements CheckInFailException{
-    public QRCodeExpiredException() {
+public class OTPExpiredException extends RuntimeException implements CheckInFailException{
+    public OTPExpiredException() {
         super("해당 QR 코드가 만료 되었습니다.");
     }
 
