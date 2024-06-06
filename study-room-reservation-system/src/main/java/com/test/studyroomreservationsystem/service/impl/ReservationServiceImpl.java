@@ -4,7 +4,8 @@ import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.domain.entity.*;
 import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.exception.*;
-import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvaildValueException;
+
+import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvalidValueException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
@@ -87,7 +88,7 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservation(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
         if (reservation == null) {
-            throw new ReservationIdInvaildValueException(reservationId);
+            throw new ReservationIdInvalidValueException(reservationId);
         }
         User user = currentUser.getUser();
         if (!reservation.getUser().getUserId().equals(user.getUserId())) {
@@ -164,6 +165,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .roomName(reservation.getRoom().getRoomName())
                 .startDateTime(reservation.getReservationStartTime())
                 .endDateTime(reservation.getReservationEndTime())
+                .reservationState(reservation.getState())
                 .build();
     }
 

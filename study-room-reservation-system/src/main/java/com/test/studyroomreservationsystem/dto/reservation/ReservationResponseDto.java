@@ -17,14 +17,16 @@ public class ReservationResponseDto {
     private String roomName;
     private Instant startDateTime;
     private Instant endDateTime;
+    private ReservationState reservationState;
 
     @Builder
-    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, Instant startDateTime, Instant endDateTime) {
+    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, Instant startDateTime, Instant endDateTime, ReservationState reservationState) {
         this.reservationId = reservationId;
         this.roomId = roomId;
         this.roomName = roomName;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.reservationState = reservationState;
     }
     public Reservation toEntity(User user, Room room) {
         return Reservation.builder()
@@ -33,7 +35,7 @@ public class ReservationResponseDto {
                 .room(room)
                 .reservationStartTime(startDateTime)
                 .reservationEndTime(endDateTime)
-                .state(ReservationState.NOT_VISITED)
+                .state(reservationState)
                 .build();
     }
 

@@ -5,6 +5,8 @@ import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.CheckInReservationDto;
+import com.test.studyroomreservationsystem.exception.checkin.InvalidRoomIdsException;
+import com.test.studyroomreservationsystem.exception.checkin.InvalidVerificationCodeException;
 import com.test.studyroomreservationsystem.exception.checkin.KeyNotFoundException;
 import com.test.studyroomreservationsystem.exception.checkin.OTPExpiredException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
@@ -53,6 +55,16 @@ public class CheckInServiceImpl implements CheckInService {
     @Override
     public List<CheckInReservationDto> verifyCheckIn(String verificationCode, List<Long> roomIds) {
         try {
+            // verificationCode 가 null 일 떄
+            if (verificationCode == null || verificationCode.isEmpty()) {
+                throw new InvalidVerificationCodeException();
+            }
+
+            // roomIds : 빈 배열일 때
+            if (roomIds == null || roomIds.isEmpty()) {
+                throw new InvalidRoomIdsException();
+            }
+
             Long userId = Long.valueOf(redisService.getValue(verificationCode));
             // 유저 검증
             User user = userService.findUserById(userId);

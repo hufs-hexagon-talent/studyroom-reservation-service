@@ -3,10 +3,8 @@ package com.test.studyroomreservationsystem.apicontroller;
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
-import com.test.studyroomreservationsystem.exception.checkin.CheckInFailException;
-import com.test.studyroomreservationsystem.exception.checkin.KeyNotFoundException;
-import com.test.studyroomreservationsystem.exception.checkin.OTPExpiredException;
-import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvaildValueException;
+import com.test.studyroomreservationsystem.exception.checkin.*;
+import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvalidValueException;
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
@@ -15,10 +13,10 @@ import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleExcep
 import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 @RestControllerAdvice
 public class AppExceptionController {
     @ExceptionHandler(UsernameAlreadyExistsException.class)
@@ -38,6 +36,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
 
     @ExceptionHandler(RoomPolicyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotOperatingException(ReservationNotPossibleException ex) {
@@ -93,6 +92,7 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
 
+
     @ExceptionHandler(KeyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -111,17 +111,37 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
     }
 
+    @ExceptionHandler(InvalidVerificationCodeException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidVerificationCodeException(CheckInFailException ex ) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.PRECONDITION_FAILED.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+    }
+
+    @ExceptionHandler(InvalidRoomIdsException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidRoomIdsException(CheckInFailException ex ) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.PRECONDITION_FAILED.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+    }
+
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
+
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.FORBIDDEN.toString(),
-                  ex.getMessage()
+                ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(ReservationIdInvaildValueException.class)
-    public ResponseEntity<ErrorResponseDto> handleReservationIdInvaildValueException(ReservationIdInvaildValueException ex) {
+    @ExceptionHandler(ReservationIdInvalidValueException.class)
+    public ResponseEntity<ErrorResponseDto> handleReservationIdInvaildValueException(ReservationIdInvalidValueException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.getMessage()
