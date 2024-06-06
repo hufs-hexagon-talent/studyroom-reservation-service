@@ -100,19 +100,4 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //    메인 API → 날짜 주면, 각 방에서 어떤 예약들이 있는지 (전체 방에 대해서)
-        @Operation(summary = "✅ 해당 날짜 모든룸 예약 상태 확인 ",
-                description = "날짜를 받으면 모든 룸의 예약을 확인",
-                security = {})
-        @GetMapping("/by-date")
-        ResponseEntity<ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
-            List<RoomsReservationResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
-
-            ApiResponseListDto<RoomsReservationResponseDto> wrapped
-                    = new ApiResponseListDto<>(responseDtoList);
-            ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>> response
-                    = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-
 }

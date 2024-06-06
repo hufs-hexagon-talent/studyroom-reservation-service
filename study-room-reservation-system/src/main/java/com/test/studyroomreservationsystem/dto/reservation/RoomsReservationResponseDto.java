@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.dto.reservation;
 
+import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +36,4 @@ public class RoomsReservationResponseDto {
             this.endDateTime = endDateTime;
         }
     }
-
-
 }

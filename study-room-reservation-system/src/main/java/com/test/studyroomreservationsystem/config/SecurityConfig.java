@@ -128,7 +128,8 @@ public class SecurityConfig {
 
                     // Reservation
                         .requestMatchers(
-                                "/reservations/by-date/**").permitAll()
+                                "/reservations/by-date/**",
+                                "/reservations/rooms/by-date/**").permitAll()
                         .requestMatchers(
                                 "/reservations/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 

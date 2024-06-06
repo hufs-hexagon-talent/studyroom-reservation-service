@@ -1,5 +1,5 @@
 package com.test.studyroomreservationsystem.exception.invaildvalue;
 
-public interface InvaildValueException {
+public interface InvalidValueException {
     String getMessage();
 }
