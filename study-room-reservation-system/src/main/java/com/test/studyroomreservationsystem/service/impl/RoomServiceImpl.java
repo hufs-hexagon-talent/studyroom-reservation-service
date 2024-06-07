@@ -23,19 +23,16 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class RoomServiceImpl implements RoomService {
     private final RoomDao roomDao;
-    private final ReservationDao reservationDao;
     private final RoomOperationPolicyScheduleDao scheduleDao;
+
     @Autowired
-    public RoomServiceImpl(RoomDao roomDao, ReservationDao reservationDao, RoomOperationPolicyScheduleDao scheduleDao) {
+    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleDao scheduleDao) {
         this.roomDao = roomDao;
-        this.reservationDao = reservationDao;
         this.scheduleDao = scheduleDao;
     }
 
@@ -106,79 +103,22 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<RoomsReservationResponseDto> getRoomsReservationsByDate(LocalDate date) {
-        List<Room> rooms = roomDao.findAll();
-        ArrayList<RoomsReservationResponseDto> responseList = new ArrayList<>();
-
-        for (Room room : rooms) {
-            RoomOperationPolicy policy = null;
-            List<RoomsReservationResponseDto.TimeRange> reservationTimes = new ArrayList<>();
-            try {
-                RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
-                        .orElseThrow(
-                                () -> new RoomPolicyNotFoundException(room, date)
-                        );
-
-                policy = schedule.getRoomOperationPolicy();
-                LocalTime operationStartTime = schedule.getRoomOperationPolicy().getOperationStartTime();
-                LocalTime operationEndTime = schedule.getRoomOperationPolicy().getOperationEndTime();
-
-                Instant operationStartDateTime = date.atTime(operationStartTime).toInstant(ZoneOffset.UTC);
-                Instant operationEndDateTime = date.atTime(operationEndTime).toInstant(ZoneOffset.UTC);
-                // 각 룸의 예약들
-                List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
-                reservationTimes = reservations.stream()
-                        .map(reservation -> new RoomsReservationResponseDto.TimeRange(reservation.getReservationId(),reservation.getReservationStartTime(), reservation.getReservationEndTime()))
-                        .toList();
-                log.trace("{}",reservationTimes);
-            } catch (RoomPolicyNotFoundException e) {
-                // 정책이 없을 때는 policyId가 null로 유지됨
-            }
-            responseList.add(new RoomsReservationResponseDto(room.getRoomId(),room.getRoomName(),policy  ,reservationTimes));
-        }
-        return responseList;
-    }
-
-    @Override
     public List<RoomsResponseDto> getRoomsPolicyByDate(LocalDate date) {
         List<Room> rooms = roomDao.findAll();
         List<RoomsResponseDto> responseList = new ArrayList<>();
 
         for (Room room : rooms) {
+            RoomOperationPolicy policy = null;
             try {
                 RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
                         .orElseThrow(() -> new RoomPolicyNotFoundException(room, date));
+                policy = schedule.getRoomOperationPolicy();
 
-                RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
-                responseList.add(new RoomsResponseDto(room.getRoomId(), room.getRoomName(), policy));
             } catch (RoomPolicyNotFoundException e) {
-//                throw new RoomPolicyNotFoundException(room, date);
+                // 정책이 없을 때는 policyId가 null로 유지됨
             }
+                responseList.add(new RoomsResponseDto(room.getRoomId(), room.getRoomName(), policy));
         }
         return responseList;
     }
-
-
-    @Override
-    public SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date) {
-        Instant startTime = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant endTime = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
-        List<Reservation> reservations = reservationDao.findByRoomIdsAndStartTimeBetween(roomIds, startTime, endTime);
-
-        List<SpecificRoomsReservationsDto.RoomReservation> roomReservations = reservations.stream()
-                .map(reservation -> new SpecificRoomsReservationsDto.RoomReservation(
-                        reservation.getReservationId(),
-                        reservation.getRoom().getRoomId(),
-                        reservation.getRoom().getRoomName(),
-                        reservation.getUser().getUserId(),
-                        reservation.getReservationStartTime(),
-                        reservation.getReservationEndTime()))
-                .collect(Collectors.toList());
-
-        return new SpecificRoomsReservationsDto(roomReservations);
-    }
-
-
-
-
 }

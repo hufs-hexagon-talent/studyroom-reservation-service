@@ -7,6 +7,7 @@ import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationService {
@@ -16,6 +17,9 @@ public interface ReservationService {
     List<Reservation> findAllReservation();
     List<Reservation> findAllReservationByUser(Long userId);
     void deleteReservation(Long reservationId, CustomUserDetails currentUser);
+
+    List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date);
+    SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
 
     List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomIds, Instant startTime, Instant endTime);
     ReservationRequestDto requestDtoFrom(Reservation reservation);

@@ -8,6 +8,7 @@ import com.test.studyroomreservationsystem.exception.*;
 import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvalidValueException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
+import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.InvalidReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
@@ -18,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,6 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final RoomService roomService;
     private final UserService userService;
     private final RoomOperationPolicyScheduleService scheduleService;
+
 
 
     @Autowired
@@ -83,7 +87,6 @@ public class ReservationServiceImpl implements ReservationService {
                 () -> new ReservationHistoryNotFoundException(userId));
     }
 
-
     @Override
     public void deleteReservation(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
@@ -97,11 +100,74 @@ public class ReservationServiceImpl implements ReservationService {
         reservationDao.deleteById(reservationId);
     }
 
+    @Override
     public List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId, List<Long> roomIds, Instant startTime, Instant endTime) {
         return reservationDao.findByUserIdAndRoomIdsAndStartTimeBetween(userId, roomIds, startTime, endTime).orElseThrow(
                 ReservationNotFoundException::new
         );
     }
+
+
+    @Override
+    public List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date) {
+        List<Room> rooms = roomService.findAllRoom();
+        ArrayList<RoomsReservationResponseDto> responseList = new ArrayList<>();
+
+        for (Room room : rooms) {
+            try {
+                RoomOperationPolicySchedule schedule = scheduleService.findScheduleByRoomAndDate(room, date);
+                RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
+
+                LocalTime operationStartTime = policy.getOperationStartTime();
+                LocalTime operationEndTime = policy.getOperationEndTime();
+
+                Instant operationStartDateTime = date.atTime(operationStartTime).toInstant(ZoneOffset.UTC);
+                Instant operationEndDateTime = date.atTime(operationEndTime).toInstant(ZoneOffset.UTC);
+
+                // 각 룸의 예약들
+                List<Reservation> reservations = reservationDao.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
+                List<RoomsReservationResponseDto.TimeRange> reservationTimes = reservations.stream()
+                        .map(reservation -> new RoomsReservationResponseDto.TimeRange(
+                                reservation.getReservationId(),
+                                reservation.getReservationStartTime(),
+                                reservation.getReservationEndTime()))
+                        .collect(Collectors.toList());
+
+                responseList.add(new RoomsReservationResponseDto(
+                        room.getRoomId(),
+                        room.getRoomName(),
+                        policy,
+                        reservationTimes));
+            } catch (ScheduleNotFoundException e) {
+                // RoomOperationPolicy가 설정되지 않은 경우 무시하고 넘어갑니다.
+            }
+        }
+        return responseList;
+    }
+
+
+
+
+    @Override
+    public SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date) {
+        Instant startTime = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant endTime = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+
+        List<Reservation> reservations = reservationDao.findByRoomIdsAndStartTimeBetween(roomIds, startTime, endTime);
+
+        List<SpecificRoomsReservationsDto.RoomReservation> roomReservations = reservations.stream()
+                .map(reservation -> new SpecificRoomsReservationsDto.RoomReservation(
+                        reservation.getReservationId(),
+                        reservation.getRoom().getRoomId(),
+                        reservation.getRoom().getRoomName(),
+                        reservation.getUser().getUserId(),
+                        reservation.getReservationStartTime(),
+                        reservation.getReservationEndTime()))
+                .collect(Collectors.toList());
+
+        return new SpecificRoomsReservationsDto(roomReservations);
+    }
+
 
     private void validateRoomAvailability(Long roomId, Instant startDateTime, Instant endDateTime) {
         boolean withinMaxReservationTime = isWithinMaxReservationTime(roomId, startDateTime, endDateTime);
