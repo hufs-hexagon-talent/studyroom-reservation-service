@@ -1,6 +1,5 @@
 package com.test.studyroomreservationsystem.service;
 
-import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
 import com.test.studyroomreservationsystem.dto.reservation.SpecificRoomsReservationsDto;
@@ -20,9 +19,8 @@ public interface RoomService {
     Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto);
     void deleteRoom(Long roomId);
     void isRoomAvailable(Long roomId, Instant startDateTime, Instant endDateTime);
-    List<RoomsReservationResponseDto> getRoomsReservationsByDate(LocalDate date);
     List<RoomsResponseDto> getRoomsPolicyByDate(LocalDate date);
-    SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
+
 
 
     default  RoomDto dtoFrom(Room room) {

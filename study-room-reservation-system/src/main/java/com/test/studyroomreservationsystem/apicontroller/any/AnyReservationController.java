@@ -1,10 +1,10 @@
 package com.test.studyroomreservationsystem.apicontroller.any;
 
-import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.dto.reservation.SpecificRoomsReservationsDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
+import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,18 +20,18 @@ import java.util.List;
 @RequestMapping("/reservations")
 public class AnyReservationController {
 
-        private final RoomService roomService;
+        private final ReservationService reservationService;
 
         @Autowired
-        public AnyReservationController(RoomService roomService) {
-            this.roomService = roomService;
+        public AnyReservationController(ReservationService reservationService) {
+            this.reservationService = reservationService;
         }
         @Operation(summary = "✅ 해당 날짜 모든룸 예약 상태 확인 ",
                 description = "날짜를 받으면 모든 룸의 예약을 확인",
                 security = {})
         @GetMapping("/by-date")
         ResponseEntity<ApiResponseDto<ApiResponseListDto<RoomsReservationResponseDto>>> getRoomReservationsByDate(@RequestParam("date") LocalDate date) {
-            List<RoomsReservationResponseDto> responseDtoList = roomService.getRoomsReservationsByDate(date);
+            List<RoomsReservationResponseDto> responseDtoList = reservationService.getReservationsByAllRoomsAndDate(date);
 
             ApiResponseListDto<RoomsReservationResponseDto> wrapped
                     = new ApiResponseListDto<>(responseDtoList);
@@ -50,7 +50,7 @@ public class AnyReservationController {
                 @RequestParam("date") LocalDate date,
                 @RequestParam("roomIds") List<Long> roomIds) {
 
-            SpecificRoomsReservationsDto responseDto = roomService.getReservationsByRoomsAndDate(roomIds, date);
+            SpecificRoomsReservationsDto responseDto = reservationService.getReservationsByRoomsAndDate(roomIds, date);
 
             ApiResponseDto<SpecificRoomsReservationsDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", responseDto);
 
