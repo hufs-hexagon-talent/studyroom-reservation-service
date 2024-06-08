@@ -11,12 +11,13 @@ import com.test.studyroomreservationsystem.exception.reservation.*;
 import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleException;
 import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+@Slf4j
 @RestControllerAdvice
 public class AppExceptionController {
     @ExceptionHandler(UsernameAlreadyExistsException.class)
@@ -211,6 +212,7 @@ public class AppExceptionController {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponseDto> handleAuthenticationServiceException(Exception ex) {
+            log.error("핸들링 되지 않은 예외 : {}", ex.getMessage(), ex);
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 "[Internal Server Error] 서비스에 문제가 발생했습니다.");

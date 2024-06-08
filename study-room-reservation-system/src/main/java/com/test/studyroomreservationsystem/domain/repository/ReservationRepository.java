@@ -16,7 +16,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.room.roomId = :roomId AND (r.reservationStartTime < :endTime AND r.reservationEndTime > :startTime)"
+            "WHERE r.room.roomId = :roomId " +
+            "AND (r.reservationStartTime < :endTime " +
+            "AND r.reservationEndTime > :startTime)"
     )
     List<Reservation> findOverlappingReservations( @Param("roomId") Long roomId,
                                                   @Param("startTime") Instant startTime,
@@ -29,11 +31,26 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     Optional<List<Reservation>> findByUserUserIdAndRoomRoomIdInAndReservationStartTimeBetween(Long userId, List<Long> roomIds, Instant startTime, Instant endTime);
 
-    // todo : 특정 날짜에 특정 방들에 대한 예약 정보를 모두 조회
-    @Query("SELECT r FROM Reservation r WHERE r.room.roomId IN :roomIds AND r.reservationStartTime >= :startTime AND r.reservationEndTime < :endTime")
+    // 특정 날짜에 특정 방들에 대한 예약 정보를 모두 조회
+    @Query("SELECT r " +
+            "FROM Reservation r " +
+            "WHERE r.room.roomId IN :roomIds " +
+            "AND r.reservationStartTime >= :startTime " +
+            "AND r.reservationEndTime < :endTime")
     List<Reservation> findByRoomRoomIdInAndReservationStartTimeBetween(
             @Param("roomIds") List<Long> roomIds,
             @Param("startTime") Instant startTime,
-            @Param("endTime") Instant endTime);
+            @Param("endTime") Instant endTime
+    );
 
+    @Query("SELECT COUNT(r) " +
+            "FROM Reservation r " +
+            "WHERE r.user.userId = :userId " +
+            "AND r.state = 'NOT_VISITED' " +
+            "AND r.reservationStartTime BETWEEN :startTime AND :endTime")
+    Long countNoShowsByUserIdAndPeriod(
+            @Param("userId") Long userId,
+            @Param("startTime") Instant startTime,
+            @Param("endTime") Instant endTime
+    );
 }

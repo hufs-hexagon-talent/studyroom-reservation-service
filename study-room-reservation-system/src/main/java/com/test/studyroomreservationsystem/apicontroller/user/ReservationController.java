@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
+import com.test.studyroomreservationsystem.dto.user.UserNoShowCntResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
@@ -100,4 +101,17 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "✅ 자신의 NoShow 횟수 조회",
+            description = " 인증 받은 유저의 자신의 노쇼 횟수 조회 ",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @GetMapping("/me/no-show")
+    ResponseEntity<ApiResponseDto<UserNoShowCntResponseDto>> lookUpNoShowCount(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        Long userId = currentUser.getUser().getUserId();
+        UserNoShowCntResponseDto userNoShowCntDto = new UserNoShowCntResponseDto(reservationService.countNoShowsByUserIdAndPeriod(userId));
+        ApiResponseDto<UserNoShowCntResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", userNoShowCntDto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

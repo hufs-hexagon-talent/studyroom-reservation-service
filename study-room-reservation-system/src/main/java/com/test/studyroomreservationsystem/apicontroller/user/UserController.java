@@ -8,6 +8,7 @@ import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
+import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -86,7 +87,6 @@ public class UserController {
 
         User foundUser = userService.findUserById(currentUser.getUser().getUserId());
         UserInfoResponseDto user = userService.dtoFrom(foundUser);
-
         ApiResponseDto<UserInfoResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", user);
         return new ResponseEntity<>(response, HttpStatus.OK);

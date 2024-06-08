@@ -16,9 +16,11 @@ import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +33,8 @@ public class ReservationServiceImpl implements ReservationService {
     private final RoomService roomService;
     private final UserService userService;
     private final RoomOperationPolicyScheduleService scheduleService;
-
+    @Value("${spring.service.noShowCntMonth}")
+    private Long noShowCntMonth;
 
 
     @Autowired
@@ -105,6 +108,16 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDao.findByUserIdAndRoomIdsAndStartTimeBetween(userId, roomIds, startTime, endTime).orElseThrow(
                 ReservationNotFoundException::new
         );
+    }
+
+    @Override
+    public Long countNoShowsByUserIdAndPeriod(Long userId) {
+        ZonedDateTime endTime = ZonedDateTime.now(ZoneOffset.UTC);
+
+        ZonedDateTime startTime = endTime.minus(noShowCntMonth, ChronoUnit.MONTHS);
+        Instant startInstant = startTime.toInstant();
+        Instant endInstant = endTime.toInstant();
+        return reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
     }
 
 

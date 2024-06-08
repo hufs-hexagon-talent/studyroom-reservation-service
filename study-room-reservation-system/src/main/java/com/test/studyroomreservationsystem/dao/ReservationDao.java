@@ -18,5 +18,5 @@ public interface ReservationDao {
     List<Reservation> findOverlappingReservations(Long roomId, Instant startDateTime, Instant endDateTime);
     Optional<List<Reservation>> findByUserIdAndRoomIdsAndStartTimeBetween(Long userId, List<Long> roomIds, Instant startDateTime, Instant endDateTime);
     List<Reservation> findByRoomIdsAndStartTimeBetween(List<Long> roomIds, Instant startTime, Instant endTime);
-
+    Long countNoShowsByUserIdAndPeriod(Long userId, Instant startDateTime, Instant endDateTime);
 }

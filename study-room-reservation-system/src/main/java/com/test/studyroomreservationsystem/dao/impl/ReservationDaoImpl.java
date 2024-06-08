@@ -61,4 +61,9 @@ public class ReservationDaoImpl implements ReservationDao {
         return reservationRepository.findByRoomRoomIdInAndReservationStartTimeBetween(roomIds, startTime, endTime);
     }
 
+    @Override
+    public Long countNoShowsByUserIdAndPeriod(Long userId, Instant startDateTime, Instant endDateTime) {
+        return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startDateTime, endDateTime);
+    }
+
 }

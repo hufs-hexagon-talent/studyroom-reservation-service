@@ -17,11 +17,12 @@ public interface ReservationService {
     List<Reservation> findAllReservation();
     List<Reservation> findAllReservationByUser(Long userId);
     void deleteReservation(Long reservationId, CustomUserDetails currentUser);
-
     List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date);
     SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
-
     List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomIds, Instant startTime, Instant endTime);
+    Long countNoShowsByUserIdAndPeriod(Long userId);
+
+
     ReservationRequestDto requestDtoFrom(Reservation reservation);
     ReservationResponseDto responseDtoFrom(Reservation reservation);
 

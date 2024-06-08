@@ -40,6 +40,7 @@ spring:
         allowedEndMinute : 15
         otpLength : 8
         otpTTL : 300
+        noShowCntMonth : 1
 
 #    flyway:
 #        enabled: true
@@ -49,17 +50,17 @@ spring:
 #        password: 1234
 #        user: root
 
-#logging:
-#    level:
-#        com:
-#            test:
-#                studyroomreservationsystem:
+logging:
+    level:
+        com:
+            test:
+                studyroomreservationsystem:
 #                    security:
 #                            TRACE
 #                    apicontroller:
 #                            TRACE
-#                    service:
-#                        impl: TRACE
+                    service:
+                        impl: TRACE
 
 #        org:
 #            springframework: DEBUG

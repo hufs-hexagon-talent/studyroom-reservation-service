@@ -122,7 +122,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/users/sign-up").permitAll()
                         .requestMatchers(
-                                "/users/me").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                                "/users/me/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers(
                                 "/users/**").hasRole("ADMIN")
 
