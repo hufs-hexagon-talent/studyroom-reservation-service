@@ -11,8 +11,9 @@ import java.time.Instant;
 
 @Getter
 
-public class ReservationResponseDto {
+public class ReservationInfoResponseDto {
     private Long reservationId;
+    private Long userId;
     private Long roomId;
     private String roomName;
     private Instant startDateTime;
@@ -20,8 +21,9 @@ public class ReservationResponseDto {
     private ReservationState reservationState;
 
     @Builder
-    public ReservationResponseDto(Long reservationId,Long roomId, String roomName, Instant startDateTime, Instant endDateTime, ReservationState reservationState) {
+    public ReservationInfoResponseDto(Long reservationId,Long userId, Long roomId, String roomName, Instant startDateTime, Instant endDateTime, ReservationState reservationState) {
         this.reservationId = reservationId;
+        this.userId = userId;
         this.roomId = roomId;
         this.roomName = roomName;
         this.startDateTime = startDateTime;

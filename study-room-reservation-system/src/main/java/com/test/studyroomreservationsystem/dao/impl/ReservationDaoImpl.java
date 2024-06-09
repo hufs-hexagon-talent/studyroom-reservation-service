@@ -62,7 +62,7 @@ public class ReservationDaoImpl implements ReservationDao {
     }
 
     @Override
-    public Long countNoShowsByUserIdAndPeriod(Long userId, Instant startDateTime, Instant endDateTime) {
+    public List<Reservation> countNoShowsByUserIdAndPeriod(Long userId, Instant startDateTime, Instant endDateTime) {
         return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startDateTime, endDateTime);
     }
 

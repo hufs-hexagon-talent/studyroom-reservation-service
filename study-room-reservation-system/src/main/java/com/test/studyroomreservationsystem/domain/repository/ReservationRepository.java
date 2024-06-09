@@ -43,12 +43,12 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             @Param("endTime") Instant endTime
     );
 
-    @Query("SELECT COUNT(r) " +
+    @Query("SELECT r " +
             "FROM Reservation r " +
             "WHERE r.user.userId = :userId " +
             "AND r.state = 'NOT_VISITED' " +
             "AND r.reservationStartTime BETWEEN :startTime AND :endTime")
-    Long countNoShowsByUserIdAndPeriod(
+    List<Reservation> countNoShowsByUserIdAndPeriod(
             @Param("userId") Long userId,
             @Param("startTime") Instant startTime,
             @Param("endTime") Instant endTime
