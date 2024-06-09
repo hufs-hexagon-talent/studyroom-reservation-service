@@ -83,15 +83,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-        User userEntity = findUserById(userId);
+        User user = findUserById(userId);
 
-        userEntity.setUsername(userInfoUpdateRequestDto.getUsername());
-        userEntity.setPassword(userInfoUpdateRequestDto.getPassword());
-        userEntity.setSerial(userInfoUpdateRequestDto.getSerial());
-        userEntity.setIsAdmin(userInfoUpdateRequestDto.getIsAdmin());
-        userEntity.setName(userInfoUpdateRequestDto.getName());
+        String newPassword = userInfoUpdateRequestDto.getPassword();
+        String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
+        user.setPassword(encodeNewPassword);
 
-        return userDao.save(userEntity);
+        return userDao.save(user);
     }
     @Override
     public void deleteUser(Long userId) {

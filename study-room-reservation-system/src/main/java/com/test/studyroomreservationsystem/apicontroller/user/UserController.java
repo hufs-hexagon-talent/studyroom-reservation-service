@@ -92,16 +92,19 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "❌ 자신의 정보 수정",
+
+    @Operation(summary = "✅ 자신의 비밀번호 수정",
             description = "본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     // todo 수정 예정
     @PatchMapping("/me")
-    public ResponseEntity<UserInfoResponseDto> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
+    public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                           @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
-
-        User updatedUser = userService.updateUser(currentUser.getUser().getUserId(), userInfoUpdateRequestDto);
-        UserInfoResponseDto user = userService.dtoFrom(updatedUser);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        User user = currentUser.getUser();
+        User updatedUser = userService.updateUser(user.getUserId(), userInfoUpdateRequestDto);
+        UserInfoResponseDto userDto = userService.dtoFrom(updatedUser);
+        ApiResponseDto<UserInfoResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 변경 되었습니다.", userDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
