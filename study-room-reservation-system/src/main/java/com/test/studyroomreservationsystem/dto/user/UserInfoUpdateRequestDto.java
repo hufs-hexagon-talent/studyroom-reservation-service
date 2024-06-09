@@ -10,27 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserInfoUpdateRequestDto { // U dto
-    private String username;
     private String password;
-    private String serial;
-    private Boolean isAdmin;
-    private String name;
 
-    public UserInfoUpdateRequestDto(String username, String password, String serial, Boolean isAdmin, String name) {
-        this.username = username;
+    public UserInfoUpdateRequestDto(String password) {
         this.password = password;
-        this.serial = serial;
-        this.isAdmin = isAdmin;
-        this.name = name;
     }
 
     public User toEntity() {
         return User.builder()
-                .username(username)
                 .password(password)
-                .serial(serial)
-                .isAdmin(isAdmin)
-                .name(name)
                 .build();
     }
 }
