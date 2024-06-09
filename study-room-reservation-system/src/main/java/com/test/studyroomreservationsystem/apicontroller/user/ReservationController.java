@@ -5,8 +5,7 @@ import com.test.studyroomreservationsystem.dto.user.UserNoShowCntResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto;
-import com.test.studyroomreservationsystem.dto.reservation.ReservationResponseDto;
-import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
+import com.test.studyroomreservationsystem.dto.reservation.ReservationInfoResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.RoomService;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -44,11 +42,11 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping
-    ResponseEntity<ApiResponseDto<ReservationResponseDto>> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                          @RequestBody ReservationRequestDto reservationRequestDto) {
+    ResponseEntity<ApiResponseDto<ReservationInfoResponseDto>> reserveProcess(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                              @RequestBody ReservationRequestDto reservationRequestDto) {
         Reservation createdReservation = reservationService.createReservation(reservationRequestDto, currentUser.getUser());
-        ReservationResponseDto reservation = reservationService.responseDtoFrom(createdReservation);
-        ApiResponseDto<ReservationResponseDto> response
+        ReservationInfoResponseDto reservation = reservationService.responseDtoFrom(createdReservation);
+        ApiResponseDto<ReservationInfoResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", reservation);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -57,10 +55,10 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me/latest")
-    ResponseEntity<ApiResponseDto<ReservationResponseDto>> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<ApiResponseDto<ReservationInfoResponseDto>> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Reservation recentReservation = reservationService.findRecentReservationByUserId(currentUser.getUser().getUserId());
-        ReservationResponseDto reservationDto = reservationService.responseDtoFrom(recentReservation);
-        ApiResponseDto<ReservationResponseDto> response
+        ReservationInfoResponseDto reservationDto = reservationService.responseDtoFrom(recentReservation);
+        ApiResponseDto<ReservationInfoResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", reservationDto);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -72,16 +70,16 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me")
-    ResponseEntity<ApiResponseDto<ApiResponseListDto<ReservationResponseDto>>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<ApiResponseDto<ApiResponseListDto<ReservationInfoResponseDto>>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
-        List<ReservationResponseDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
+        List<ReservationInfoResponseDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
                 .stream()
                 .map(reservationService::responseDtoFrom)
                 .collect(Collectors.toList());
 
-        ApiResponseListDto<ReservationResponseDto> wrapped
+        ApiResponseListDto<ReservationInfoResponseDto> wrapped
                 = new ApiResponseListDto<>(reservationsByUser);
-        ApiResponseDto<ApiResponseListDto<ReservationResponseDto>> response
+        ApiResponseDto<ApiResponseListDto<ReservationInfoResponseDto>> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -101,14 +99,18 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "✅ 자신의 NoShow 횟수 조회",
+    @Operation(summary = "✅ 자신의 NoShow 정보 조회",
             description = " 인증 받은 유저의 자신의 노쇼 횟수 조회 ",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/me/no-show")
     ResponseEntity<ApiResponseDto<UserNoShowCntResponseDto>> lookUpNoShowCount(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userId = currentUser.getUser().getUserId();
-        UserNoShowCntResponseDto userNoShowCntDto = new UserNoShowCntResponseDto(reservationService.countNoShowsByUserIdAndPeriod(userId));
+        List<Reservation> reservations = reservationService.countNoShowsByUserIdAndPeriod(userId);
+        List<ReservationInfoResponseDto> reservationInfos = reservations.stream().map(reservationService::responseDtoFrom).collect(Collectors.toList());
+
+        int count = reservations.size();
+        UserNoShowCntResponseDto userNoShowCntDto = new UserNoShowCntResponseDto(count,reservationInfos);
         ApiResponseDto<UserNoShowCntResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", userNoShowCntDto);
 

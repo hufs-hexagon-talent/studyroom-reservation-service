@@ -111,13 +111,25 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Long countNoShowsByUserIdAndPeriod(Long userId) {
+    public List<Reservation> countNoShowsByUserIdAndPeriod(Long userId) {
         ZonedDateTime endTime = ZonedDateTime.now(ZoneOffset.UTC);
 
         ZonedDateTime startTime = endTime.minus(noShowCntMonth, ChronoUnit.MONTHS);
         Instant startInstant = startTime.toInstant();
         Instant endInstant = endTime.toInstant();
-        return reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
+        List<Reservation> reservations = reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
+//        List<ReservationInfoResponseDto> reservationInfos = reservations.stream()
+//                .map(reservation -> new ReservationInfoResponseDto(
+//                        reservation.getReservationId(),
+//                        reservation.getUser().getUserId(),
+//                        reservation.getRoom().getRoomId(),
+//                        reservation.getRoom().getRoomName(),
+//                        reservation.getReservationStartTime(),
+//                        reservation.getReservationEndTime(),
+//                        reservation.getState()))
+//                .collect(Collectors.toList());
+
+        return reservations;
     }
 
 
@@ -238,9 +250,10 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ReservationResponseDto responseDtoFrom(Reservation reservation) {
-        return ReservationResponseDto.builder()
+    public ReservationInfoResponseDto responseDtoFrom(Reservation reservation) {
+        return ReservationInfoResponseDto.builder()
                 .reservationId(reservation.getReservationId())
+                .userId(reservation.getUser().getUserId())
                 .roomId(reservation.getRoom().getRoomId())
                 .roomName(reservation.getRoom().getRoomName())
                 .startDateTime(reservation.getReservationStartTime())
