@@ -174,6 +174,7 @@ public class ReservationServiceImpl implements ReservationService {
                         reservation.getRoom().getRoomId(),
                         reservation.getRoom().getRoomName(),
                         reservation.getUser().getUserId(),
+                        reservation.getState(),
                         reservation.getReservationStartTime(),
                         reservation.getReservationEndTime()))
                 .collect(Collectors.toList());
