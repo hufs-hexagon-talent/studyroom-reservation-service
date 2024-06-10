@@ -23,7 +23,6 @@ public interface ReservationService {
     List<Reservation> countNoShowsByUserIdAndPeriod(Long userId);
 
 
-    ReservationRequestDto requestDtoFrom(Reservation reservation);
     ReservationInfoResponseDto responseDtoFrom(Reservation reservation);
 
 }
