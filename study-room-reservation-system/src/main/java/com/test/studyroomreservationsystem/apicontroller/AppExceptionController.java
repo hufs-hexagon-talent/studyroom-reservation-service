@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
+import com.test.studyroomreservationsystem.exception.NoShowLimitExceededException;
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.checkin.*;
@@ -20,117 +21,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class AppExceptionController {
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleUsernameAlreadyExistsException(SignUpNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.CONFLICT.toString(),
-                 ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(SerialAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleSerialAlreadyExistsException(SignUpNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.CONFLICT.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
-
-
-    @ExceptionHandler(RoomPolicyNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleRoomNotOperatingException(ReservationNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.NOT_FOUND.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(OperationClosedException.class)
-    public ResponseEntity<ErrorResponseDto> handleOperationClosedException(ReservationNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.PRECONDITION_FAILED.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
-    }
-
-    @ExceptionHandler(OverlappingReservationException.class)
-    public ResponseEntity<ErrorResponseDto> handleOverlappingReservationException(ReservationNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.CONFLICT.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(PastReservationTimeException.class)
-    public ResponseEntity<ErrorResponseDto> handlePastReservationTimeException(ReservationNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.PRECONDITION_FAILED.toString(),
-                  ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
-    }
-
-    @ExceptionHandler(ExceedingMaxReservationTimeException.class)
-    public ResponseEntity<ErrorResponseDto> handleExceedingMaxReservationTimeException(ReservationNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.PRECONDITION_FAILED.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
-    }
-
-    @ExceptionHandler(InvalidReservationTimeException.class)
-    public ResponseEntity<ErrorResponseDto> handleInvalidReservationTimeException(ReservationNotPossibleException ex) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.PRECONDITION_FAILED.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
-    }
-
-
-    @ExceptionHandler(KeyNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.NOT_FOUND.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
-    }
-
-    @ExceptionHandler(OTPExpiredException.class)
-    public ResponseEntity<ErrorResponseDto> handleOTPExpiredException(CheckInFailException ex ) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.GONE.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
-    }
-
-    @ExceptionHandler(InvalidVerificationCodeException.class)
-    public ResponseEntity<ErrorResponseDto> handleInvalidVerificationCodeException(CheckInFailException ex ) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.PRECONDITION_FAILED.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
-    }
-
-    @ExceptionHandler(InvalidRoomIdsException.class)
-    public ResponseEntity<ErrorResponseDto> handleInvalidRoomIdsException(CheckInFailException ex ) {
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.PRECONDITION_FAILED.toString(),
-                ex.getMessage()
-        );
-        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
-    }
-
-
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException ex) {
 
