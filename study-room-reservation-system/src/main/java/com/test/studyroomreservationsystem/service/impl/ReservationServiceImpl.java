@@ -189,46 +189,53 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     private void validateRoomAvailability(Long userId,Long roomId, Instant startDateTime, Instant endDateTime) {
-        boolean withinMaxReservationTime = isWithinMaxReservationTime(roomId, startDateTime, endDateTime);
 //        boolean isPastTime = isPastTime(startDateTime);
-        boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
-        boolean isInvalidReservationTime = (startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime));
+
         //  이용 불가 한 학생
-        if (isNoneBlocking(userId)) {
-            // todo 예외 처리 끝까지 ..
+        if (isUserBlocked(userId)) {
             throw new NoShowLimitExceededException();
         }
+
         //  운영이 하지 않음 (운영 정책 없음), 운영이 종료 되었음 (운영 정책 있음)
         isOperating(roomId, startDateTime, endDateTime);
 
-        if (!withinMaxReservationTime) {
+        // 잘못된 예약 : 시간 : 예약당 최대 시간 초과
+        if (!isWithinMaxReservationTime(roomId, startDateTime, endDateTime)) {
             throw new ExceedingMaxReservationTimeException();
         }
+
+        // 잘못된 예약 : 예약시작 < 예약끝 인지 확인
+        if (isInvalidReservationTime(startDateTime, endDateTime)) {
+            throw new InvalidReservationTimeException();
+        }
+        // todo : 현재 가능한 예약 초과 : 사용자는 2개 이상의 예약(NOT_VISITED)을 보유할 수 없음, 근데 NOT_VISITED 중 NO_SHOW 인 경우를 어캐 구분하지?
+        // todo : 오늘 가능한 예약 초과 : 사용자는 동일 날짜에 2개 이상의 예약(VISITED)을 보유할 수 없음
+
         // 이미 예약이 있음
-        if (!hasNoOverlappingReservations) {
+        if (!isRoomNotOverlapping(roomId, startDateTime, endDateTime)) {
             throw new OverlappingReservationException(roomService.findRoomById(roomId), startDateTime, endDateTime);
         }
 
-        // 잘못된 예약 시간인지 확인
-        if (isInvalidReservationTime) {
-            throw new InvalidReservationTimeException();
-        }
-
     }
-    private boolean isNoneBlocking(Long userId){
+
+    private boolean isInvalidReservationTime(Instant startDateTime, Instant endDateTime) {
+        return startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime);
+    }
+
+    private boolean isUserBlocked(Long userId){
         List<Reservation> reservations = countNoShowsByUserIdAndPeriod(userId);
         int noShowCnt = reservations.size();
         
         return noShowCnt > noShowLimit;
     }
 
+    // 룸이 운영을 하는지? && 운영이 종료 되었는지?
     private void isOperating(Long roomId, Instant startDateTime, Instant endDateTime) {
-        // 룸이 운영을 하는지? && 운영이 종료 되었는지?
         roomService.isRoomAvailable(roomId, startDateTime, endDateTime);
     }
 
+    // 다른 예약과 겹치지 않는지 확인
     private boolean isRoomNotOverlapping(Long roomId, Instant startDateTime, Instant endDateTime) {
-        // 다른 예약과 겹치지 않는지 확인
         return reservationDao.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
     }
 
@@ -241,15 +248,6 @@ public class ReservationServiceImpl implements ReservationService {
         Integer eachMaxMinute = schedule.getRoomOperationPolicy().getEachMaxMinute();
 
         return reservationMinutes <= eachMaxMinute;
-    }
-
-    @Override
-    public ReservationRequestDto requestDtoFrom(Reservation reservation) {
-        return ReservationRequestDto.builder()
-                .roomId(reservation.getRoom().getRoomId())
-                .startDateTime(reservation.getReservationStartTime())
-                .endDateTime(reservation.getReservationEndTime())
-                .build();
     }
 
     @Override
