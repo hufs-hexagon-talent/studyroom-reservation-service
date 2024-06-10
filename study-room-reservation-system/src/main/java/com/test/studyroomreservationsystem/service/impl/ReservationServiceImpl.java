@@ -35,7 +35,8 @@ public class ReservationServiceImpl implements ReservationService {
     private final RoomOperationPolicyScheduleService scheduleService;
     @Value("${spring.service.noShowCntMonth}")
     private Long noShowCntMonth;
-
+    @Value("${spring.service.noShowLimit}")
+    private int noShowLimit;
 
     @Autowired
     public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
@@ -49,11 +50,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation createReservation(ReservationRequestDto reservationRequestDto, User user) {
         Long roomId = reservationRequestDto.getRoomId();
+        Long userId = user.getUserId();
         Instant startDateTime = reservationRequestDto.getStartDateTime();
         Instant endDateTime = reservationRequestDto.getEndDateTime();
 
         // 검증
-        validateRoomAvailability(roomId, startDateTime, endDateTime);
+        validateRoomAvailability(userId,roomId, startDateTime, endDateTime);
 
         Reservation reservationEntity = reservationRequestDto.toEntity(
                 user,
@@ -118,16 +120,7 @@ public class ReservationServiceImpl implements ReservationService {
         Instant startInstant = startTime.toInstant();
         Instant endInstant = endTime.toInstant();
         List<Reservation> reservations = reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
-//        List<ReservationInfoResponseDto> reservationInfos = reservations.stream()
-//                .map(reservation -> new ReservationInfoResponseDto(
-//                        reservation.getReservationId(),
-//                        reservation.getUser().getUserId(),
-//                        reservation.getRoom().getRoomId(),
-//                        reservation.getRoom().getRoomName(),
-//                        reservation.getReservationStartTime(),
-//                        reservation.getReservationEndTime(),
-//                        reservation.getState()))
-//                .collect(Collectors.toList());
+
 
         return reservations;
     }
@@ -195,12 +188,16 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-    private void validateRoomAvailability(Long roomId, Instant startDateTime, Instant endDateTime) {
+    private void validateRoomAvailability(Long userId,Long roomId, Instant startDateTime, Instant endDateTime) {
         boolean withinMaxReservationTime = isWithinMaxReservationTime(roomId, startDateTime, endDateTime);
 //        boolean isPastTime = isPastTime(startDateTime);
         boolean hasNoOverlappingReservations = isRoomNotOverlapping(roomId, startDateTime, endDateTime);
         boolean isInvalidReservationTime = (startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime));
-
+        //  이용 불가 한 학생
+        if (isNoneBlocking(userId)) {
+            // todo 예외 처리 끝까지 ..
+            throw new NoShowLimitExceededException();
+        }
         //  운영이 하지 않음 (운영 정책 없음), 운영이 종료 되었음 (운영 정책 있음)
         isOperating(roomId, startDateTime, endDateTime);
 
@@ -217,6 +214,12 @@ public class ReservationServiceImpl implements ReservationService {
             throw new InvalidReservationTimeException();
         }
 
+    }
+    private boolean isNoneBlocking(Long userId){
+        List<Reservation> reservations = countNoShowsByUserIdAndPeriod(userId);
+        int noShowCnt = reservations.size();
+        
+        return noShowCnt > noShowLimit;
     }
 
     private void isOperating(Long roomId, Instant startDateTime, Instant endDateTime) {

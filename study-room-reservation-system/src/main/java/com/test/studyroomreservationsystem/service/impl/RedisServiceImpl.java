@@ -44,7 +44,6 @@ public class RedisServiceImpl implements RedisService {
     public String getValue(String key) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Object value = valueOperations.get(key);
-        // todo : 존재하지 않는 KEY 에 대한 get을 할 수 없음
 
         if (value == null) {
                 throw new KeyNotFoundException();

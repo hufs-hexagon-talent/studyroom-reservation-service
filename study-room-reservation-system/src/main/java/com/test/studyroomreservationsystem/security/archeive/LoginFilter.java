@@ -68,7 +68,6 @@
 //        if (!isPost(request)){
 //            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 //
-//            // todo : response 바디에 error 메시지 담아서 응답
 //            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(), "Unsupported Method : " + request.getMethod());
 //            writeResponse(response, errorResponse);
 //
@@ -77,7 +76,6 @@
 //        if (!isApplicationJson(request)){
 //            response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 //
-//            // todo : response 바디에 error 메시지 담아서 응답
 //            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), "Unsupported Media Type: " + request.getContentType());
 //            writeResponse(response, errorResponse);
 //            throw new AuthenticationServiceException("Unsupported Media Type: " + request.getContentType());
@@ -90,7 +88,6 @@
 //
 //            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 //
-//            // todo : response 바디에 error 메시지 담아서 응답
 //            ErrorResponseDto errorResponse = new ErrorResponseDto(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Error parsing login request");
 //            writeResponse(response, errorResponse);
 //            throw new AuthenticationServiceException("Error parsing login request ", e);
