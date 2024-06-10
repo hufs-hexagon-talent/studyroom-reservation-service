@@ -37,8 +37,6 @@ public class UserServiceImpl implements UserService {
         log.trace("\n[회원가입]유저네임 : {}",username);
         log.trace("\n[회원가입]비밀번호 : {}",password);
 
-        // todo :  다른 값들도 받아서 검증
-
         // 해당 로그인 ID 가 이미 존재하는 아이디인지?
         Boolean existsByUsername = userDao.existsByUsername(username);
         if (existsByUsername) {

@@ -9,7 +9,7 @@ public class PastReservationTimeException extends RuntimeException implements Re
     private final Instant startDateTime;
     private final Instant endDateTime;
     public PastReservationTimeException(Instant startDateTime, Instant endDateTime) {
-        super("예약 할 수 없는 시간 입니다.");
+        super("과거는 예약 할 수 없는 시간 입니다.");
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }

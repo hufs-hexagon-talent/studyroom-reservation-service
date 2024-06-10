@@ -18,6 +18,7 @@ spring:
         otpLength: 8
         otpTTL: 300
         noShowCntMonth : 1
+        noShowLimit : 3
 
     jpa:
         show-sql: false
