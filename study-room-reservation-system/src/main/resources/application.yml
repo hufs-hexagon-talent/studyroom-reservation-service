@@ -42,6 +42,7 @@ spring:
         otpTTL : 300
         noShowCntMonth : 1
         noShowLimit : 3
+        reservationLimit : 1
 
 #    flyway:
 #        enabled: true

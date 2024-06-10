@@ -20,6 +20,8 @@ public interface ReservationService {
     List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date);
     SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
     List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomIds, Instant startTime, Instant endTime);
+
+    List<Reservation> getNotVisitedReservationsAfterNow(Long userId);
     List<Reservation> countNoShowsByUserIdAndPeriod(Long userId);
 
 
