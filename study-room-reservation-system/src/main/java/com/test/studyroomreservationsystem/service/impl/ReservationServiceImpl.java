@@ -12,6 +12,7 @@ import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundEx
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.InvalidReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
+import com.test.studyroomreservationsystem.exception.reservation.TooManyReservationsException;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,8 @@ public class ReservationServiceImpl implements ReservationService {
     private Long noShowCntMonth;
     @Value("${spring.service.noShowLimit}")
     private int noShowLimit;
+    @Value("${spring.service.reservationLimit}")
+    private int reservationLimit;
 
     @Autowired
     public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
@@ -113,16 +116,23 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<Reservation> getNotVisitedReservationsAfterNow(Long userId) {
+        Instant now = Instant.now();
+        // todo : 현재 시점으로 이후로 NOT_VISITED 인 예약 가져오기
+        return reservationDao.getNotVisitedReservationsAfterNow(userId, now);
+    }
+
+
+    @Override
     public List<Reservation> countNoShowsByUserIdAndPeriod(Long userId) {
         ZonedDateTime endTime = ZonedDateTime.now(ZoneOffset.UTC);
-
+        endTime = endTime.minus(1, ChronoUnit.DAYS);
         ZonedDateTime startTime = endTime.minus(noShowCntMonth, ChronoUnit.MONTHS);
         Instant startInstant = startTime.toInstant();
         Instant endInstant = endTime.toInstant();
-        List<Reservation> reservations = reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
 
 
-        return reservations;
+        return reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
     }
 
 
@@ -208,14 +218,20 @@ public class ReservationServiceImpl implements ReservationService {
         if (isInvalidReservationTime(startDateTime, endDateTime)) {
             throw new InvalidReservationTimeException();
         }
-        // todo : 현재 가능한 예약 초과 : 사용자는 2개 이상의 예약(NOT_VISITED)을 보유할 수 없음, 근데 NOT_VISITED 중 NO_SHOW 인 경우를 어캐 구분하지?
-        // todo : 오늘 가능한 예약 초과 : 사용자는 동일 날짜에 2개 이상의 예약(VISITED)을 보유할 수 없음
+        // 현재 가능한 예약 초과 : 사용자는 1개 이상의 예약(NOT_VISITED)을 보유할 수 없음
+        if (isTooMany(userId)) {
+            throw new TooManyReservationsException(reservationLimit);
+        }
 
         // 이미 예약이 있음
         if (!isRoomNotOverlapping(roomId, startDateTime, endDateTime)) {
             throw new OverlappingReservationException(roomService.findRoomById(roomId), startDateTime, endDateTime);
         }
 
+    }
+
+    private boolean isTooMany(Long userId) {
+        return getNotVisitedReservationsAfterNow(userId).size() > reservationLimit;
     }
 
     private boolean isInvalidReservationTime(Instant startDateTime, Instant endDateTime) {

@@ -19,4 +19,5 @@ public interface ReservationDao {
     Optional<List<Reservation>> findByUserIdAndRoomIdsAndStartTimeBetween(Long userId, List<Long> roomIds, Instant startDateTime, Instant endDateTime);
     List<Reservation> findByRoomIdsAndStartTimeBetween(List<Long> roomIds, Instant startTime, Instant endTime);
     List<Reservation> countNoShowsByUserIdAndPeriod(Long userId, Instant startDateTime, Instant endDateTime);
+    List<Reservation> getNotVisitedReservationsAfterNow(Long userId, Instant startTime);
 }

@@ -66,4 +66,9 @@ public class ReservationDaoImpl implements ReservationDao {
         return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startDateTime, endDateTime);
     }
 
+    @Override
+    public List<Reservation> getNotVisitedReservationsAfterNow(Long userId, Instant currentTime) {
+        return reservationRepository.findByUserUserIdAndReservationStartTime(userId, currentTime);
+    }
+
 }
