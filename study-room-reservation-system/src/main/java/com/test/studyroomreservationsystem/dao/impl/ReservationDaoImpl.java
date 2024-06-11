@@ -4,6 +4,7 @@ import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
+import com.test.studyroomreservationsystem.service.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
@@ -69,6 +70,13 @@ public class ReservationDaoImpl implements ReservationDao {
     @Override
     public List<Reservation> getNotVisitedReservationsAfterNow(Long userId, Instant currentTime) {
         return reservationRepository.findByUserUserIdAndReservationStartTime(userId, currentTime);
+    }
+
+    @Override
+    public List<Reservation> findByUserIdAndTodayDate(Long userId) {
+        Instant startOfToday = DateTimeUtil.getStartOfToday();
+        Instant endOfToday = DateTimeUtil.getEndOfToday();
+        return reservationRepository.findByUserIdAndReservationStartTime(userId, startOfToday, endOfToday);
     }
 
 }

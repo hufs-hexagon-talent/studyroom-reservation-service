@@ -12,7 +12,8 @@ import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundEx
 import com.test.studyroomreservationsystem.exception.reservation.ExceedingMaxReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.InvalidReservationTimeException;
 import com.test.studyroomreservationsystem.exception.reservation.OverlappingReservationException;
-import com.test.studyroomreservationsystem.exception.reservation.TooManyReservationsException;
+import com.test.studyroomreservationsystem.exception.reservation.TooManyCurrentReservationsException;
+import com.test.studyroomreservationsystem.exception.reservation.TooManyTodayReservationsException;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class ReservationServiceImpl implements ReservationService {
     private int noShowLimit;
     @Value("${spring.service.reservationLimit}")
     private int reservationLimit;
+    @Value("${spring.service.reservationLimitToday}")
+    private int reservationLimitToday;
 
     @Autowired
     public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
@@ -68,7 +71,6 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDao.save(reservationEntity);
 
     }
-
 
     @Override
     public Reservation findReservationById(Long reservationId) {
@@ -131,7 +133,6 @@ public class ReservationServiceImpl implements ReservationService {
         Instant startInstant = startTime.toInstant();
         Instant endInstant = endTime.toInstant();
 
-
         return reservationDao.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
     }
 
@@ -174,8 +175,6 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
 
-
-
     @Override
     public SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date) {
         Instant startTime = date.atStartOfDay(ZoneOffset.UTC).toInstant();
@@ -198,6 +197,11 @@ public class ReservationServiceImpl implements ReservationService {
         return new SpecificRoomsReservationsDto(roomReservations);
     }
 
+    @Override
+    public List<Reservation> getReservationsByUserIdAndToday(Long userId) {
+        Instant today = ZonedDateTime.now().toInstant();
+        return reservationDao.findByUserIdAndTodayDate(userId);
+    }
 
     private void validateRoomAvailability(Long userId,Long roomId, Instant startDateTime, Instant endDateTime) {
 //        boolean isPastTime = isPastTime(startDateTime);
@@ -220,10 +224,13 @@ public class ReservationServiceImpl implements ReservationService {
             throw new InvalidReservationTimeException();
         }
         // 현재 가능한 예약 초과 : 사용자는 1개 이상의 예약(NOT_VISITED)을 보유할 수 없음
-        if (isTooMany(userId)) {
-            throw new TooManyReservationsException(reservationLimit);
+        if (isTooManyCurrent(userId)) {
+            throw new TooManyCurrentReservationsException(reservationLimit);
         }
-
+        // 오늘 가능한 예약 초과 : 사용자는 하루에 2개 까지 예약을 생성할 수 있음
+        if (isTooManyToday(userId)) {
+            throw new TooManyTodayReservationsException(reservationLimitToday);
+        }
         // 이미 예약이 있음
         if (!isRoomNotOverlapping(roomId, startDateTime, endDateTime)) {
             throw new OverlappingReservationException(roomService.findRoomById(roomId), startDateTime, endDateTime);
@@ -231,7 +238,11 @@ public class ReservationServiceImpl implements ReservationService {
 
     }
 
-    private boolean isTooMany(Long userId) {
+    private boolean isTooManyToday(Long userId) {
+        return getReservationsByUserIdAndToday(userId).size() >= reservationLimitToday;
+    }
+
+    private boolean isTooManyCurrent(Long userId) {
         return getNotVisitedReservationsAfterNow(userId).size() >= reservationLimit;
     }
 

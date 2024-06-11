@@ -147,8 +147,16 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
-    @ExceptionHandler(TooManyReservationsException.class)
+    @ExceptionHandler(TooManyCurrentReservationsException.class)
     public ResponseEntity<ErrorResponseDto> handleTooManyReservationsException(ReservationNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.PRECONDITION_FAILED.toString(),
+                ex.getMessage()
+                );
+        return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
+    }
+    @ExceptionHandler(TooManyTodayReservationsException.class)
+    public ResponseEntity<ErrorResponseDto> handleTooManyTodayReservationsException(ReservationNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.PRECONDITION_FAILED.toString(),
                 ex.getMessage()

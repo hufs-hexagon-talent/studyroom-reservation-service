@@ -5,6 +5,7 @@ import com.test.studyroomreservationsystem.domain.entity.User;
 
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,5 @@ public interface ReservationDao {
     List<Reservation> findByRoomIdsAndStartTimeBetween(List<Long> roomIds, Instant startTime, Instant endTime);
     List<Reservation> countNoShowsByUserIdAndPeriod(Long userId, Instant startDateTime, Instant endDateTime);
     List<Reservation> getNotVisitedReservationsAfterNow(Long userId, Instant startTime);
+    List<Reservation> findByUserIdAndTodayDate(Long userId);
 }
