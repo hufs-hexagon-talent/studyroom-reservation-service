@@ -24,15 +24,17 @@ public class SpecificRoomsReservationsDto {
         private final Long roomId;
         private final String roomName;
         private final Long userId;
+        private final String name;
         private final ReservationState state;
         private final Instant startDateTime;
         private final Instant endDateTime;
 
-        public RoomReservation(Long reservationId, Long roomId, String roomName, Long userId, ReservationState state, Instant startDateTime, Instant endDateTime) {
+        public RoomReservation(Long reservationId, Long roomId, String roomName, Long userId, String name, ReservationState state, Instant startDateTime, Instant endDateTime) {
             this.reservationId = reservationId;
             this.roomId = roomId;
             this.roomName = roomName;
             this.userId = userId;
+            this.name = name;
             this.state = state;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;
