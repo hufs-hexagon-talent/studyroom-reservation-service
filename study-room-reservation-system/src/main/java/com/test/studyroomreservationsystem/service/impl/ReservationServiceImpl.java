@@ -232,7 +232,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private boolean isTooMany(Long userId) {
-        return getNotVisitedReservationsAfterNow(userId).size() > reservationLimit;
+        return getNotVisitedReservationsAfterNow(userId).size() >= reservationLimit;
     }
 
     private boolean isInvalidReservationTime(Instant startDateTime, Instant endDateTime) {
