@@ -73,7 +73,7 @@ public class RefreshController {
             return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
         }
 
-        // todo : login 성공 핸들러가 응답하는 것과 동일하게...
+        // login 성공 핸들러가 응답하는 것과 동일하게...
 
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);

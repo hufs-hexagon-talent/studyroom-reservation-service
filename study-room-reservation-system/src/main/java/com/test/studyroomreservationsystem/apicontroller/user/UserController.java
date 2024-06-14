@@ -8,7 +8,6 @@ import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
-import com.test.studyroomreservationsystem.service.ReservationService;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -96,7 +95,6 @@ public class UserController {
     @Operation(summary = "✅ 자신의 비밀번호 수정",
             description = "본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
-    // todo 수정 예정
     @PatchMapping("/me")
     public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                           @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {

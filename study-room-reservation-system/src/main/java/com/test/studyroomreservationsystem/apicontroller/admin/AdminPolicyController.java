@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "RoomOperationPolicy", description = "Room 운영 정책 관련 API")
 @RestController
@@ -59,7 +58,7 @@ public class AdminPolicyController {
         List<RoomOperationPolicyDto> policies = roomOperationPolicyService.findAllPolicies()
                 .stream()
                 .map(roomOperationPolicyService::dtoFrom)
-                .collect(Collectors.toList());
+                .toList();
 
         ApiResponseListDto<RoomOperationPolicyDto> wrapped = new ApiResponseListDto<>(policies);
         ApiResponseDto<ApiResponseListDto<RoomOperationPolicyDto>> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
