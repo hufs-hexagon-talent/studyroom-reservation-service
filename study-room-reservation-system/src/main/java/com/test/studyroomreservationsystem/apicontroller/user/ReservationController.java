@@ -35,7 +35,6 @@ public class ReservationController {
         this.reservationService = reservationService;
         this.roomService = roomService;
     }
-    // todo 수정 예정
 
     @Operation(summary = "✅ 자신의 예약 생성",
             description = "인증 받은 유저 사용자 예약 생성",
@@ -84,8 +83,7 @@ public class ReservationController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    // todo 수정 예정
-    // 자신의 예약 삭제
+
     @Operation(summary = "✅ 자신의 예약 삭제",
             description = "인증 받은 유저의 자신의 예약 삭제",
             security = {@SecurityRequirement(name = "JWT")}

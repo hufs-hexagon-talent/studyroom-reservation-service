@@ -1,8 +1,6 @@
 package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
-import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
-import com.test.studyroomreservationsystem.dto.reservation.SpecificRoomsReservationsDto;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;

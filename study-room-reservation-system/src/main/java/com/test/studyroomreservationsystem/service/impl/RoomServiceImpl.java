@@ -1,14 +1,10 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.dao.RoomDao;
 import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
-import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.dto.reservation.RoomsReservationResponseDto;
-import com.test.studyroomreservationsystem.dto.reservation.SpecificRoomsReservationsDto;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;

@@ -34,16 +34,13 @@ public class UserServiceImpl implements UserService {
         String password = requestDto.getPassword();
         String serial = requestDto.getSerial();
 
-        log.trace("\n[회원가입]유저네임 : {}",username);
-        log.trace("\n[회원가입]비밀번호 : {}",password);
-
         // 해당 로그인 ID 가 이미 존재하는 아이디인지?
-        Boolean existsByUsername = userDao.existsByUsername(username);
+        boolean existsByUsername = userDao.existsByUsername(username);
         if (existsByUsername) {
             throw (new UsernameAlreadyExistsException(username));
         }
         // 해당 학번이 이미 존재 하는지?
-        Boolean existsBySerial = userDao.existsBySerial(serial);
+        boolean existsBySerial = userDao.existsBySerial(serial);
         if (existsBySerial) {
             throw (new SerialAlreadyExistsException(serial));
         }

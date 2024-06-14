@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +43,7 @@ public class ReservationServiceImpl implements ReservationService {
     private int reservationLimit;
     @Value("${spring.service.reservationLimitToday}")
     private int reservationLimitToday;
+    private static final int ONE_DAY_OFFSET = 1;
 
     @Autowired
     public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
@@ -124,7 +124,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> getNotVisitedReservationsAfterNow(Long userId) {
         Instant now = Instant.now();
-        // 현재 시점으로 이후로 NOT_VISITED 인 예약 가져오기
+        // 현재 시점 으로 이후로 NOT_VISITED 인 예약 가져오기
         return reservationDao.getNotVisitedReservationsAfterNow(userId, now);
     }
 
@@ -132,8 +132,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> countNoShowsByUserIdAndPeriod(Long userId) {
         ZonedDateTime endTime = ZonedDateTime.now(ZoneOffset.UTC);
-        endTime = endTime.minus(1, ChronoUnit.DAYS);
-        ZonedDateTime startTime = endTime.minus(noShowCntMonth, ChronoUnit.MONTHS);
+        endTime = endTime.minusDays(ONE_DAY_OFFSET);
+        ZonedDateTime startTime = endTime.minusMonths(noShowCntMonth);
         Instant startInstant = startTime.toInstant();
         Instant endInstant = endTime.toInstant();
 
@@ -220,7 +220,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ExceedingMaxReservationTimeException();
         }
 
-        // 잘못된 예약 : 예약시작 < 예약끝 인지 확인
+        // 잘못된 예약 : 예약 시작 < 예약끝 인지 확인
         if (isInvalidReservationTime(startDateTime, endDateTime)) {
             throw new InvalidReservationTimeException();
         }
