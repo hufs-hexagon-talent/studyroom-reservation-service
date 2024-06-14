@@ -1,20 +1,22 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.service.OTPCodeService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 @Service
 public class OTPServiceImpl implements OTPCodeService {
+    @Value("${spring.service.randomChars}")
+    private String randomChars;
+    private final Random random = new Random();
 
     @Override
     public String generateRandomString(int length) {
-        String characters = "abcdefghjkmnopqrstuvwxyz23456789";
-        Random random = new Random();
         StringBuilder builder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            builder.append(characters.charAt(random.nextInt(characters.length())));
+            builder.append(randomChars.charAt(random.nextInt(randomChars.length())));
         }
         return builder.toString();
     }

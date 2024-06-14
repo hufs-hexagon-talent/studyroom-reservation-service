@@ -23,15 +23,12 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-
     private final String jwtHeader;
-    private final String jwtAccessCategory;
     private final UserDetailsService userDetailsService;
 
-    public JWTFilter(JWTUtil jwtUtil, String jwtHeader, String jwtAccessCategory, UserDetailsService userDetailsService) {
+    public JWTFilter(JWTUtil jwtUtil, String jwtHeader, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.jwtHeader = jwtHeader;
-        this.jwtAccessCategory = jwtAccessCategory;
         this.userDetailsService = userDetailsService;
     }
 
@@ -64,7 +61,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // 헤더 값이 access 이며, 만료되지 않았을 때
             String username = jwtUtil.getUsername(accessToken);
-            String role = jwtUtil.getRole(accessToken);
 
             UserDetails customUserDetails = userDetailsService.loadUserByUsername(username);
 

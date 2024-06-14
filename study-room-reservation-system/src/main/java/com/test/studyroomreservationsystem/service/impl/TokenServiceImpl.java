@@ -17,16 +17,16 @@ public class TokenServiceImpl implements TokenService {
     @Value("${spring.jwt.refresh.expiration}")
     private Long refreshTokenExpiration;
 
-    private final String jwtAccessCategory = "access";
-    private final String jwtRefreshCategory = "refresh";
+    private static final String JWT_ACCESS_CATEGORY = "access";
+    private static final String JWT_REFRESH_CATEGORY = "refresh";
 
     @Override
     public String createAccessToken(String username, String role) {
-        return jwtUtil.createAccessJwt(jwtAccessCategory, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
+        return jwtUtil.createAccessJwt(JWT_ACCESS_CATEGORY, username, role, accessTokenExpiration * 1000); // 밀리초 -> 초
     }
 
     @Override
     public String createRefreshToken(String username) {
-        return jwtUtil.createRefreshJwt(jwtRefreshCategory, username, refreshTokenExpiration * 1000); // 밀리초 -> 초
+        return jwtUtil.createRefreshJwt(JWT_REFRESH_CATEGORY, username, refreshTokenExpiration * 1000); // 밀리초 -> 초
     }
 }

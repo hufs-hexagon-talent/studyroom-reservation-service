@@ -34,7 +34,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.getWriter().flush();
         response.getWriter().close();
     }
-//        throw accessDeniedException;
 }
 
 

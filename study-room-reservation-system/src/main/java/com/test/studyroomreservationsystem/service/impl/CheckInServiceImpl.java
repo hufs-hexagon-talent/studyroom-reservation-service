@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CheckInServiceImpl implements CheckInService {
@@ -95,7 +94,7 @@ public class CheckInServiceImpl implements CheckInService {
                             .reservationEndTime(reservation.getReservationEndTime())
                             .state(reservation.getState())
                             .build())
-                    .collect(Collectors.toList());
+                    .toList();
 
         } catch (KeyNotFoundException e) {
             throw new OTPExpiredException();
