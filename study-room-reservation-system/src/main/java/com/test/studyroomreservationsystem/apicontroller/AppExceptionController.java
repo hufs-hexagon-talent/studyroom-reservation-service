@@ -10,6 +10,7 @@ import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdI
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
+import com.test.studyroomreservationsystem.exception.user.NotPossibleDeleteException;
 import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleException;
 import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
@@ -51,6 +52,15 @@ public class AppExceptionController {
 
     @ExceptionHandler(ReservationIdInvalidValueException.class)
     public ResponseEntity<ErrorResponseDto> handleReservationIdInvalidValueException(InvalidValueException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotPossibleDeleteException.class)
+    public ResponseEntity<ErrorResponseDto> handleNotPossibleDeleteException(NotPossibleDeleteException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.getMessage()
