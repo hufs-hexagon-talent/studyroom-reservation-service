@@ -165,7 +165,6 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(
                             jwtUtil,
                             jwtHeader,
-                            jwtAccessCategory,
                             userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         // 예외 처리
