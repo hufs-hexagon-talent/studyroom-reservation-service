@@ -15,6 +15,7 @@ spring:
     service:
         allowedStartMinute: 15
         allowedEndMinute: 15
+        randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength: 8
         otpTTL: 300
         noShowCntMonth : 1
