@@ -28,12 +28,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
-    private final RoomService roomService;
 
     @Autowired
-    public ReservationController(ReservationService reservationService, RoomService roomService) {
+    public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
-        this.roomService = roomService;
     }
 
     @Operation(summary = "✅ 자신의 예약 생성",
@@ -74,7 +72,7 @@ public class ReservationController {
         List<ReservationInfoResponseDto> reservationsByUser = reservationService.findAllReservationByUser(currentUser.getUser().getUserId())
                 .stream()
                 .map(reservationService::responseDtoFrom)
-                .collect(Collectors.toList());
+                .toList();
 
         ApiResponseListDto<ReservationInfoResponseDto> wrapped
                 = new ApiResponseListDto<>(reservationsByUser);
@@ -105,7 +103,7 @@ public class ReservationController {
     ResponseEntity<ApiResponseDto<UserNoShowCntResponseDto>> lookUpNoShowCount(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userId = currentUser.getUser().getUserId();
         List<Reservation> reservations = reservationService.countNoShowsByUserIdAndPeriod(userId);
-        List<ReservationInfoResponseDto> reservationInfos = reservations.stream().map(reservationService::responseDtoFrom).collect(Collectors.toList());
+        List<ReservationInfoResponseDto> reservationInfos = reservations.stream().map(reservationService::responseDtoFrom).toList();
 
         int count = reservations.size();
         UserNoShowCntResponseDto userNoShowCntDto = new UserNoShowCntResponseDto(count,reservationInfos);

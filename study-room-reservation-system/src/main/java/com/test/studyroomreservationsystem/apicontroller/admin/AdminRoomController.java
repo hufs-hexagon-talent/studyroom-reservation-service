@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "Room", description = "방 정보 관련 API")
 @RestController
@@ -60,7 +59,7 @@ public class AdminRoomController {
         List<RoomDto> rooms = roomService.findAllRoom()
                 .stream()
                 .map(roomService::dtoFrom)
-                .collect(Collectors.toList());
+                .toList();
 
         ApiResponseListDto<RoomDto> wrapped = new ApiResponseListDto<>(rooms);
         ApiResponseDto<ApiResponseListDto<RoomDto>> response
