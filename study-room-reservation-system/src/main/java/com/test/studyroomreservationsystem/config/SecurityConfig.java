@@ -42,6 +42,9 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
+    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
                           JWTUtil jwtUtil,
@@ -57,7 +60,6 @@ public class SecurityConfig {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
-
         this.jwtAccessCategory = jwtAccessCategory;
         this.jwtRefreshCategory = jwtRefreshCategory;
         this.jwtHeader = jwtHeader;
@@ -122,40 +124,40 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/users/sign-up").permitAll()
                         .requestMatchers(
-                                "/users/me/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                                "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
                         .requestMatchers(
-                                "/users/**").hasRole("ADMIN")
+                                "/users/**").hasAuthority(ROLE_ADMIN)
 
                     // Reservation
                         .requestMatchers(
                                 "/reservations/by-date/**",
                                 "/reservations/rooms/by-date/**").permitAll()
                         .requestMatchers(
-                                "/reservations/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                                "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
 
                     // PolicySchedule
                         .requestMatchers(
                                 "/schedules/available-dates").permitAll()
                         .requestMatchers(
-                                "/schedules/**").hasRole("ADMIN")
+                                "/schedules/**").hasAuthority(ROLE_ADMIN)
 
                     // Room
                         .requestMatchers(
                                 "/rooms/policy/by-date/**").permitAll()
                         .requestMatchers(
-                                "/rooms/**").hasRole("ADMIN")
+                                "/rooms/**").hasAuthority(ROLE_ADMIN)
                     // Policy
                         .requestMatchers(
-                                "/policies/**").hasRole("ADMIN")
+                                "/policies/**").hasAuthority(ROLE_ADMIN)
 
                     // otp
                         .requestMatchers(
                                 "/otp/**"
-                        ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        ).hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
                     // check-in
                         .requestMatchers(
                                 "/check-in/**"
-                        ).hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") // todo : 추후 ROLE_USER 삭제
+                        ).hasAuthority(ROLE_ADMIN)
 
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
@@ -165,7 +167,6 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(
                             jwtUtil,
                             jwtHeader,
-                            jwtAccessCategory,
                             userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         // 예외 처리
