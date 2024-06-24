@@ -8,7 +8,6 @@ import com.test.studyroomreservationsystem.dto.reservation.ReservationRequestDto
 import com.test.studyroomreservationsystem.dto.reservation.ReservationInfoResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.ReservationService;
-import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
 @Slf4j
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
@@ -89,7 +88,7 @@ public class ReservationController {
     @DeleteMapping("/me/{reservationId}")
     public ResponseEntity<ApiResponseDto<Objects>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                                      @PathVariable Long reservationId) {
-        reservationService.deleteReservation(reservationId, currentUser);
+        reservationService.deleteReservationBySelf(reservationId, currentUser);
         ApiResponseDto<Objects> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
         return new ResponseEntity<>(response, HttpStatus.OK);
