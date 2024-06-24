@@ -99,7 +99,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void deleteReservation(Long reservationId, CustomUserDetails currentUser) {
+    public void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
         if (reservation == null) {
             throw new ReservationIdInvalidValueException(reservationId);
@@ -110,6 +110,19 @@ public class ReservationServiceImpl implements ReservationService {
         }
         if (reservation.getState() == ReservationState.VISITED) {
             throw new NotPossibleDeleteException();
+        }
+        reservationDao.deleteById(reservationId);
+    }
+
+    @Override
+    public void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser) {
+        Reservation reservation = findReservationById(reservationId);
+        if (reservation == null) {
+            throw new ReservationIdInvalidValueException(reservationId);
+        }
+        User user = currentUser.getUser();
+        if (Boolean.FALSE.equals(user.getIsAdmin())) {
+            throw new AccessDeniedException();
         }
         reservationDao.deleteById(reservationId);
     }

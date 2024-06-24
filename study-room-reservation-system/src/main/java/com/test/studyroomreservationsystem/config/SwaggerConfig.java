@@ -4,12 +4,9 @@ package com.test.studyroomreservationsystem.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Configuration
 public class SwaggerConfig {
@@ -25,8 +22,6 @@ public class SwaggerConfig {
                                 .bearerFormat("JWT")
         );
 
-//        String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-
 
         return new OpenAPI()
                 .info(apiInfo())
@@ -36,6 +31,6 @@ public class SwaggerConfig {
         return new Info()
                 .title("HUFS Reservation Service") // API의 제목
                 .description("User Side, Admin Side API") // API에 대한 설명
-                .version("1.0.1"); // API의 버전
+                .version("1.0.2"); // API의 버전
     }
 }

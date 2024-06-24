@@ -16,7 +16,8 @@ public interface ReservationService {
     Reservation findRecentReservationByUserId(Long userId);
     List<Reservation> findAllReservation();
     List<Reservation> findAllReservationByUser(Long userId);
-    void deleteReservation(Long reservationId, CustomUserDetails currentUser);
+    void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser);
+    void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser);
     List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date);
     SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
     List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomIds, Instant startTime, Instant endTime);
