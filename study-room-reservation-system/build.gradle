@@ -40,7 +40,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 // migration
 //	implementation 'org.flywaydb:flyway-mysql'
-
+// Email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 // Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

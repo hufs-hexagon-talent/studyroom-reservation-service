@@ -30,7 +30,6 @@ spring:
             mode: always
             encoding: utf-8
 
-
     data:
         redis:
             host: localhost
@@ -45,6 +44,19 @@ spring:
         noShowLimit : 10
         reservationLimit : 1
         reservationLimitToday : 2
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: hwangbbang9@gmail.com
+        password: crta nqkq kkcy msow # todo .env 로 빼기
+        properties:
+            smtp:
+                auth: true
+                timeout: 5000
+                starttls:
+                    enable: true
+
+
 #    flyway:
 #        enabled: true
 #        baseline-on-migrate: true
