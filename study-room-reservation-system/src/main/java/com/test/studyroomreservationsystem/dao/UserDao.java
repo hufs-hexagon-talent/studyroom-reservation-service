@@ -12,6 +12,7 @@ public interface UserDao {
         Optional<User> findBySerial(String serial);
         Boolean existsBySerial(String serial);
         Boolean existsByUsername(String username);
+        Boolean existsByEmail(String email);
         List<User> findAll();
         void deleteById(Long userId);
 }

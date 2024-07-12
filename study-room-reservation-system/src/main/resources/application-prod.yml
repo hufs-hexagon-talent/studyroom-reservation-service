@@ -44,8 +44,9 @@ spring:
         username: hwangbbang9@gmail.com
         password: crta nqkq kkcy msow # todo .env 로 빼기
         properties:
-            smtp:
-                auth: true
-                timeout: 5000
-                starttls:
-                    enable: true
+            mail:
+                smtp:
+                    auth: true
+                    timeout: 5000
+                    starttls:
+                        enable: true

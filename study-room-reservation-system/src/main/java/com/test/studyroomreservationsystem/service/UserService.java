@@ -12,15 +12,18 @@ public interface UserService {
     User signUpProcess(SingUpRequestDto requestDto);
     User findUserById(Long userId);
     User findByUsername(String username);
+    String findEmailByUsername(String username);
     List<User> findAllUsers();
     User updateUser(Long userId, UserInfoUpdateRequestDto userInfoUpdateRequestDto);
     void deleteUser(Long userId);
     default UserInfoResponseDto dtoFrom(User user) {
         return UserInfoResponseDto.builder()
+                .userId(user.getUserId())
                 .username(user.getUsername())
                 .serial(user.getSerial())
                 .isAdmin(user.getIsAdmin())
                 .name(user.getName())
+                .email(user.getEmail())
                 .build();
     }
 
