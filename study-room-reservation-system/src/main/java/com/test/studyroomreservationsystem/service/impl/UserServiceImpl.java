@@ -4,6 +4,7 @@ import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
+import com.test.studyroomreservationsystem.exception.user.EmailAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
 import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
         String serial = requestDto.getSerial();
+        String email = requestDto.getEmail();
 
         // 해당 로그인 ID 가 이미 존재하는 아이디인지?
         boolean existsByUsername = userDao.existsByUsername(username);
@@ -44,7 +46,10 @@ public class UserServiceImpl implements UserService {
         if (existsBySerial) {
             throw (new SerialAlreadyExistsException(serial));
         }
-
+        boolean existsByEmail = userDao.existsByEmail(email);
+        if (existsByEmail) {
+            throw (new EmailAlreadyExistsException(email));
+        }
 
         String encodedPassword = bCryptPasswordEncoder.encode(password);
 
@@ -54,7 +59,7 @@ public class UserServiceImpl implements UserService {
         user.setSerial(serial);
         user.setName(requestDto.getName());
         user.setIsAdmin(Boolean.FALSE);
-
+        user.setEmail(email);
         return userDao.save(user);
     }
 
@@ -69,7 +74,11 @@ public class UserServiceImpl implements UserService {
         return userDao.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
-
+    @Override
+    public String findEmailByUsername(String username) {
+        User user = userDao.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        return user.getEmail();
+    }
     @Override
     public List<User> findAllUsers() {
         return userDao.findAll();

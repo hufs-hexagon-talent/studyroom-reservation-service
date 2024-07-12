@@ -38,3 +38,15 @@ spring:
         refresh:
             expiration: 7776000000 # 90일 -> ms
             category: refresh # jwt 의 헤더
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: hwangbbang9@gmail.com
+        password: crta nqkq kkcy msow # todo .env 로 빼기
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    timeout: 5000
+                    starttls:
+                        enable: true

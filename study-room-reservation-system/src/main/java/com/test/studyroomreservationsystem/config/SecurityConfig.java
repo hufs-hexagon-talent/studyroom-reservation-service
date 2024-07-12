@@ -119,7 +119,8 @@ public class SecurityConfig {
                     // Auth
                         .requestMatchers(
                                 "/auth/refresh",
-                                "/auth/login").permitAll()
+                                "/auth/login",
+                        "/auth/mail/send").permitAll()
                     // User
                         .requestMatchers(
                                 "/users/sign-up").permitAll()

@@ -22,6 +22,9 @@ public class User {
     @Column(name="serial", unique = true, length = 9)
     private String serial;
 
+    @Column(name="email", unique = true)
+    private String email;
+
     @Column(name="name")
     private String name; // 진짜 이름
 
@@ -30,11 +33,12 @@ public class User {
 
 
     @Builder
-    public User(Long userId, String username, String password, String serial, Boolean isAdmin, String name) {
+    public User(Long userId, String username, String password, String serial,String email, Boolean isAdmin, String name) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.serial = serial;
+        this.email = email;
         this.isAdmin = isAdmin != null ? isAdmin : false; // null 체크 후 기본값 할당
         this.name = name;
     }

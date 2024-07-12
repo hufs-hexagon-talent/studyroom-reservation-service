@@ -10,10 +10,7 @@ import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdI
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
-import com.test.studyroomreservationsystem.exception.user.NotPossibleDeleteException;
-import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
-import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleException;
-import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
+import com.test.studyroomreservationsystem.exception.user.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +40,14 @@ public class AppExceptionController {
     }
     @ExceptionHandler(SerialAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDto> handleSerialAlreadyExistsException(SignUpNotPossibleException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.CONFLICT.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleEmailAlreadyExistsException(SignUpNotPossibleException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.CONFLICT.toString(),
                 ex.getMessage()
