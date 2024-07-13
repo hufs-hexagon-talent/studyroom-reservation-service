@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.service;
 
+import com.test.studyroomreservationsystem.dto.auth.EmailResponseDto;
 import jakarta.mail.internet.MimeMessage;
 
 public interface MailService {
