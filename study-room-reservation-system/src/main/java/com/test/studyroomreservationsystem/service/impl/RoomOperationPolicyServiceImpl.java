@@ -27,7 +27,6 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
     }
 
 
-
     @Override
     public RoomOperationPolicy findPolicyById(Long policyId) {
         return policyDao.findById(policyId)
@@ -52,7 +51,7 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
 
     @Override
     public void deletePolicy(Long policyId) {
-        policyDao.findById(policyId).orElseThrow(() -> new PolicyNotFoundException(policyId));
+        findPolicyById(policyId); // 찾아보고 없으면 예외처리
         policyDao.deleteById(policyId);
     }
 
