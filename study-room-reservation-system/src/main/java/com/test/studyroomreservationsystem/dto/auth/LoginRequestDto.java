@@ -10,9 +10,9 @@ import lombok.*;
 @Schema(description = "로그인 요청 DTO")
 public class LoginRequestDto {
 
-    @Schema(description = "로그인 ID")
+    @Schema(description = "로그인 ID", example = "admin")
     private String username;
-    @Schema(description = "로그인 PW")
+    @Schema(description = "로그인 PW", example = "admin")
     private String password;
 
     public LoginRequestDto(String username, String password) {

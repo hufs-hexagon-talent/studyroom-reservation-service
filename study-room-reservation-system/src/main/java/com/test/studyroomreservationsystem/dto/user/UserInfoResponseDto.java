@@ -23,7 +23,7 @@ public class UserInfoResponseDto { // CR dto
     @NotNull(message = "이름이 비어 있습니다")
     private String name;
 
-    @NotNull(message = "이름이 비어 있습니다")
+    @NotNull(message = "이메일이 비어 있습니다")
     private String email;
 
     // of :  Dto -> Entity

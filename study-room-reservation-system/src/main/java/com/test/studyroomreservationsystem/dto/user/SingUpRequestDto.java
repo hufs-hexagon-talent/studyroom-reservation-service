@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.dto.user;
 
+import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ public class SingUpRequestDto {
     private String password;
     private String serial;
     private String name;
+
+    @Email(message = "유효한 이메일 주소를 입력하세요")
     private String email;
 
 

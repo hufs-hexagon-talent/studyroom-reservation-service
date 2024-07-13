@@ -3,6 +3,7 @@ package com.test.studyroomreservationsystem.service;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
+import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequestDto;
 
 
@@ -14,6 +15,7 @@ public interface UserService {
     User findByUsername(String username);
     String findEmailByUsername(String username);
     List<User> findAllUsers();
+    User updateUserInfo(Long userId,UserInfoUpdateRequestDto requestDto);
     User updateUserPassword(Long userId, UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto);
     void deleteUser(Long userId);
     default UserInfoResponseDto dtoFrom(User user) {

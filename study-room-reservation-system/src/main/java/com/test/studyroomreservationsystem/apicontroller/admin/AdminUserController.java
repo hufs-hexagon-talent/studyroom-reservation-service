@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
@@ -97,5 +98,18 @@ public class AdminUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    @Operation(summary = "✅ [관리자] 특정 회원 정보 수정",
+            description = "해당 user id의 정보를 수정 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @PatchMapping("/{userId}")
+    public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> updateUserInfo(@PathVariable Long userId,
+                                                                              @RequestBody UserInfoUpdateRequestDto requestDto) {
+        User user = userService.updateUserInfo(userId, requestDto);
+        UserInfoResponseDto userInfoDto = userService.dtoFrom(user);
+        ApiResponseDto<UserInfoResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 수정 되었습니다.", userInfoDto);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

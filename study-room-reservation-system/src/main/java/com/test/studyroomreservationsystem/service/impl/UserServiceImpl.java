@@ -2,6 +2,8 @@ package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.domain.repository.UserRepository;
+import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidNewPasswordException;
@@ -24,11 +26,14 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+
     @Autowired
-    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
         this.userDao = userDao;
 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userRepository = userRepository;
     }
     /*-------------------------------------------------*/
     @Override
@@ -84,6 +89,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAllUsers() {
         return userDao.findAll();
+    }
+
+    @Override
+    public User updateUserInfo(Long userId, UserInfoUpdateRequestDto requestDto) {
+        User user = findUserById(userId);
+        requestDto.toEntity(user);
+        return userRepository.save(user);
     }
 
 
