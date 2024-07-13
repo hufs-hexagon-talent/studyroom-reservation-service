@@ -33,7 +33,6 @@ public class EmailController {
         String email = userService.findEmailByUsername(username);
         int verificationCode = mailService.sendMail(email);
         EmailResponseDto emailDto = new EmailResponseDto(email, verificationCode);
-        mailService.sendMail(email);
 
         ApiResponseDto<EmailResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "인증 코드 전송 성공하였습니다.", emailDto);
