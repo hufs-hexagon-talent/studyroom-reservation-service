@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.service.impl;
 
+import com.test.studyroomreservationsystem.dto.auth.EmailResponseDto;
 import com.test.studyroomreservationsystem.exception.EmailCreationException;
 import com.test.studyroomreservationsystem.service.MailService;
 import jakarta.mail.Message;
@@ -60,4 +61,6 @@ public class MailServiceImpl implements MailService {
         javaMailSender.send(mail);
         return number;
     }
+
+
 }

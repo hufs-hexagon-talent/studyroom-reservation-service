@@ -4,6 +4,7 @@ import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
+import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidNewPasswordException;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidCurrentPasswordException;
 import com.test.studyroomreservationsystem.exception.user.EmailAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
@@ -89,13 +90,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUserPassword(Long userId, UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
         User user = findUserById(userId);
+        String currentPassword = userInfoUpdateRequestDto.getPrePassword();
 
         // 기존 비밀번호 검증
-        if (!bCryptPasswordEncoder.matches(userInfoUpdateRequestDto.getPrePassword(), user.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(currentPassword, user.getPassword())) {
             throw new InvalidCurrentPasswordException();
         }
         // 새 비밀번호 암호화 및 업데이트
         String newPassword = userInfoUpdateRequestDto.getNewPassword();
+        if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
+            throw new InvalidNewPasswordException();
+        }
         String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
         user.setPassword(encodeNewPassword);
 

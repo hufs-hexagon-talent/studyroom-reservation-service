@@ -92,10 +92,10 @@ public class UserController {
     }
 
 
-    @Operation(summary = "✅ 자신의 비밀번호 수정",
-            description = "본인 정보 업데이트 API",
+    @Operation(summary = "✅로그인 후, 자신의 비밀번호 수정",
+            description = "로그인 후, 본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @PatchMapping("/me/password")
+    @PutMapping("/me/password")
     public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                           @RequestBody UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
         User user = currentUser.getUser();

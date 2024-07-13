@@ -6,6 +6,7 @@ import com.test.studyroomreservationsystem.exception.administrative.Administrati
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.checkin.*;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidCurrentPasswordException;
+import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidNewPasswordException;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidValueException;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidReservationIdException;
 import com.test.studyroomreservationsystem.exception.notfound.*;
@@ -71,6 +72,14 @@ public class AppExceptionController {
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.getMessage()
         );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidNewPasswordException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidNewPasswordException(InvalidValueException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                ex.getMessage()
+                );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
