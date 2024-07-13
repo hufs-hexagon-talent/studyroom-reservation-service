@@ -6,7 +6,7 @@ import com.test.studyroomreservationsystem.domain.entity.*;
 import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.exception.*;
 
-import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvalidValueException;
+import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidReservationIdException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
@@ -102,7 +102,7 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
         if (reservation == null) {
-            throw new ReservationIdInvalidValueException(reservationId);
+            throw new InvalidReservationIdException(reservationId);
         }
         User user = currentUser.getUser();
         if (!reservation.getUser().getUserId().equals(user.getUserId())) {
@@ -118,7 +118,7 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
         if (reservation == null) {
-            throw new ReservationIdInvalidValueException(reservationId);
+            throw new InvalidReservationIdException(reservationId);
         }
         User user = currentUser.getUser();
         if (Boolean.FALSE.equals(user.getIsAdmin())) {

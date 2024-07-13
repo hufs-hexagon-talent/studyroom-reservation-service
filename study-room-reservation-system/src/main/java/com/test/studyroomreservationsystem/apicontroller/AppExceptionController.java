@@ -5,8 +5,9 @@ import com.test.studyroomreservationsystem.exception.NoShowLimitExceededExceptio
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.checkin.*;
+import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidCurrentPasswordException;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidValueException;
-import com.test.studyroomreservationsystem.exception.invaildvalue.ReservationIdInvalidValueException;
+import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidReservationIdException;
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
@@ -55,8 +56,17 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(ReservationIdInvalidValueException.class)
+
+    @ExceptionHandler(InvalidReservationIdException.class)
     public ResponseEntity<ErrorResponseDto> handleReservationIdInvalidValueException(InvalidValueException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidCurrentPasswordException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidCurrentPasswordException(InvalidValueException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.getMessage()
@@ -66,12 +76,14 @@ public class AppExceptionController {
 
     @ExceptionHandler(NotPossibleDeleteException.class)
     public ResponseEntity<ErrorResponseDto> handleNotPossibleDeleteException(NotPossibleDeleteException ex) {
+
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
 
     @ExceptionHandler(KeyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {
@@ -105,6 +117,8 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
+
+
 
     @ExceptionHandler(RoomPolicyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleRoomNotOperatingException(ReservationNotPossibleException ex) {
@@ -179,6 +193,7 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
 
+
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleReservationNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
@@ -219,9 +234,8 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
-
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+    public ResponseEntity<ErrorResponseDto> handleUsernameNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.NOT_FOUND.toString(),
                 ex.getMessage()

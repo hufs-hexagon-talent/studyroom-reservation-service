@@ -7,7 +7,7 @@ import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
-import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
+import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,11 +95,11 @@ public class UserController {
     @Operation(summary = "✅ 자신의 비밀번호 수정",
             description = "본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @PatchMapping("/me")
+    @PatchMapping("/me/password")
     public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                          @RequestBody UserInfoUpdateRequestDto userInfoUpdateRequestDto) {
+                                                          @RequestBody UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
         User user = currentUser.getUser();
-        User updatedUser = userService.updateUser(user.getUserId(), userInfoUpdateRequestDto);
+        User updatedUser = userService.updateUserPassword(user.getUserId(), userInfoUpdateRequestDto);
         UserInfoResponseDto userDto = userService.dtoFrom(updatedUser);
         ApiResponseDto<UserInfoResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 변경 되었습니다.", userDto);
