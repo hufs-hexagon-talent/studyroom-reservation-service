@@ -43,10 +43,19 @@ public class MailServiceImpl implements MailService {
 
             String body = "";
 
-            body += "<h3>" + "요청하신 인증 번호입니다." + "</h3>";
-            body += "<h1>" + number + "</h1>";
-            body += "<h3>" + "감사합니다." + "</h3>";
-            message.setText(body,"UTF-8", "html");
+            body += "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>";
+            body += "<h2 style='color: #2E86C1; text-align: center;'>이메일 인증</h2>";
+            body += "<p style='font-size: 16px; color: #333;'>안녕하세요,</p>";
+            body += "<p style='font-size: 16px; color: #333;'>요청하신 인증 번호를 보내드립니다.</p>";
+            body += "<div style='text-align: center; margin: 20px 0;'>";
+            body += "<h1 style='font-size: 48px; color: #E74C3C;'>" + number + "</h1>";
+            body += "</div>";
+            body += "<p style='font-size: 16px; color: #333;'>감사합니다.</p>";
+            body += "<hr style='border: none; border-top: 1px solid #ddd; margin: 20px 0;'>";
+            body += "<p style='font-size: 12px; color: #999; text-align: center;'>이 메일은 자동으로 생성된 메일입니다. 회신하지 마세요.</p>";
+            body += "</div>";
+
+            message.setText(body, "UTF-8", "html");
 
         } catch (MessagingException e) {
             log.error("Failed to create email message", e);

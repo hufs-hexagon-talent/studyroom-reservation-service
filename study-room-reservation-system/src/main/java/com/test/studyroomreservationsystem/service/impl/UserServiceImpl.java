@@ -120,6 +120,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void deleteUser(Long userId) {
+        findUserById(userId); //찾아보고 없으면 예외처리
         userDao.deleteById(userId);
     }
 

@@ -14,11 +14,15 @@ import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
 import com.test.studyroomreservationsystem.exception.user.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+
 @Slf4j
 @RestControllerAdvice
 public class AppExceptionController {
@@ -261,7 +265,27 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
+        String errorMessage = "잘못된 JSON 입력입니다: " + ex.getLocalizedMessage();
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                errorMessage
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDto> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String errorMessage = "외래키 제약 조건으로 삭제하거나 업데이트할 수 없습니다.";
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.CONFLICT.toString(),
+                errorMessage
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleAuthenticationServiceException(Exception ex) {
             log.error("핸들링 되지 않은 예외 : {}", ex.getMessage(), ex);
         ErrorResponseDto errorResponse = new ErrorResponseDto(

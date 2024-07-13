@@ -68,6 +68,7 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
     public List<RoomOperationPolicySchedule> findAllSchedule() {return scheduleDao.findAll();}
     @Override
     public void deleteScheduleById(Long roomScheduleId) {
+        findScheduleById(roomScheduleId); // 찾아보고 없으면 예외처리
         scheduleDao.deleteById(roomScheduleId);
     }
 
