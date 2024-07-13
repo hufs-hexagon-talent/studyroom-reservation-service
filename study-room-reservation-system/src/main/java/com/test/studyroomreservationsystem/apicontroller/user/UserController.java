@@ -80,7 +80,6 @@ public class UserController {
 
             }
     )
-
     @GetMapping("/me")
     public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
