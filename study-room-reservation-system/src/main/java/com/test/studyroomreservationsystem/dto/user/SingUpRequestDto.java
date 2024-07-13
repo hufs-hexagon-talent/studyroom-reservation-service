@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.dto.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class SingUpRequestDto {
     private String name;
 
     @Email(message = "유효한 이메일 주소를 입력하세요")
+    @Schema(description = "이메일", example = "@hufs.ac.kr")
     private String email;
 
 
