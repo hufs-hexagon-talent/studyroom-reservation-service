@@ -10,6 +10,6 @@ public class ScheduleNotFoundException extends RuntimeException implements NotFo
         super(date + ": " + room.getRoomName() + "를 찾을 수 없습니다.");
     }
     public ScheduleNotFoundException(Long scheduleId) {
-        super("id: " + scheduleId + "를 찾을 수 없습니다.");
+        super("id가 " + scheduleId + "인 Schedule 을 찾을 수 없습니다.");
     }
 }
