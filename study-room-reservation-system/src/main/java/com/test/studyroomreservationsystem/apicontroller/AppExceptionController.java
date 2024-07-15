@@ -206,7 +206,7 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
 
-
+    // todo : NOT FOUND 에외처리 로직 수정 / 없는 녀석 삭제시 핸들링되지않고 있음
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleReservationNotFoundException(NotFoundException ex) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
