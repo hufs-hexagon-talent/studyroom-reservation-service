@@ -4,7 +4,7 @@ import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.EmailVerifyRequestDto;
 import com.test.studyroomreservationsystem.dto.EmailVerifyResponseDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
-import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoResetRequestDto;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoResetRequestDto;
 import com.test.studyroomreservationsystem.dto.auth.EmailResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
@@ -47,7 +47,7 @@ public class EmailController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "🚧 인증 코드 검증",
+    @Operation(summary = "✅ 인증 코드 검증",
             description = "이메일로 전송된 인증 코드를 검증하는 API")
     @PostMapping("/mail/verify")
     public ResponseEntity<ApiResponseDto<EmailVerifyResponseDto>> verifyMail(@RequestBody EmailVerifyRequestDto requestDto) {

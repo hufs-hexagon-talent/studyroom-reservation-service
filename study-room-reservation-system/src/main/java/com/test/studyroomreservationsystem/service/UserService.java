@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.*;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequest;
 
 
 import java.util.List;
