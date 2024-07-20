@@ -104,4 +104,6 @@ public class UserController {
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 변경 되었습니다.", userDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    // @Operation(summary = "✅로그인 X, 자신의 비밀번호 재설정",
+    //            description = "로그인 X, 이메일로 본인 확인 후 비밀번호 재설정 API")
 }

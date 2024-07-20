@@ -17,8 +17,18 @@ public class TokenServiceImpl implements TokenService {
     @Value("${spring.jwt.refresh.expiration}")
     private Long refreshTokenExpiration;
 
-    private static final String JWT_ACCESS_CATEGORY = "access";
-    private static final String JWT_REFRESH_CATEGORY = "refresh";
+    @Value("${spring.jwt.password-reset.expiration}")
+    private Long passwordResetTokenExpiration;
+
+    @Value("${spring.jwt.access.category}")
+    private String JWT_ACCESS_CATEGORY;
+
+    @Value("${spring.jwt.refresh.category}")
+    private String JWT_REFRESH_CATEGORY;
+
+    @Value("${spring.jwt.password-reset.category}")
+    private String JWT_PASSWORD_RESET_CATEGORY;
+
 
     @Override
     public String createAccessToken(String username, String role) {
@@ -28,5 +38,10 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String createRefreshToken(String username) {
         return jwtUtil.createRefreshJwt(JWT_REFRESH_CATEGORY, username, refreshTokenExpiration * 1000); // 밀리초 -> 초
+    }
+
+    @Override
+    public String createPasswordResetToken(String email) {
+        return jwtUtil.createPasswordResetJwt(JWT_PASSWORD_RESET_CATEGORY, email, passwordResetTokenExpiration * 1000); // 밀리초 -> 초
     }
 }

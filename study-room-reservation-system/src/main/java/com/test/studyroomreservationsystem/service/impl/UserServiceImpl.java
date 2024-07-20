@@ -4,6 +4,7 @@ import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
+import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequest;
 import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidNewPasswordException;
@@ -81,11 +82,19 @@ public class UserServiceImpl implements UserService {
         return userDao.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
+
     @Override
-    public String findEmailByUsername(String username) {
-        User user = userDao.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-        return user.getEmail();
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
+
+    @Override
+    public User findBySerial(String serial) {
+        return userDao.findBySerial(serial)
+                .orElseThrow(() -> new UserNotFoundException(serial));
+    }
+
     @Override
     public List<User> findAllUsers() {
         return userDao.findAll();
@@ -100,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User updateUserPassword(Long userId, UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
+    public User updateUserPassword(Long userId, UserPasswordInfoUpdateRequest userInfoUpdateRequestDto) {
         User user = findUserById(userId);
         String currentPassword = userInfoUpdateRequestDto.getPrePassword();
 

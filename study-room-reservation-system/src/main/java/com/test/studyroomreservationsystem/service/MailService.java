@@ -1,11 +1,11 @@
 package com.test.studyroomreservationsystem.service;
 
-import com.test.studyroomreservationsystem.dto.auth.EmailResponseDto;
 import jakarta.mail.internet.MimeMessage;
 
 public interface MailService {
-    void generateRandomNumber();
-    MimeMessage createMail(String recipientEmail);
-    int sendMail(String recipientEmail);
-
+    String generateAuthCode(); // 인증코드 생성
+    MimeMessage createMailContext(String recipientEmail, String authCode); // 메일 내용 생성
+    MimeMessage createMail(String recipientEmail); // 메일 생성
+    void sendMail(MimeMessage mail); // 메일 전송
+    boolean validateAuthCode(String recipientEmail, String authCode);
 }

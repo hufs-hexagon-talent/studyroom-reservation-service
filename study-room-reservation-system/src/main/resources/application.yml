@@ -19,12 +19,16 @@ spring:
         secret: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
         header: Authorization
         access:
-            expiration: 604800000  # 7일 -> ms
+            expiration: 604800000  # 7일 (ms)
             category: access # jwt 의 헤더
 
         refresh:
-            expiration: 7776000000 # 90일 -> ms
+            expiration: 7776000000 # 90일 (ms)
             category: refresh # jwt 의 헤더
+
+        password-reset:
+            expiration: 600000 # 10분 (ms)
+            category: password-reset
     sql:
         init:
             mode: always

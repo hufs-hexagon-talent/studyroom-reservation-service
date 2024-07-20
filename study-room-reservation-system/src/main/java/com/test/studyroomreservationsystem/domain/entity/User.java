@@ -19,7 +19,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name="serial", unique = true, length = 9)
+    @Column(name="serial", unique = true)
     private String serial;
 
     @Column(name="email", unique = true)
