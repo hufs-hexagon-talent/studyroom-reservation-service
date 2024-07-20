@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller;
 
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
+import com.test.studyroomreservationsystem.exception.AuthCodeMismatchException;
 import com.test.studyroomreservationsystem.exception.NoShowLimitExceededException;
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
@@ -101,7 +102,7 @@ public class AppExceptionController {
     @ExceptionHandler(KeyNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleQRCodeExpiredException(CheckInFailException ex ) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
-                HttpStatus.NOT_FOUND.toString(),
+                HttpStatus.GONE.toString(),
                 ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.GONE);
@@ -265,6 +266,15 @@ public class AppExceptionController {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(AuthCodeMismatchException.class)
+    public ResponseEntity<ErrorResponseDto> handleAuthCodeMismatchException(AuthCodeMismatchException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
         String errorMessage = "잘못된 JSON 입력입니다: " + ex.getLocalizedMessage();
@@ -283,6 +293,15 @@ public class AppExceptionController {
                 errorMessage
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                "Null Key가 아닌 Key가 필요합니다." // todo : 추후 수정 (하드 코딩)
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

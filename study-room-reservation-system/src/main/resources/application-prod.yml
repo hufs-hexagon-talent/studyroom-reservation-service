@@ -38,6 +38,10 @@ spring:
         refresh:
             expiration: 7776000000 # 90일 -> ms
             category: refresh # jwt 의 헤더
+
+        password-reset:
+            expiration: 600000 # 10분 (ms)
+            category: password-reset
     mail:
         host: smtp.gmail.com
         port: 587

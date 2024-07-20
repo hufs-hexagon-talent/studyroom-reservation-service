@@ -10,6 +10,7 @@ public interface UserDao {
         Optional<User> findByUsername(String username);
         Optional<User> findById(Long userId);
         Optional<User> findBySerial(String serial);
+        Optional<User> findByEmail(String email);
         Boolean existsBySerial(String serial);
         Boolean existsByUsername(String username);
         Boolean existsByEmail(String email);

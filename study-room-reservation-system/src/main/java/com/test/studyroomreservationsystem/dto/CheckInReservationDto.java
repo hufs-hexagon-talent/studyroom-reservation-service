@@ -9,7 +9,6 @@ import java.time.Instant;
 
 @Getter
 @Builder
-@AllArgsConstructor
 public class CheckInReservationDto {
     private Long reservationId;
     private Long userId;
@@ -19,4 +18,22 @@ public class CheckInReservationDto {
     private Instant reservationStartTime;
     private Instant reservationEndTime;
     private ReservationState state;
+
+    public CheckInReservationDto(Long reservationId,
+                                 Long userId,
+                                 String name,
+                                 Long roomId,
+                                 String roomName,
+                                 Instant reservationStartTime,
+                                 Instant reservationEndTime,
+                                 ReservationState state) {
+        this.reservationId = reservationId;
+        this.userId = userId;
+        this.name = name;
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.reservationStartTime = reservationStartTime;
+        this.reservationEndTime = reservationEndTime;
+        this.state = state;
+    }
 }

@@ -120,7 +120,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/refresh",
                                 "/auth/login",
-                        "/auth/mail/send").permitAll()
+                                "/auth/mail/send",
+                                "/auth/mail/verify",
+                                "auth/mail/reset-password").permitAll()
                     // User
                         .requestMatchers(
                                 "/users/sign-up").permitAll()
