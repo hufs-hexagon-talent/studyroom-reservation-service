@@ -7,7 +7,7 @@ import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
 import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
-import com.test.studyroomreservationsystem.dto.user.UserPasswordInfoUpdateRequestDto;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

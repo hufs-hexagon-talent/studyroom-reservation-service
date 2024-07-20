@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.dto.user;
+package com.test.studyroomreservationsystem.dto.user.editpassword;
 
 
 public interface UserPasswordInfoUpdateRequest {
