@@ -29,7 +29,6 @@ public class EmailController {
     private final MailService mailService;
     private final UserService userService;
     private final TokenService tokenService;
-    private final JWTUtil jwtUtil;
 
     @Operation(summary = "✅ 이메일 인증 코드 전송",
             description = "로그인X, 비밀번호 수정을 위한 이메일 인증 코드 전송 API"
@@ -64,21 +63,5 @@ public class EmailController {
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "Email 인증에 성공하였습니다.", emailDto);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    @Operation(summary = "✅ 비밀번호 재설정",
-            description = "JWT 토큰과 새로운 비밀번호를 사용하여 비밀번호를 재설정하는 API")
-    @PostMapping("/mail/reset-password")
-    public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> resetPassword(@RequestBody UserPasswordInfoResetRequestDto requestDto) {
-        String token = requestDto.getToken();
-
-        String email = jwtUtil.getEmail(token); // 토큰에서 이메일 추출
-        Long userId = userService.findByEmail(email).getUserId();
-        User user = userService.updateUserPassword(userId, requestDto);// 비밀번호 업데이트
-        UserInfoResponseDto responseDto = userService.dtoFrom(user);
-        ApiResponseDto<UserInfoResponseDto> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "비밀번호가 성공적으로 변경되었습니다.",responseDto);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 }

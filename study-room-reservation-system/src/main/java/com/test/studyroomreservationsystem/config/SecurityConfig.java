@@ -121,11 +121,12 @@ public class SecurityConfig {
                                 "/auth/refresh",
                                 "/auth/login",
                                 "/auth/mail/send",
-                                "/auth/mail/verify",
-                                "auth/mail/reset-password").permitAll()
+                                "/auth/mail/verify"
+                                ).permitAll()
                     // User
                         .requestMatchers(
-                                "/users/sign-up").permitAll()
+                                "/users/sign-up",
+                                "/users/reset-password").permitAll()
                         .requestMatchers(
                                 "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
                         .requestMatchers(

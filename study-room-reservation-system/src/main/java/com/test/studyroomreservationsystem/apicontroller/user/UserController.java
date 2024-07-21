@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.user;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoResetRequestDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.dto.auth.LoginResponseDto;
@@ -8,6 +9,7 @@ import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoResponseDto;
 import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequestDto;
+import com.test.studyroomreservationsystem.security.jwt.JWTUtil;
 import com.test.studyroomreservationsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,9 +29,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-
-    public UserController(UserService userService) {
+    private final JWTUtil jwtUtil;
+    public UserController(UserService userService, JWTUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -98,12 +101,27 @@ public class UserController {
     public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                           @RequestBody UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
         User user = currentUser.getUser();
-        User updatedUser = userService.updateUserPassword(user.getUserId(), userInfoUpdateRequestDto);
+        User updatedUser = userService.resetUserPassword(user.getUserId(), userInfoUpdateRequestDto);
         UserInfoResponseDto userDto = userService.dtoFrom(updatedUser);
         ApiResponseDto<UserInfoResponseDto> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 변경 되었습니다.", userDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    // @Operation(summary = "✅로그인 X, 자신의 비밀번호 재설정",
-    //            description = "로그인 X, 이메일로 본인 확인 후 비밀번호 재설정 API")
+
+    @Operation(summary = "✅로그인 X, 자신의 비밀번호 재설정",
+            description = "JWT 토큰과 새로운 비밀번호를 사용하여 비밀번호를 재설정하는 API")
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponseDto<UserInfoResponseDto>> resetPassword(@RequestBody UserPasswordInfoResetRequestDto requestDto) {
+        String token = requestDto.getToken();
+
+        String email = jwtUtil.getEmail(token); // 토큰에서 이메일 추출
+        Long userId = userService.findByEmail(email).getUserId();
+        User user = userService.resetUserPassword(userId, requestDto);// 비밀번호 업데이트
+        UserInfoResponseDto responseDto = userService.dtoFrom(user);
+        ApiResponseDto<UserInfoResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "비밀번호가 성공적으로 변경되었습니다.",responseDto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 }
