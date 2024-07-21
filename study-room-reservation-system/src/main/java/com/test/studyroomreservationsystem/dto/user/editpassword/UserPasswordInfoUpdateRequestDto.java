@@ -1,20 +1,17 @@
 package com.test.studyroomreservationsystem.dto.user.editpassword;
 
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
-public class UserPasswordInfoUpdateRequestDto implements UserPasswordInfoUpdateRequest { // U dto
+public class UserPasswordInfoUpdateRequestDto { // U dto
     private String prePassword;
     private String newPassword;
 
-    @Override
-    public String getPrePassword() {
-        return prePassword;
-    }
-
-    @Override
-    public String getNewPassword() {
-        return newPassword;
+    public UserPasswordInfoUpdateRequestDto(String prePassword, String newPassword) {
+        this.prePassword = prePassword;
+        this.newPassword = newPassword;
     }
 }

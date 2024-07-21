@@ -4,8 +4,9 @@ import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
-import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequest;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoResetRequestDto;
 import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidNewPasswordException;
 import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidCurrentPasswordException;
 import com.test.studyroomreservationsystem.exception.user.EmailAlreadyExistsException;
@@ -108,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User updateUserPassword(Long userId, UserPasswordInfoUpdateRequest userInfoUpdateRequestDto) {
+    public User resetUserPassword(Long userId, UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
         User user = findUserById(userId);
         String currentPassword = userInfoUpdateRequestDto.getPrePassword();
 
@@ -126,6 +127,21 @@ public class UserServiceImpl implements UserService {
 
         return userDao.save(user);
     }
+
+    @Override
+    public User resetUserPassword(Long userId, UserPasswordInfoResetRequestDto resetRequestDto) {
+        User user = findUserById(userId);
+        // 새 비밀번호 암호화 및 업데이트
+        String newPassword = resetRequestDto.getNewPassword();
+        if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
+            throw new InvalidNewPasswordException();
+        }
+        String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
+        user.setPassword(encodeNewPassword);
+
+        return userDao.save(user);
+    }
+
     @Override
     public void deleteUser(Long userId) {
         findUserById(userId); //찾아보고 없으면 예외처리

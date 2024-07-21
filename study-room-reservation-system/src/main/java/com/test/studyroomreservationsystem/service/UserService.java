@@ -2,7 +2,8 @@ package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.dto.user.*;
-import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequest;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoResetRequestDto;
+import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoUpdateRequestDto;
 
 
 import java.util.List;
@@ -15,7 +16,9 @@ public interface UserService {
     User findBySerial(String serial);
     List<User> findAllUsers();
     User updateUserInfo(Long userId,UserInfoUpdateRequestDto requestDto);
-    User updateUserPassword(Long userId, UserPasswordInfoUpdateRequest userInfoUpdateRequestDto);
+    User resetUserPassword(Long userId, UserPasswordInfoUpdateRequestDto updateRequestDto);
+    User resetUserPassword(Long userId, UserPasswordInfoResetRequestDto resetRequestDto);
+
     void deleteUser(Long userId);
 
     default UserInfoResponseDto dtoFrom(User user) {
