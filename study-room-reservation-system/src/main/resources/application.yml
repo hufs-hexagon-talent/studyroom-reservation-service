@@ -11,7 +11,7 @@ spring:
         show-sql: false
         open-in-view: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: validate
         properties:
             hibernate:
                 format_sql: true # SQL을 보기 좋게 포맷팅
@@ -62,13 +62,11 @@ spring:
                         enable: true
 
 
-#    flyway:
-#        enabled: true
-#        baseline-on-migrate: true
-#        baseline-version: 1
-#        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
-#        password: 1234
-#        user: root
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+        baseline-version: 1
+
 
 logging:
     level:
