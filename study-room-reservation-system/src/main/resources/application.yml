@@ -66,6 +66,10 @@ spring:
         enabled: true
         baseline-on-migrate: true
         baseline-version: 1
+        url: jdbc:mysql://localhost:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        user: root
+        password: 1234
+
 
 
 logging:
