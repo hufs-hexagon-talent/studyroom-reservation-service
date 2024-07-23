@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @Import(JpaConfig.class)
-@OpenAPIDefinition(servers = {@Server(url = "https://api.studyroom.jisub.kim", description = "Default Server URL")})
-//@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8081", description = "Default Server URL")})
+//@OpenAPIDefinition(servers = {@Server(url = "https://api.studyroom.jisub.kim", description = "Default Server URL")})
+@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8081", description = "Default Server URL")})
 @SpringBootApplication
 public class StudyRoomReservationSystemApplication {
 

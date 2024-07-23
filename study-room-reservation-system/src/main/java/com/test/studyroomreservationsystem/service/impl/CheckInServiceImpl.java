@@ -1,9 +1,9 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dao.ReservationDao;
 import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
 import com.test.studyroomreservationsystem.dto.CheckInReservationDto;
 import com.test.studyroomreservationsystem.exception.checkin.InvalidRoomIdsException;
 import com.test.studyroomreservationsystem.exception.checkin.InvalidVerificationCodeException;
@@ -28,7 +28,7 @@ public class CheckInServiceImpl implements CheckInService {
     private final RedisService redisService;
     private final UserService userService;
     private final ReservationService reservationService;
-    private final ReservationDao reservationDao;
+    private final ReservationRepository reservationRepository;
 
     @Value("${spring.service.allowedEndMinute}")
     private Integer allowedEndMinute;
@@ -44,11 +44,14 @@ public class CheckInServiceImpl implements CheckInService {
         this.allowedEndTime = Duration.ofMinutes(allowedEndMinute);
     }
 
-    public CheckInServiceImpl(RedisService redisService, UserService userService, ReservationService reservationService, ReservationDao reservationDao) {
+    public CheckInServiceImpl(RedisService redisService,
+                              UserService userService,
+                              ReservationService reservationService,
+                              ReservationRepository reservationRepository) {
         this.redisService = redisService;
         this.userService = userService;
         this.reservationService = reservationService;
-        this.reservationDao = reservationDao;
+        this.reservationRepository = reservationRepository;
     }
 
     @Override
@@ -81,7 +84,7 @@ public class CheckInServiceImpl implements CheckInService {
 
             for (Reservation reservation : reservations) {
                 reservation.setState(ReservationState.VISITED);
-                reservationDao.save(reservation);
+                reservationRepository.save(reservation);
             }
             return reservations.stream()
                     .map(reservation -> CheckInReservationDto.builder()

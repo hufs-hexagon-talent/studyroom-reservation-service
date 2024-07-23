@@ -1,10 +1,10 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dao.RoomDao;
-import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
+import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
+import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
 import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
@@ -23,36 +23,38 @@ import java.util.List;
 @Slf4j
 @Service
 public class RoomServiceImpl implements RoomService {
-    private final RoomDao roomDao;
-    private final RoomOperationPolicyScheduleDao scheduleDao;
+    private final RoomRepository roomRepository;
+    private final RoomOperationPolicyScheduleRepository scheduleRepository;
 
     @Autowired
-    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleDao scheduleDao) {
-        this.roomDao = roomDao;
-        this.scheduleDao = scheduleDao;
+    public RoomServiceImpl(RoomRepository roomRepository, RoomOperationPolicyScheduleRepository scheduleRepository) {
+        this.roomRepository = roomRepository;
+        this.scheduleRepository = scheduleRepository;
     }
+
+
 
     @Override
     public Room createRoom(RoomDto roomDto) {
         Room roomEntity = roomDto.toEntity();
-        return roomDao.save(roomEntity);
+        return roomRepository.save(roomEntity);
     }
 
     @Override
     public Room findRoomById(Long roomId) {
-        return roomDao.findById(roomId)
+        return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId));
     }
     @Override
     public Room findRoomByName(String roomName) {
-        return roomDao.findByRoomName(roomName)
+        return roomRepository.findByRoomName(roomName)
                 .orElseThrow(() -> new RoomNotFoundException(roomName));
     }
 
 
     @Override
     public List<Room> findAllRoom() {
-        return roomDao.findAll();
+        return roomRepository.findAll();
     }
 
     @Override
@@ -60,13 +62,13 @@ public class RoomServiceImpl implements RoomService {
         Room roomEntity = findRoomById(roomId);
         roomEntity.setRoomName(roomUpdateDto.getRoomName());
 
-        return roomDao.save(roomEntity);
+        return roomRepository.save(roomEntity);
     }
 
     @Override
     public void deleteRoom(Long roomId) {
         findRoomById(roomId); // 찾아보고 없으면 예외처리
-        roomDao.deleteById(roomId);
+        roomRepository.deleteById(roomId);
     }
 
     @Override // 룸이 운영을 하는지? && 운영이 종료 되었는지?
@@ -77,7 +79,7 @@ public class RoomServiceImpl implements RoomService {
 
         // 룸과 날짜로 정책 찾기
         RoomOperationPolicySchedule schedule
-                = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
+                = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
                 .orElseThrow(
                         // 운영이 하지 않음 (운영 정책 없음)
                         () -> new RoomPolicyNotFoundException(room, date)
@@ -98,15 +100,16 @@ public class RoomServiceImpl implements RoomService {
 
     }
 
+    // todo 수정해야해
     @Override
     public List<RoomsResponseDto> getRoomsPolicyByDate(LocalDate date) {
-        List<Room> rooms = roomDao.findAll();
+        List<Room> rooms = roomRepository.findAll();
         List<RoomsResponseDto> responseList = new ArrayList<>();
 
         for (Room room : rooms) {
             RoomOperationPolicy policy = null;
             try {
-                RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
+                RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
                         .orElseThrow(() -> new RoomPolicyNotFoundException(room, date));
                 policy = schedule.getRoomOperationPolicy();
 
