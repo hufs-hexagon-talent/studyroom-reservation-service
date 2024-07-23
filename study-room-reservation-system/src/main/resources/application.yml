@@ -11,7 +11,7 @@ spring:
         show-sql: false
         open-in-view: true
         hibernate:
-            ddl-auto: validate
+            ddl-auto: none
         properties:
             hibernate:
                 format_sql: true # SQL을 보기 좋게 포맷팅
@@ -48,6 +48,7 @@ spring:
         noShowLimit : 10
         reservationLimit : 1
         reservationLimitToday : 2
+
     mail:
         host: smtp.gmail.com
         port: 587
@@ -62,13 +63,13 @@ spring:
                         enable: true
 
 
-    flyway:
-        enabled: true
-        baseline-on-migrate: true
-        baseline-version: 1
-        url: jdbc:mysql://localhost:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-        user: root
-        password: 1234
+#    flyway:
+#        enabled: true
+#        baseline-on-migrate: true
+#        baseline-version: 1
+#        url: jdbc:mysql://localhost:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#        user: root
+#        password: 1234
 
 
 

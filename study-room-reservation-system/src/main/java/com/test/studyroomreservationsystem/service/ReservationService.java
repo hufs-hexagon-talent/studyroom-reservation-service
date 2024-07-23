@@ -20,7 +20,7 @@ public interface ReservationService {
     void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser);
     List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date);
     SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
-    List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomIds, Instant startTime, Instant endTime);
+    List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomPartitionIds, Instant startTime, Instant endTime);
 
     List<Reservation> getReservationsByUserIdAndToday(Long userId);
     List<Reservation> getNotVisitedReservationsAfterNow(Long userId);

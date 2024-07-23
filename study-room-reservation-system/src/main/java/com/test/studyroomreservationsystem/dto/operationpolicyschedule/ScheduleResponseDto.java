@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule;
+package com.test.studyroomreservationsystem.dto.operationpolicyschedule;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
@@ -12,13 +12,15 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @Builder
-public class ScheduleRequestDto {
+public class ScheduleResponseDto {
+    private Long roomOperationPolicyScheduleId;
     private Long roomId;
     private Long roomOperationPolicyId;
     private LocalDate policyApplicationDate;
 
 
-    public ScheduleRequestDto(Long roomId, Long roomOperationPolicyId, LocalDate policyApplicationDate) {
+    public ScheduleResponseDto(Long roomOperationPolicyScheduleId, Long roomId, Long roomOperationPolicyId, LocalDate policyApplicationDate) {
+        this.roomOperationPolicyScheduleId = roomOperationPolicyScheduleId;
         this.roomId = roomId;
         this.roomOperationPolicyId = roomOperationPolicyId;
         this.policyApplicationDate = policyApplicationDate;
@@ -26,6 +28,7 @@ public class ScheduleRequestDto {
 
     public RoomOperationPolicySchedule toEntity(Room room ,RoomOperationPolicy roomOperationPolicy) {
         return RoomOperationPolicySchedule.builder()
+                .roomOperationPolicyScheduleId(roomOperationPolicyScheduleId)
                 .room(room)
                 .roomOperationPolicy(roomOperationPolicy)
                 .policyApplicationDate(policyApplicationDate)

@@ -14,7 +14,7 @@ import lombok.Setter;
 public class RoomPartition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long partitionId;
+    private Long roomPartitionId;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
@@ -24,8 +24,8 @@ public class RoomPartition {
     private String partitionNumber;
 
     @Builder
-    public RoomPartition(Long partitionId, Room room, String partitionNumber) {
-        this.partitionId = partitionId;
+    public RoomPartition(Long roomPartitionId, Room room, String partitionNumber) {
+        this.roomPartitionId = roomPartitionId;
         this.room = room;
         this.partitionNumber = partitionNumber;
     }

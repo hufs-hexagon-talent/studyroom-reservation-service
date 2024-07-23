@@ -13,8 +13,9 @@ public class CheckInReservationDto {
     private Long reservationId;
     private Long userId;
     private String name;
-    private Long roomId;
+    private Long roomPartitionId;
     private String roomName;
+    private String partitionNumber;
     private Instant reservationStartTime;
     private Instant reservationEndTime;
     private ReservationState state;
@@ -22,16 +23,18 @@ public class CheckInReservationDto {
     public CheckInReservationDto(Long reservationId,
                                  Long userId,
                                  String name,
-                                 Long roomId,
+                                 Long roomPartitionId,
                                  String roomName,
+                                 String partitionNumber,
                                  Instant reservationStartTime,
                                  Instant reservationEndTime,
                                  ReservationState state) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.name = name;
-        this.roomId = roomId;
+        this.roomPartitionId = roomPartitionId;
         this.roomName = roomName;
+        this.partitionNumber = partitionNumber;
         this.reservationStartTime = reservationStartTime;
         this.reservationEndTime = reservationEndTime;
         this.state = state;

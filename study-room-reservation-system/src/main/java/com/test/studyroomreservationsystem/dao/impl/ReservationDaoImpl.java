@@ -54,12 +54,12 @@ public class ReservationDaoImpl implements ReservationDao {
     }
 
     @Override
-    public Optional<List<Reservation>> findByUserIdAndRoomIdsAndStartTimeBetween(Long userId, List<Long> roomIds, Instant startDateTime, Instant endDateTime) {
-        return reservationRepository.findByUserUserIdAndRoomRoomIdInAndReservationStartTimeBetween(userId, roomIds, startDateTime, endDateTime);
+    public Optional<List<Reservation>> findByUserIdAndRoomPartitionIdsAndStartTimeBetween(Long userId, List<Long> roomPartitionIds, Instant startDateTime, Instant endDateTime) {
+        return reservationRepository.findByUserUserIdAndRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(userId, roomPartitionIds, startDateTime, endDateTime);
     }
     @Override
     public List<Reservation> findByRoomIdsAndStartTimeBetween(List<Long> roomIds, Instant startTime, Instant endTime) {
-        return reservationRepository.findByRoomRoomIdInAndReservationStartTimeBetween(roomIds, startTime, endTime);
+        return reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(roomIds, startTime, endTime);
     }
 
     @Override

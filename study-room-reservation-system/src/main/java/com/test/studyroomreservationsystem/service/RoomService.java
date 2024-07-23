@@ -21,7 +21,7 @@ public interface RoomService {
 
 
 
-    default  RoomDto dtoFrom(Room room) {
+    default RoomDto dtoFrom(Room room) {
         return RoomDto.builder()
                 .roomId(room.getRoomId())
                 .roomName(room.getRoomName())

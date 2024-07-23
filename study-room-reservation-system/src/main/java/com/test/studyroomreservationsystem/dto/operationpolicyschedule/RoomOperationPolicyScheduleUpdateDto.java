@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule;
+package com.test.studyroomreservationsystem.dto.operationpolicyschedule;
 
 import lombok.Getter;
 

@@ -33,40 +33,43 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationDao reservationDao;
     private final RoomService roomService;
+    private final RoomPartitionService partitionService;
     private final UserService userService;
     private final RoomOperationPolicyScheduleService scheduleService;
-    @Value("${spring.service.noShowCntMonth}")
-    private Long noShowCntMonth;
-    @Value("${spring.service.noShowLimit}")
-    private int noShowLimit;
-    @Value("${spring.service.reservationLimit}")
-    private int reservationLimit;
-    @Value("${spring.service.reservationLimitToday}")
-    private int reservationLimitToday;
+    @Value("${spring.service.noShowCntMonth}") private Long noShowCntMonth;
+    @Value("${spring.service.noShowLimit}") private int noShowLimit;
+    @Value("${spring.service.reservationLimit}") private int reservationLimit;
+    @Value("${spring.service.reservationLimitToday}") private int reservationLimitToday;
     private static final int ONE_DAY_OFFSET = 1;
 
     @Autowired
-    public ReservationServiceImpl(ReservationDao reservationDao, RoomService roomService, UserService userService, RoomOperationPolicyScheduleService scheduleService) {
+    public ReservationServiceImpl(ReservationDao reservationDao,
+                                  RoomService roomService,
+                                  RoomPartitionService partitionService,
+                                  UserService userService,
+                                  RoomOperationPolicyScheduleService scheduleService) {
         this.reservationDao = reservationDao;
         this.roomService = roomService;
+        this.partitionService = partitionService;
         this.userService = userService;
         this.scheduleService = scheduleService;
     }
 
 
+
+
     @Override
     public Reservation createReservation(ReservationRequestDto reservationRequestDto, User user) {
-        Long roomId = reservationRequestDto.getRoomId();
+        Long partitionId = reservationRequestDto.getRoomPartitionId();
         Long userId = user.getUserId();
         Instant startDateTime = reservationRequestDto.getStartDateTime();
         Instant endDateTime = reservationRequestDto.getEndDateTime();
 
         // 검증
-        validateRoomAvailability(userId,roomId, startDateTime, endDateTime);
+        validateRoomAvailability(userId,partitionId, startDateTime, endDateTime);
 
         Reservation reservationEntity = reservationRequestDto.toEntity(
-                user,
-                roomService.findRoomById(roomId)
+                user,partitionService.findRoomPartitionById(partitionId)
         );
 
         return reservationDao.save(reservationEntity);
@@ -128,8 +131,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId, List<Long> roomIds, Instant startTime, Instant endTime) {
-        return reservationDao.findByUserIdAndRoomIdsAndStartTimeBetween(userId, roomIds, startTime, endTime).orElseThrow(
+    public List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId, List<Long> roomPartitionIds, Instant startTime, Instant endTime) {
+        return reservationDao.findByUserIdAndRoomPartitionIdsAndStartTimeBetween(userId, roomPartitionIds, startTime, endTime).orElseThrow(
                 ReservationNotFoundException::new
         );
     }
@@ -202,8 +205,10 @@ public class ReservationServiceImpl implements ReservationService {
         List<SpecificRoomsReservationsDto.RoomReservation> roomReservations = reservations.stream()
                 .map(reservation -> new SpecificRoomsReservationsDto.RoomReservation(
                         reservation.getReservationId(),
-                        reservation.getRoom().getRoomId(),
-                        reservation.getRoom().getRoomName(),
+                        reservation.getRoomPartition().getRoom().getRoomId(),
+                        reservation.getRoomPartition().getRoom().getRoomName(),
+                        reservation.getRoomPartition().getRoomPartitionId(),
+                        reservation.getRoomPartition().getPartitionNumber(),
                         reservation.getUser().getUserId(),
                         reservation.getUser().getName(),
                         reservation.getState(),
@@ -301,12 +306,16 @@ public class ReservationServiceImpl implements ReservationService {
         return ReservationInfoResponseDto.builder()
                 .reservationId(reservation.getReservationId())
                 .userId(reservation.getUser().getUserId())
-                .roomId(reservation.getRoom().getRoomId())
-                .roomName(reservation.getRoom().getRoomName())
+                .roomId(reservation.getRoomPartition().getRoom().getRoomId())
+                .roomName(reservation.getRoomPartition().getRoom().getRoomName())
+                .roomPartitionId(reservation.getRoomPartition().getRoomPartitionId())
+                .partitionNumber(reservation.getRoomPartition().getPartitionNumber())
                 .startDateTime(reservation.getReservationStartTime())
                 .endDateTime(reservation.getReservationEndTime())
                 .reservationState(reservation.getState())
                 .build();
+
+
     }
 
 }

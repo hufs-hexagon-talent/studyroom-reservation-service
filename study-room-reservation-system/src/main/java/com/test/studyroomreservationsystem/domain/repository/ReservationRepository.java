@@ -16,11 +16,11 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.room.roomId = :roomId " +
+            "WHERE r.roomPartition.roomPartitionId = :roomPartitionId " +
             "AND (r.reservationStartTime < :endTime " +
             "AND r.reservationEndTime > :startTime)"
     )
-    List<Reservation> findOverlappingReservations( @Param("roomId") Long roomId,
+    List<Reservation> findOverlappingReservations( @Param("roomPartitionId") Long roomPartitionId,
                                                   @Param("startTime") Instant startTime,
                                                   @Param("endTime") Instant endTime
     );
@@ -29,16 +29,16 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     Optional<Reservation> findTopByUserUserIdOrderByReservationStartTimeDesc(Long userId);
 
-    Optional<List<Reservation>> findByUserUserIdAndRoomRoomIdInAndReservationStartTimeBetween(Long userId, List<Long> roomIds, Instant startTime, Instant endTime);
+    Optional<List<Reservation>> findByUserUserIdAndRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(Long userId, List<Long> roomPartitionIds, Instant startTime, Instant endTime);
 
     // 특정 날짜에 특정 방들에 대한 예약 정보를 모두 조회
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.room.roomId IN :roomIds " +
+            "WHERE r.roomPartition.roomPartitionId IN :roomPartitionIds " +
             "AND r.reservationStartTime >= :startTime " +
             "AND r.reservationEndTime < :endTime")
-    List<Reservation> findByRoomRoomIdInAndReservationStartTimeBetween(
-            @Param("roomIds") List<Long> roomIds,
+    List<Reservation> findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(
+            @Param("roomPartitionIds") List<Long> roomPartitionIds,
             @Param("startTime") Instant startTime,
             @Param("endTime") Instant endTime
     );

@@ -52,7 +52,7 @@ public class CheckInServiceImpl implements CheckInService {
     }
 
     @Override
-    public List<CheckInReservationDto> verifyCheckIn(String verificationCode, List<Long> roomIds) {
+    public List<CheckInReservationDto> verifyCheckIn(String verificationCode, List<Long> roomPartitionIds) {
         try {
             // verificationCode 가 null 일 떄
             if (verificationCode == null || verificationCode.isEmpty()) {
@@ -60,7 +60,7 @@ public class CheckInServiceImpl implements CheckInService {
             }
 
             // roomIds : 빈 배열일 때
-            if (roomIds == null || roomIds.isEmpty()) {
+            if (roomPartitionIds == null || roomPartitionIds.isEmpty()) {
                 throw new InvalidRoomIdsException();
             }
 
@@ -74,7 +74,7 @@ public class CheckInServiceImpl implements CheckInService {
             Instant validEndTime = now.plus(allowedEndTime);
 
             List<Reservation> reservations
-                    = reservationService.findByUserIdAndRoomIdAndStartTimeBetween(userId, roomIds, validStartTime, validEndTime);
+                    = reservationService.findByUserIdAndRoomIdAndStartTimeBetween(userId, roomPartitionIds, validStartTime, validEndTime);
             // 예약 시작 시간 가져옴
             // 그렇다면, reservation 테이블의 해당 ID의 state 를 NOT_VISITED -> VISTIED 로 변경
             if (reservations.isEmpty()) { throw new ReservationNotFoundException();}
@@ -88,8 +88,9 @@ public class CheckInServiceImpl implements CheckInService {
                             .reservationId(reservation.getReservationId())
                             .userId(user.getUserId())
                             .name(user.getName())
-                            .roomId(reservation.getRoom().getRoomId())
-                            .roomName(reservation.getRoom().getRoomName())
+                            .roomPartitionId(reservation.getRoomPartition().getRoomPartitionId())
+                            .roomName(reservation.getRoomPartition().getRoom().getRoomName())
+                            .partitionNumber(reservation.getRoomPartition().getPartitionNumber())
                             .reservationStartTime(reservation.getReservationStartTime())
                             .reservationEndTime(reservation.getReservationEndTime())
                             .state(reservation.getState())

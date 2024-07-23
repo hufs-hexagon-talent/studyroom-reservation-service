@@ -3,6 +3,7 @@ package com.test.studyroomreservationsystem.dto.reservation;
 import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Room;
+import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,19 +16,20 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 public class ReservationRequestDto { // CR
-    private Long roomId;
+    private Long roomPartitionId;
     private Instant startDateTime;
     private Instant endDateTime;
 
-    public ReservationRequestDto(Long roomId, Instant startDateTime, Instant endDateTime) {
-        this.roomId = roomId;
+    public ReservationRequestDto(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
+        this.roomPartitionId = roomPartitionId;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }
-    public Reservation toEntity(User user, Room room) {
+
+    public Reservation toEntity(User user, RoomPartition roomPartition) {
         return Reservation.builder()
                 .user(user)
-                .room(room)
+                .roomPartition(roomPartition)
                 .reservationStartTime(startDateTime)
                 .reservationEndTime(endDateTime)
                 .state(ReservationState.NOT_VISITED)

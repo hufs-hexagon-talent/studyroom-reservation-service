@@ -23,16 +23,20 @@ public class SpecificRoomsReservationsDto {
         private final Long reservationId;
         private final Long roomId;
         private final String roomName;
+        private final Long roomPartitionId;
+        private final String partitionNumber;
         private final Long userId;
         private final String name;
         private final ReservationState state;
         private final Instant startDateTime;
         private final Instant endDateTime;
 
-        public RoomReservation(Long reservationId, Long roomId, String roomName, Long userId, String name, ReservationState state, Instant startDateTime, Instant endDateTime) {
+        public RoomReservation(Long reservationId, Long roomId, String roomName, Long roomPartitionId, String partitionNumber, Long userId, String name, ReservationState state, Instant startDateTime, Instant endDateTime) {
             this.reservationId = reservationId;
             this.roomId = roomId;
             this.roomName = roomName;
+            this.roomPartitionId = roomPartitionId;
+            this.partitionNumber = partitionNumber;
             this.userId = userId;
             this.name = name;
             this.state = state;

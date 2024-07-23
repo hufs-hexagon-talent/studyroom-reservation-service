@@ -1,12 +1,12 @@
 -- data 삽입
 INSERT INTO `service-db`.`user`
-(name, username, password, serial, is_admin)
+(name, username, password, serial, is_admin, email)
 VALUES
-    ('관리자','admin', '$2a$10$8M0z/VSeWXOTO8LXTimtZeK6YGTdNNRca1nFgDAFQvZoj1ZYc2bH2', '123456789' , TRUE),
-    ('황병훈','h1009218', '$2a$10$5UF4pm1p5/i73rvxVGq4z.e8y0EUKpxdJHr2e5MshaNM5kXxCOjne', '202103769',  TRUE),
-    ('김지섭','0226daniel', '$2a$10$GAmvgYVVlBq3.20i/hB/AOdarXyl3a8y8BvqXhEjuTJvYWGzfAJE2', '202012345',  TRUE),
-    ('이서연','lsy0476', '$2a$10$mMpahAEAKv.eJTrEhlVsvu4tFvS7VsqYvqXnBZoYZ5lvEDKmCBarS', '202202465',  TRUE),
-    ('김소정','sojeong22', '$2a$10$zQ/HRLZgQF5RRH0jiDzhgeg1u5otgXpvNLx2.MKJ8EqA77US7VZzu', '202200720',  TRUE);
+    ('관리자','admin', '$2a$10$8M0z/VSeWXOTO8LXTimtZeK6YGTdNNRca1nFgDAFQvZoj1ZYc2bH2', '123456789' , TRUE, 'hwangbbang9@gmail.com'),
+    ('황병훈','h1009218', '$2a$10$5UF4pm1p5/i73rvxVGq4z.e8y0EUKpxdJHr2e5MshaNM5kXxCOjne', '202103769',  TRUE, 'h1009218@hufs.ac.kr'),
+    ('김지섭','0226daniel', '$2a$10$GAmvgYVVlBq3.20i/hB/AOdarXyl3a8y8BvqXhEjuTJvYWGzfAJE2', '202012345',  TRUE, '0226daniel@hufs.ac.kr'),
+    ('이서연','lsy0476', '$2a$10$mMpahAEAKv.eJTrEhlVsvu4tFvS7VsqYvqXnBZoYZ5lvEDKmCBarS', '202202465',  TRUE, 'lsy0476@hufs.ac.kr'),
+    ('김소정','sojeong22', '$2a$10$zQ/HRLZgQF5RRH0jiDzhgeg1u5otgXpvNLx2.MKJ8EqA77US7VZzu', '202200720',  TRUE, 'sojeong22@hufs.ac.kr');
 
 
 INSERT INTO `service-db`.`room_operation_policy` (operation_start_time, operation_end_time, each_max_minute)
@@ -21,9 +21,15 @@ VALUES
 
 INSERT INTO `service-db`.`room` (room_name)
 VALUES
-    ('306-1'),
-    ('306-2'),
-    ('306-3'),
-    ('306-4'),
-    ('428-1'),
-    ('428-2');
+    ('306'),
+    ('428');
+
+
+INSERT INTO `service-db`.`room_partition` (room_id, partition_number)
+VALUES
+    (1,'1'),
+    (1,'2'),
+    (1,'3'),
+    (1,'4'),
+    (2,'1'),
+    (2,'2');

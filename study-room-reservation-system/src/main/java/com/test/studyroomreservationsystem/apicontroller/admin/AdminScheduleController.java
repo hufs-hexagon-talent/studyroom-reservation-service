@@ -2,9 +2,9 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleRequestDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleResponseDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 import com.test.studyroomreservationsystem.service.impl.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

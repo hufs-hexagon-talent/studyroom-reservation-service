@@ -2,8 +2,8 @@ package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.dao.RoomOperationPolicyDao;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicy.RoomOperationPolicyUpdateDto;
+import com.test.studyroomreservationsystem.dto.operationpolicy.RoomOperationPolicyDto;
+import com.test.studyroomreservationsystem.dto.operationpolicy.RoomOperationPolicyUpdateDto;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
 import com.test.studyroomreservationsystem.exception.notfound.PolicyNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

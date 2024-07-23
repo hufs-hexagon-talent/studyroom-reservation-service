@@ -2,9 +2,9 @@ package com.test.studyroomreservationsystem.service;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleResponseDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleRequestDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleResponseDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
 
 import java.time.LocalDate;
 import java.util.List;
