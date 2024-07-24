@@ -5,7 +5,7 @@ import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
-import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
+import com.test.studyroomreservationsystem.dto.room.RoomUpdateRequestDto;
 import com.test.studyroomreservationsystem.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -36,7 +36,8 @@ public class AdminRoomController {
         Room createdRoom = roomService.createRoom(roomDto);
         RoomDto room = roomService.dtoFrom(createdRoom);
 
-        ApiResponseDto<RoomDto> response = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", room);
+        ApiResponseDto<RoomDto> response
+                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", room);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @Operation(summary = "✅[관리자] room 조회",
@@ -74,7 +75,7 @@ public class AdminRoomController {
     )
     @PutMapping("/{roomId}")
     public ResponseEntity<RoomDto> updateRoom(@PathVariable Long roomId,
-                                              @RequestBody RoomUpdateDto roomDto) {
+                                              @RequestBody RoomUpdateRequestDto roomDto) {
         Room updatedRoom = roomService.updateRoom(roomId, roomDto);
         RoomDto room = roomService.dtoFrom(updatedRoom);
 

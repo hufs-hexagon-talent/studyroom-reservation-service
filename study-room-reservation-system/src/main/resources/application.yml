@@ -14,6 +14,7 @@ spring:
             ddl-auto: none
         properties:
             hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect
                 format_sql: true # SQL을 보기 좋게 포맷팅
     jwt: # openssl rand -hex 32 ( HS256 )
         secret: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
@@ -40,7 +41,6 @@ spring:
             port: 6379
     service:
         allowedStartMinute : 15
-        allowedEndMinute : 15
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength : 8
         otpTTL : 300

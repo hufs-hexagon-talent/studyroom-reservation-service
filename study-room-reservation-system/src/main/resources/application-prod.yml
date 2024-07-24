@@ -14,7 +14,6 @@ spring:
 #            password: ${SPRING_REDIS_PORT}
     service:
         allowedStartMinute: 15
-        allowedEndMinute: 15
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength: 8
         otpTTL: 300
@@ -25,8 +24,9 @@ spring:
 
     jpa:
         show-sql: false
-#        properties:
-
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect
     jwt: # openssl rand -hex 32 ( HS256 )
         secret: ${SPRING_JWT_SECRET}
         header: Authorization

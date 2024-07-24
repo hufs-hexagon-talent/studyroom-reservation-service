@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.exception.checkin;
 
-public class InvalidRoomIdsException extends RuntimeException implements CheckInFailException{
-    public InvalidRoomIdsException() {
+public class InvalidPartitionIdsException extends RuntimeException implements CheckInFailException{
+    public InvalidPartitionIdsException() {
         super("잘못된 Room ID 들 입니다.");
     }
     @Override

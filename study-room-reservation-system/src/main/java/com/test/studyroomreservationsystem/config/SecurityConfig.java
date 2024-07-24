@@ -112,58 +112,63 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable); // HTTP Basic 비활성화
         http
                 .authorizeHttpRequests((auth) -> auth
-                    // Swagger
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**").permitAll()
-                    // Auth
-                        .requestMatchers(
-                                "/auth/refresh",
-                                "/auth/login",
-                                "/auth/mail/send",
-                                "/auth/mail/verify"
+                                // Swagger
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**").permitAll()
+                                // Auth
+                                .requestMatchers(
+                                        "/auth/refresh",
+                                        "/auth/login",
+                                        "/auth/mail/send",
+                                        "/auth/mail/verify"
                                 ).permitAll()
-                    // User
-                        .requestMatchers(
-                                "/users/sign-up",
-                                "/users/reset-password").permitAll()
-                        .requestMatchers(
-                                "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
-                        .requestMatchers(
-                                "/users/**").hasAuthority(ROLE_ADMIN)
+                                // User
+                                .requestMatchers(
+                                        "/users/sign-up",
+                                        "/users/reset-password").permitAll()
+                                .requestMatchers(
+                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                                .requestMatchers(
+                                        "/users/**").hasAuthority(ROLE_ADMIN)
 
-                    // Reservation
-                        .requestMatchers(
-                                "/reservations/by-date/**",
-                                "/reservations/rooms/by-date/**").permitAll()
-                        .requestMatchers(
-                                "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                                // Reservation
+                                .requestMatchers(
+                                        "/reservations/by-date/**",
+                                        "/reservations/partitions/by-date/**").permitAll()
+                                .requestMatchers(
+                                        "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
 
-                    // PolicySchedule
-                        .requestMatchers(
-                                "/schedules/available-dates").permitAll()
-                        .requestMatchers(
-                                "/schedules/**").hasAuthority(ROLE_ADMIN)
+                                // PolicySchedule
+                                .requestMatchers(
+                                        "/schedules/available-dates").permitAll()
+                                .requestMatchers(
+                                        "/schedules/**").hasAuthority(ROLE_ADMIN)
 
-                    // Room
-                        .requestMatchers(
-                                "/rooms/policy/by-date/**").permitAll()
-                        .requestMatchers(
-                                "/rooms/**").hasAuthority(ROLE_ADMIN)
-                    // Policy
-                        .requestMatchers(
-                                "/policies/**").hasAuthority(ROLE_ADMIN)
+                                // Room
+                                .requestMatchers(
+                                        "/rooms/policy/by-date/**").permitAll()
+                                .requestMatchers(
+                                        "/rooms/**").hasAuthority(ROLE_ADMIN)
+                                // RoomPartition
+                                .requestMatchers(
+                                        "/partitions/policy/by-date").permitAll()
+                                .requestMatchers(
+                                        "/partitions/**").hasAuthority(ROLE_ADMIN)
+                                // Policy
+                                .requestMatchers(
+                                        "/policies/**").hasAuthority(ROLE_ADMIN)
 
-                    // otp
-                        .requestMatchers(
-                                "/otp/**"
-                        ).hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
-                    // check-in
-                        .requestMatchers(
-                                "/check-in/**"
-                        ).hasAuthority(ROLE_ADMIN)
+                                // otp
+                                .requestMatchers(
+                                        "/otp/**"
+                                ).hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                                // check-in
+                                .requestMatchers(
+                                        "/check-in/**"
+                                ).hasAuthority(ROLE_ADMIN)
 
-                        .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
+                                .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
 
         // JWT 필터 검증 추가

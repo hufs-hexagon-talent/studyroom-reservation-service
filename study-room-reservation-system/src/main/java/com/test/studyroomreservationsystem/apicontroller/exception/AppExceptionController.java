@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.apicontroller;
+package com.test.studyroomreservationsystem.apicontroller.exception;
 
 import com.test.studyroomreservationsystem.dto.util.ErrorResponseDto;
 import com.test.studyroomreservationsystem.exception.AuthCodeMismatchException;
@@ -123,7 +123,7 @@ public class AppExceptionController {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.PRECONDITION_FAILED);
     }
-    @ExceptionHandler(InvalidRoomIdsException.class)
+    @ExceptionHandler(InvalidPartitionIdsException.class)
     public ResponseEntity<ErrorResponseDto> handleInvalidRoomIdsException(CheckInFailException ex ) {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 HttpStatus.PRECONDITION_FAILED.toString(),

@@ -1,13 +1,20 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
+import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
+import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleRequestDto;
 import com.test.studyroomreservationsystem.dto.operationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
+import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
+import com.test.studyroomreservationsystem.exception.reservation.OperationClosedException;
+import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
+import com.test.studyroomreservationsystem.service.RoomPartitionService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
@@ -15,28 +22,28 @@ import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundEx
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService {
-
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final RoomRepository roomRepository;
     private final RoomService roomService;
     private final RoomOperationPolicyService policyService;
 
-    @Autowired
-    public RoomOperationPolicyScheduleServiceImpl(RoomOperationPolicyScheduleRepository scheduleRepository,
-                                                  RoomRepository roomRepository,
-                                                  RoomService roomService,
-                                                  RoomOperationPolicyService policyService) {
+    public RoomOperationPolicyScheduleServiceImpl(RoomOperationPolicyScheduleRepository scheduleRepository, RoomRepository roomRepository, RoomService roomService, RoomOperationPolicyService policyService) {
         this.scheduleRepository = scheduleRepository;
         this.roomRepository = roomRepository;
         this.roomService = roomService;
         this.policyService = policyService;
     }
+
 
     @Override
     public RoomOperationPolicySchedule createSchedule(ScheduleRequestDto requestDto) {
@@ -98,7 +105,6 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
 
         return scheduleRepository.save(schedule);
     }
-
 
     // todo 변경
     @Override

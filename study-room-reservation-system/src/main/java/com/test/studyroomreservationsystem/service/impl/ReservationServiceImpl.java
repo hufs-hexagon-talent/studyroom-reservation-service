@@ -40,7 +40,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Value("${spring.service.noShowLimit}") private int noShowLimit;
     @Value("${spring.service.reservationLimit}") private int reservationLimit;
     @Value("${spring.service.reservationLimitToday}") private int reservationLimitToday;
-    private static final int ONE_DAY_OFFSET = 1;
 
     @Autowired
     public ReservationServiceImpl(ReservationRepository reservationRepository,
@@ -57,16 +56,16 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation createReservation(ReservationRequestDto reservationRequestDto, User user) {
-        Long partitionId = reservationRequestDto.getRoomPartitionId();
+        Long roomPartitionId = reservationRequestDto.getRoomPartitionId();
         Long userId = user.getUserId();
         Instant startDateTime = reservationRequestDto.getStartDateTime();
         Instant endDateTime = reservationRequestDto.getEndDateTime();
 
         // 검증
-        validateRoomAvailability(userId,partitionId, startDateTime, endDateTime);
+        validateRoomAvailability(userId, roomPartitionId, startDateTime, endDateTime);
 
         Reservation reservationEntity = reservationRequestDto.toEntity(
-                user,partitionService.findRoomPartitionById(partitionId)
+                user,partitionService.findRoomPartitionById(roomPartitionId)
         );
 
         return reservationRepository.save(reservationEntity);
@@ -128,10 +127,14 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId, List<Long> roomPartitionIds, Instant startTime, Instant endTime) {
-        return reservationRepository.findByUserUserIdAndRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(userId, roomPartitionIds, startTime, endTime).orElseThrow(
-                ReservationNotFoundException::new
-        );
+    public List<Reservation> findValidReservations(
+            Long userId,
+            List<Long> roomPartitionIds,
+            Instant nowTime,
+            Long allowedStartMinute) {
+        String notVisitedState = ReservationState.NOT_VISITED.toString();
+        return reservationRepository.findValidReservations(userId, roomPartitionIds, nowTime, allowedStartMinute,notVisitedState)
+                .orElseThrow(ReservationNotFoundException::new);
     }
 
     @Override
@@ -141,12 +144,12 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findByUserUserIdAndReservationStartTime(userId, now);
     }
 
-
     @Override
     public List<Reservation> countNoShowsByUserIdAndPeriod(Long userId) {
-        ZonedDateTime endTime = ZonedDateTime.now(ZoneOffset.UTC);
-        endTime = endTime.minusDays(ONE_DAY_OFFSET);
-        ZonedDateTime startTime = endTime.minusMonths(noShowCntMonth);
+
+        ZonedDateTime endTime = DateTimeUtil.getOneDayBefore(DateTimeUtil.getEndOfTodayZoned());
+        ZonedDateTime startTime = DateTimeUtil.getMonthBefore(endTime, noShowCntMonth);
+
         Instant startInstant = startTime.toInstant();
         Instant endInstant = endTime.toInstant();
 
@@ -155,12 +158,13 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date) {
-        List<Room> rooms = roomService.findAllRoom();
-        ArrayList<RoomsReservationResponseDto> responseList = new ArrayList<>();
+    public List<PartitionsReservationResponseDto> getReservationsByAllPartitionsAndDate(LocalDate date) {
+        List<RoomPartition> partitions = partitionService.findAllRoomPartition();
+        ArrayList<PartitionsReservationResponseDto> responseList = new ArrayList<>();
 
-        for (Room room : rooms) {
+        for (RoomPartition partition : partitions) {
             try {
+                Room room = partition.getRoom();
                 RoomOperationPolicySchedule schedule = scheduleService.findScheduleByRoomAndDate(room, date);
                 RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
 
@@ -170,18 +174,24 @@ public class ReservationServiceImpl implements ReservationService {
                 Instant operationStartDateTime = date.atTime(operationStartTime).toInstant(ZoneOffset.UTC);
                 Instant operationEndDateTime = date.atTime(operationEndTime).toInstant(ZoneOffset.UTC);
 
-                // 각 룸의 예약들
-                List<Reservation> reservations = reservationRepository.findOverlappingReservations(room.getRoomId(), operationStartDateTime, operationEndDateTime);
-                List<RoomsReservationResponseDto.TimeRange> reservationTimes = reservations.stream()
-                        .map(reservation -> new RoomsReservationResponseDto.TimeRange(
+                // 각 파티션의 예약들
+                List<Reservation> reservations = reservationRepository.findOverlappingReservations(
+                        partition.getRoomPartitionId(),
+                        operationStartDateTime,
+                        operationEndDateTime);
+
+                List<PartitionsReservationResponseDto.TimeRange> reservationTimes = reservations.stream()
+                        .map(reservation -> new PartitionsReservationResponseDto.TimeRange(
                                 reservation.getReservationId(),
                                 reservation.getReservationStartTime(),
                                 reservation.getReservationEndTime()))
                         .toList();
 
-                responseList.add(new RoomsReservationResponseDto(
+                responseList.add(new PartitionsReservationResponseDto(
+                        partition.getRoomPartitionId(),
                         room.getRoomId(),
                         room.getRoomName(),
+                        partition.getPartitionNumber(),
                         policy,
                         reservationTimes));
             } catch (ScheduleNotFoundException e) {
@@ -193,11 +203,12 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date) {
-        Instant startTime = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant endTime = date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant();
+    public SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date) {
+        Instant startTime = DateTimeUtil.getStartOfDateInstant(date);
+        Instant endTime = DateTimeUtil.getEndOfDateInstant(date);
 
-        List<Reservation> reservations = reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(roomIds, startTime, endTime);
+        List<Reservation> reservations
+                = reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(partitionIds, startTime, endTime);
 
         List<SpecificRoomsReservationsDto.RoomReservation> roomReservations = reservations.stream()
                 .map(reservation -> new SpecificRoomsReservationsDto.RoomReservation(
@@ -220,17 +231,17 @@ public class ReservationServiceImpl implements ReservationService {
     public List<Reservation> getReservationsByUserIdAndToday(Long userId) {
         return reservationRepository.findByUserIdAndReservationStartTime(
                 userId,
-                DateTimeUtil.getStartOfToday(),
-                DateTimeUtil.getEndOfToday()
+                DateTimeUtil.getStartOfTodayInstant(),
+                DateTimeUtil.getEndOfTodayInstant()
         );
     }
 
-    private void validateRoomAvailability(Long userId,Long roomId, Instant startDateTime, Instant endDateTime) {
+    private void validateRoomAvailability(Long userId,Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
         //  이용 불가 한 학생
         if (isUserBlocked(userId)) {
             throw new NoShowLimitExceededException();
         }
-
+        Long roomId = partitionService.findRoomPartitionById(roomPartitionId).getRoom().getRoomId();
         //  운영이 하지 않음 (운영 정책 없음), 운영이 종료 되었음 (운영 정책 있음)
         isOperating(roomId, startDateTime, endDateTime);
 
@@ -254,8 +265,8 @@ public class ReservationServiceImpl implements ReservationService {
             throw new TooManyTodayReservationsException(reservationLimitToday);
         }
         // 이미 다른 사용자의 예약이 있음
-        if (!isRoomNotOverlapping(roomId, startDateTime, endDateTime)) {
-            throw new OverlappingReservationException(roomService.findRoomById(roomId), startDateTime, endDateTime);
+        if (!isPartitionNotOverlapping(roomPartitionId, startDateTime, endDateTime)) {
+            throw new OverlappingReservationException(partitionService.findRoomPartitionById(roomPartitionId));
         }
 
     }
@@ -287,8 +298,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     // 다른 예약과 겹치지 않는지 확인
-    private boolean isRoomNotOverlapping(Long roomId, Instant startDateTime, Instant endDateTime) {
-        return reservationRepository.findOverlappingReservations(roomId, startDateTime, endDateTime).isEmpty();
+    private boolean isPartitionNotOverlapping(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
+        return reservationRepository.findOverlappingReservations(roomPartitionId, startDateTime, endDateTime).isEmpty();
     }
 
     private boolean isWithinMaxReservationTime(Long roomId, Instant startDateTime, Instant endDateTime) {
