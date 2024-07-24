@@ -34,8 +34,10 @@ public class AdminCheckInController {
 
     @PostMapping
     public ResponseEntity<ApiResponseDto<CheckInResponseDto>> verifyCheckInReservation(@RequestBody CheckInRequestDto requestDto) {
-        List<CheckInReservationDto> checkInReservations = checkInService.verifyCheckIn(requestDto.getVerificationCode(), requestDto.getRoomIds());
-        CheckInResponseDto responseDto = new CheckInResponseDto(checkInReservations);
+        List<CheckInReservationDto> checkInReservations
+                = checkInService.verifyCheckIn(requestDto.getVerificationCode(), requestDto.getRoomId());
+        CheckInResponseDto responseDto
+                = new CheckInResponseDto(checkInReservations);
         ApiResponseDto<CheckInResponseDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(),
                 "정상적으로 검증 되었습니다.", responseDto);
 

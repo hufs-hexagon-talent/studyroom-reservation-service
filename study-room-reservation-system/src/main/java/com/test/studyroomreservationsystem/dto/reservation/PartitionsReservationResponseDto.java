@@ -1,6 +1,5 @@
 package com.test.studyroomreservationsystem.dto.reservation;
 
-import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,19 +9,28 @@ import java.util.List;
 
 @Getter
 @Builder
-public class RoomsReservationResponseDto {
+public class PartitionsReservationResponseDto {
+    private final Long partitionId;
     private final Long roomId;
     private final String roomName;
+    private final String partitionNumber;
     private final RoomOperationPolicy policy;
     private final List<TimeRange> timeline;
 
-
-    public RoomsReservationResponseDto(Long roomId, String roomName, RoomOperationPolicy policy, List<TimeRange> timeline) {
+    public PartitionsReservationResponseDto(Long partitionId,
+                                            Long roomId,
+                                            String roomName,
+                                            String partitionNumber,
+                                            RoomOperationPolicy policy,
+                                            List<TimeRange> timeline) {
+        this.partitionId = partitionId;
         this.roomId = roomId;
         this.roomName = roomName;
+        this.partitionNumber = partitionNumber;
         this.policy = policy;
         this.timeline = timeline;
     }
+
     @Getter
     public static class TimeRange {
         private final Long reservationId;

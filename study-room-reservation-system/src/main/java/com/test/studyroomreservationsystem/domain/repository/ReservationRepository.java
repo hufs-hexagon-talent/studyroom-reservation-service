@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +17,11 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.room.roomId = :roomId " +
+            "WHERE r.roomPartition.roomPartitionId = :roomPartitionId " +
             "AND (r.reservationStartTime < :endTime " +
             "AND r.reservationEndTime > :startTime)"
     )
-    List<Reservation> findOverlappingReservations( @Param("roomId") Long roomId,
+    List<Reservation> findOverlappingReservations( @Param("roomPartitionId") Long roomPartitionId,
                                                   @Param("startTime") Instant startTime,
                                                   @Param("endTime") Instant endTime
     );
@@ -29,16 +30,28 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     Optional<Reservation> findTopByUserUserIdOrderByReservationStartTimeDesc(Long userId);
 
-    Optional<List<Reservation>> findByUserUserIdAndRoomRoomIdInAndReservationStartTimeBetween(Long userId, List<Long> roomIds, Instant startTime, Instant endTime);
+    // 검증을 위한 예약 가져오기 , userId , partitionIDs, 현재 시간, 현재 state 가 NOT_VISITED
+    @Query(value =
+            "SELECT * FROM reservation r WHERE r.user_id = :userId " +
+            "AND r.room_partition_id IN :roomPartitionIds " +
+            "AND r.state = :notVisitedState " +
+            "AND :nowTime BETWEEN (r.reservation_start_time - INTERVAL :allowedStartMinute MINUTE) AND r.reservation_end_time",
+            nativeQuery = true)
+    Optional<List<Reservation>> findValidReservations(
+            @Param("userId") Long userId,
+            @Param("roomPartitionIds") List<Long> roomPartitionIds,
+            @Param("nowTime") Instant nowTime,
+            @Param("allowedStartMinute") Long allowedStartMinute,
+            @Param("notVisitedState")String notVisitedState);
 
     // 특정 날짜에 특정 방들에 대한 예약 정보를 모두 조회
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.room.roomId IN :roomIds " +
+            "WHERE r.roomPartition.roomPartitionId IN :roomPartitionIds " +
             "AND r.reservationStartTime >= :startTime " +
             "AND r.reservationEndTime < :endTime")
-    List<Reservation> findByRoomRoomIdInAndReservationStartTimeBetween(
-            @Param("roomIds") List<Long> roomIds,
+    List<Reservation> findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(
+            @Param("roomPartitionIds") List<Long> roomPartitionIds,
             @Param("startTime") Instant startTime,
             @Param("endTime") Instant endTime
     );

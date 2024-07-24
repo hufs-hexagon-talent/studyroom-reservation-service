@@ -25,8 +25,8 @@ public class Reservation {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
+    @JoinColumn(name = "room_partition_id")
+    private RoomPartition roomPartition;
 
     @Column(name="reservation_start_time")
     private Instant reservationStartTime;
@@ -38,10 +38,10 @@ public class Reservation {
     private ReservationState state; // NOT_VISITED, VISITED
 
     @Builder
-    public Reservation(Long reservationId, User user, Room room, Instant reservationStartTime, Instant reservationEndTime, ReservationState state) {
+    public Reservation(Long reservationId, User user, RoomPartition roomPartition, Instant reservationStartTime, Instant reservationEndTime, ReservationState state) {
         this.reservationId = reservationId;
         this.user = user;
-        this.room = room;
+        this.roomPartition = roomPartition;
         this.reservationStartTime = reservationStartTime;
         this.reservationEndTime = reservationEndTime;
         this.state = state;

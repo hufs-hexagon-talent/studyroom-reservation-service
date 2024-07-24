@@ -14,7 +14,6 @@ spring:
 #            password: ${SPRING_REDIS_PORT}
     service:
         allowedStartMinute: 15
-        allowedEndMinute: 15
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength: 8
         otpTTL: 300
@@ -25,8 +24,9 @@ spring:
 
     jpa:
         show-sql: false
-#        properties:
-
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect
     jwt: # openssl rand -hex 32 ( HS256 )
         secret: ${SPRING_JWT_SECRET}
         header: Authorization
@@ -42,6 +42,7 @@ spring:
         password-reset:
             expiration: 600000 # 10분 (ms)
             category: password-reset
+
     mail:
         host: smtp.gmail.com
         port: 587
@@ -54,3 +55,11 @@ spring:
                     timeout: 5000
                     starttls:
                         enable: true
+
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+        baseline-version: 1
+        url: ${ SPRING_DATASOURCE_URL }
+        user: ${SPRING_DATASOURCE_USERNAME}
+        password: ${SPRING_DATASOURCE_PASSWORD}

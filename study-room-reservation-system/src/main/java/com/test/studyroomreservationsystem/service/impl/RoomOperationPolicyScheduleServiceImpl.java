@@ -1,13 +1,20 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dao.RoomDao;
-import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
+import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.ScheduleRequestDto;
-import com.test.studyroomreservationsystem.dto.roomoperationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
+import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
+import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleRequestDto;
+import com.test.studyroomreservationsystem.dto.operationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
+import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
+import com.test.studyroomreservationsystem.exception.reservation.OperationClosedException;
+import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
+import com.test.studyroomreservationsystem.service.RoomPartitionService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
@@ -15,29 +22,27 @@ import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundEx
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService {
-
-    private final RoomOperationPolicyScheduleDao scheduleDao;
-    private final RoomDao roomDao;
+    private final RoomOperationPolicyScheduleRepository scheduleRepository;
+    private final RoomRepository roomRepository;
     private final RoomService roomService;
     private final RoomOperationPolicyService policyService;
 
-    @Autowired
-    public RoomOperationPolicyScheduleServiceImpl(RoomOperationPolicyScheduleDao scheduleDao,
-                                                  RoomDao roomDao,
-                                                  RoomService roomService,
-                                                  RoomOperationPolicyService policyService) {
-        this.scheduleDao = scheduleDao;
-        this.roomDao = roomDao;
+    public RoomOperationPolicyScheduleServiceImpl(RoomOperationPolicyScheduleRepository scheduleRepository, RoomRepository roomRepository, RoomService roomService, RoomOperationPolicyService policyService) {
+        this.scheduleRepository = scheduleRepository;
+        this.roomRepository = roomRepository;
         this.roomService = roomService;
         this.policyService = policyService;
     }
-
 
 
     @Override
@@ -55,26 +60,26 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
                         policyService.findPolicyById(roomOperationPolicyId)
         );
 
-        return scheduleDao.save(scheduleEntity);
+        return scheduleRepository.save(scheduleEntity);
     }
 
     @Override
     public RoomOperationPolicySchedule findScheduleById(Long scheduleId) {
-        return scheduleDao.findById(scheduleId)
+        return scheduleRepository.findById(scheduleId)
                 .orElseThrow(()->new ScheduleNotFoundException(scheduleId));
     }
 
     @Override
-    public List<RoomOperationPolicySchedule> findAllSchedule() {return scheduleDao.findAll();}
+    public List<RoomOperationPolicySchedule> findAllSchedule() {return scheduleRepository.findAll();}
     @Override
     public void deleteScheduleById(Long roomScheduleId) {
         findScheduleById(roomScheduleId); // 찾아보고 없으면 예외처리
-        scheduleDao.deleteById(roomScheduleId);
+        scheduleRepository.deleteById(roomScheduleId);
     }
 
     @Override
     public RoomOperationPolicySchedule findScheduleByRoomAndDate(Room room, LocalDate date) {
-        return scheduleDao.findByRoomAndPolicyApplicationDate(room, date).orElseThrow(
+        return scheduleRepository.findByRoomAndPolicyApplicationDate(room, date).orElseThrow(
                 () -> new ScheduleNotFoundException(room,date)
         );
     }
@@ -98,24 +103,23 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         schedule.setRoom(roomService.findRoomById(roomId));
         schedule.setPolicyApplicationDate(date);
 
-        return scheduleDao.save(schedule);
+        return scheduleRepository.save(schedule);
     }
 
-
-
+    // todo 변경
     @Override
     public List<LocalDate> getAvailableDatesFromToday() {
         LocalDate today = LocalDate.now();
-        return scheduleDao.findAvailableRoomsGroupedByDate(today);
+        return scheduleRepository.findAvailableRoomsGroupedByDate(today);
     }
 
 
     public boolean isExistSchedule(Long roomId , LocalDate date) {
-        Room room = roomDao.findById(roomId).orElseThrow(
+        Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new RoomNotFoundException(roomId));
 
         Optional<RoomOperationPolicySchedule> schedule
-                = scheduleDao.findByRoomAndPolicyApplicationDate(room, date);
+                = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date);
 
         // 이게 존재한다면 -> 해당 스케줄 생성 X      false 리턴
         // 이게 존재하지않는다면 -> 해당 스케줄 생성 O    true 리턴

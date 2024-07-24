@@ -7,14 +7,14 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class RoomsResponseDto {
+public class RoomResponseDto {
     private final Long roomId;
     private final String roomName;
     private final RoomOperationPolicy policy;
 //    private final TimeRange timeline;
 
 
-    public RoomsResponseDto(Long roomId, String roomName, RoomOperationPolicy policy) {
+    public RoomResponseDto(Long roomId, String roomName, RoomOperationPolicy policy) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.policy = policy;

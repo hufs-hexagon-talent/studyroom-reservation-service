@@ -18,10 +18,9 @@ public interface ReservationService {
     List<Reservation> findAllReservationByUser(Long userId);
     void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser);
     void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser);
-    List<RoomsReservationResponseDto> getReservationsByAllRoomsAndDate(LocalDate date);
-    SpecificRoomsReservationsDto getReservationsByRoomsAndDate(List<Long> roomIds, LocalDate date);
-    List<Reservation> findByUserIdAndRoomIdAndStartTimeBetween(Long userId,List<Long> roomIds, Instant startTime, Instant endTime);
-
+    List<PartitionsReservationResponseDto> getReservationsByAllPartitionsAndDate(LocalDate date);
+    SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date);
+    List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute);
     List<Reservation> getReservationsByUserIdAndToday(Long userId);
     List<Reservation> getNotVisitedReservationsAfterNow(Long userId);
     List<Reservation> countNoShowsByUserIdAndPeriod(Long userId);

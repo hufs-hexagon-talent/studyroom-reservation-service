@@ -1,6 +1,5 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dao.UserDao;
 import com.test.studyroomreservationsystem.domain.entity.User;
 import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
@@ -25,14 +24,11 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
-        this.userDao = userDao;
-
+    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
     }
@@ -45,16 +41,16 @@ public class UserServiceImpl implements UserService {
         String email = requestDto.getEmail();
 
         // 해당 로그인 ID 가 이미 존재하는 아이디인지?
-        boolean existsByUsername = userDao.existsByUsername(username);
+        boolean existsByUsername = userRepository.existsByUsername(username);
         if (existsByUsername) {
             throw (new UsernameAlreadyExistsException(username));
         }
         // 해당 학번이 이미 존재 하는지?
-        boolean existsBySerial = userDao.existsBySerial(serial);
+        boolean existsBySerial = userRepository.existsBySerial(serial);
         if (existsBySerial) {
             throw (new SerialAlreadyExistsException(serial));
         }
-        boolean existsByEmail = userDao.existsByEmail(email);
+        boolean existsByEmail = userRepository.existsByEmail(email);
         if (existsByEmail) {
             throw (new EmailAlreadyExistsException(email));
         }
@@ -68,36 +64,34 @@ public class UserServiceImpl implements UserService {
         user.setName(requestDto.getName());
         user.setIsAdmin(Boolean.FALSE);
         user.setEmail(email);
-        return userDao.save(user);
+        return userRepository.save(user);
     }
 
 
     @Override
     public User findUserById(Long userId) {
-        return userDao.findById(userId)
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
     }
     @Override
     public User findByUsername(String username) {
-        return userDao.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
-
     @Override
     public User findByEmail(String email) {
-        return userDao.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
-
     @Override
     public User findBySerial(String serial) {
-        return userDao.findBySerial(serial)
+        return userRepository.findBySerial(serial)
                 .orElseThrow(() -> new UserNotFoundException(serial));
     }
 
     @Override
     public List<User> findAllUsers() {
-        return userDao.findAll();
+        return userRepository.findAll();
     }
 
     @Override
@@ -125,7 +119,7 @@ public class UserServiceImpl implements UserService {
         String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
         user.setPassword(encodeNewPassword);
 
-        return userDao.save(user);
+        return userRepository.save(user);
     }
 
     @Override
@@ -139,13 +133,13 @@ public class UserServiceImpl implements UserService {
         String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
         user.setPassword(encodeNewPassword);
 
-        return userDao.save(user);
+        return userRepository.save(user);
     }
 
     @Override
     public void deleteUser(Long userId) {
         findUserById(userId); //찾아보고 없으면 예외처리
-        userDao.deleteById(userId);
+        userRepository.deleteById(userId);
     }
 
     

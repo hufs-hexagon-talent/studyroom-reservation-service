@@ -1,9 +1,8 @@
-package com.test.studyroomreservationsystem.dto.roomoperationpolicy;
+package com.test.studyroomreservationsystem.dto.operationpolicy;
 
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 

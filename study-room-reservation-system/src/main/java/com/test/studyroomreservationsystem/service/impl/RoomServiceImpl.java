@@ -1,19 +1,19 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.dao.RoomDao;
-import com.test.studyroomreservationsystem.dao.RoomOperationPolicyScheduleDao;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
+import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
+import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.room.RoomDto;
-import com.test.studyroomreservationsystem.dto.room.RoomUpdateDto;
-import com.test.studyroomreservationsystem.dto.room.RoomsResponseDto;
+import com.test.studyroomreservationsystem.dto.room.RoomUpdateRequestDto;
+import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
 import com.test.studyroomreservationsystem.exception.reservation.OperationClosedException;
+import com.test.studyroomreservationsystem.service.DateTimeUtil;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -23,61 +23,61 @@ import java.util.List;
 @Slf4j
 @Service
 public class RoomServiceImpl implements RoomService {
-    private final RoomDao roomDao;
-    private final RoomOperationPolicyScheduleDao scheduleDao;
+    private final RoomRepository roomRepository;
+    private final RoomOperationPolicyScheduleRepository scheduleRepository;
 
-    @Autowired
-    public RoomServiceImpl(RoomDao roomDao, RoomOperationPolicyScheduleDao scheduleDao) {
-        this.roomDao = roomDao;
-        this.scheduleDao = scheduleDao;
+    public RoomServiceImpl(RoomRepository roomRepository,
+                           RoomOperationPolicyScheduleRepository scheduleRepository) {
+        this.roomRepository = roomRepository;
+        this.scheduleRepository = scheduleRepository;
     }
 
     @Override
     public Room createRoom(RoomDto roomDto) {
         Room roomEntity = roomDto.toEntity();
-        return roomDao.save(roomEntity);
+        return roomRepository.save(roomEntity);
     }
 
     @Override
     public Room findRoomById(Long roomId) {
-        return roomDao.findById(roomId)
+        return roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(roomId));
     }
+
     @Override
     public Room findRoomByName(String roomName) {
-        return roomDao.findByRoomName(roomName)
+        return roomRepository.findByRoomName(roomName)
                 .orElseThrow(() -> new RoomNotFoundException(roomName));
     }
 
-
     @Override
     public List<Room> findAllRoom() {
-        return roomDao.findAll();
+        return roomRepository.findAll();
     }
 
     @Override
-    public Room updateRoom(Long roomId, RoomUpdateDto roomUpdateDto) {
+    public Room updateRoom(Long roomId, RoomUpdateRequestDto roomUpdateDto) {
         Room roomEntity = findRoomById(roomId);
         roomEntity.setRoomName(roomUpdateDto.getRoomName());
 
-        return roomDao.save(roomEntity);
+        return roomRepository.save(roomEntity);
     }
 
     @Override
     public void deleteRoom(Long roomId) {
         findRoomById(roomId); // 찾아보고 없으면 예외처리
-        roomDao.deleteById(roomId);
+        roomRepository.deleteById(roomId);
     }
 
     @Override // 룸이 운영을 하는지? && 운영이 종료 되었는지?
-    public void isRoomAvailable(Long roomId, Instant startDateTime, Instant endDateTime) {
+    public void isRoomAvailable(Long roomId, Instant reservationStartTime, Instant reservationEndTime) {
 
         Room room = findRoomById(roomId);
-        LocalDate date = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
+        LocalDate date = reservationStartTime.atZone(ZoneOffset.UTC).toLocalDate();
 
         // 룸과 날짜로 정책 찾기
         RoomOperationPolicySchedule schedule
-                = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
+                = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
                 .orElseThrow(
                         // 운영이 하지 않음 (운영 정책 없음)
                         () -> new RoomPolicyNotFoundException(room, date)
@@ -86,35 +86,51 @@ public class RoomServiceImpl implements RoomService {
 
         RoomOperationPolicy roomOperationPolicy = schedule.getRoomOperationPolicy();
 
-        LocalTime operationStartTime = roomOperationPolicy.getOperationStartTime();
-        LocalTime operationEndTime = roomOperationPolicy.getOperationEndTime();
+        // todo : 이렇게되면 Policy 시작 시간이 9시전 이라면 큰 문제가 됨 수정해야해!!
+        Instant operationStartTime
+                = date.atTime(
+                        DateTimeUtil.convertKstToUtc(roomOperationPolicy.getOperationStartTime()))
+                .atZone(ZoneOffset.UTC).toInstant();
 
-        LocalTime reservationStartTime = startDateTime.atZone(ZoneOffset.UTC).toLocalTime();
-        LocalTime reservationEndTime = endDateTime.atZone(ZoneOffset.UTC).toLocalTime();
+        Instant operationEndTime
+                = date.atTime(
+                        DateTimeUtil.convertKstToUtc(roomOperationPolicy.getOperationEndTime()))
+                .atZone(ZoneOffset.UTC).toInstant();
+        boolean after = operationStartTime.isAfter(reservationStartTime);
+        boolean before = reservationEndTime.isBefore(operationEndTime);
 
-        if (operationStartTime.isAfter(reservationStartTime) && operationEndTime.isBefore(reservationEndTime)) {
-            throw new OperationClosedException(room, operationStartTime, operationEndTime);
+        if (!after && !before) {
+            throw new OperationClosedException(
+                    room,
+                    operationStartTime, operationEndTime,
+                    reservationStartTime, reservationEndTime);
         }
 
     }
 
     @Override
-    public List<RoomsResponseDto> getRoomsPolicyByDate(LocalDate date) {
-        List<Room> rooms = roomDao.findAll();
-        List<RoomsResponseDto> responseList = new ArrayList<>();
+    public List<RoomResponseDto> getRoomsPolicyByDate(LocalDate date) {
+        List<Room> rooms = roomRepository.findAll();
+        List<RoomResponseDto> responseList = new ArrayList<>();
 
         for (Room room : rooms) {
             RoomOperationPolicy policy = null;
             try {
-                RoomOperationPolicySchedule schedule = scheduleDao.findByRoomAndPolicyApplicationDate(room, date)
-                        .orElseThrow(() -> new RoomPolicyNotFoundException(room, date));
+                // 룸과 날짜로 정책 찾기
+                RoomOperationPolicySchedule schedule
+                        = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
+                        .orElseThrow(
+                                // 운영이 하지 않음 (운영 정책 없음)
+                                () -> new RoomPolicyNotFoundException(room, date)
+                        );
                 policy = schedule.getRoomOperationPolicy();
 
             } catch (RoomPolicyNotFoundException e) {
                 // 정책이 없을 때는 policyId가 null로 유지됨
             }
-                responseList.add(new RoomsResponseDto(room.getRoomId(), room.getRoomName(), policy));
+            responseList.add(new RoomResponseDto(room.getRoomId(), room.getRoomName(), policy));
         }
         return responseList;
     }
+
 }

@@ -11,9 +11,10 @@ spring:
         show-sql: false
         open-in-view: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: none
         properties:
             hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect
                 format_sql: true # SQL을 보기 좋게 포맷팅
     jwt: # openssl rand -hex 32 ( HS256 )
         secret: b98f37cbf7fb4beeb4fec0e1a1dfa7b5a86c2f3504441ad6dc8e7b636ad67a80
@@ -40,7 +41,6 @@ spring:
             port: 6379
     service:
         allowedStartMinute : 15
-        allowedEndMinute : 15
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength : 8
         otpTTL : 300
@@ -48,6 +48,7 @@ spring:
         noShowLimit : 10
         reservationLimit : 1
         reservationLimitToday : 2
+
     mail:
         host: smtp.gmail.com
         port: 587
@@ -66,9 +67,11 @@ spring:
 #        enabled: true
 #        baseline-on-migrate: true
 #        baseline-version: 1
-#        url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/hufs_reservation
-#        password: 1234
+#        url: jdbc:mysql://localhost:3306/service-db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 #        user: root
+#        password: 1234
+
+
 
 logging:
     level:
