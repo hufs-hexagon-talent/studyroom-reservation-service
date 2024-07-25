@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.exception.invaildvalue;
+package com.test.studyroomreservationsystem.exception.invalidvalue;
 
 public interface InvalidValueException {
     String getMessage();

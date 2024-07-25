@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.exception.invaildvalue;
+package com.test.studyroomreservationsystem.exception.invalidvalue;
 
 public class InvalidReservationIdException extends RuntimeException implements InvalidValueException {
     public InvalidReservationIdException(Long reservationId) {

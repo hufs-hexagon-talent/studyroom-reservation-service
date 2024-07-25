@@ -6,7 +6,7 @@ import com.test.studyroomreservationsystem.domain.repository.ReservationReposito
 import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.exception.*;
 
-import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidReservationIdException;
+import com.test.studyroomreservationsystem.exception.invalidvalue.InvalidReservationIdException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationHistoryNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
