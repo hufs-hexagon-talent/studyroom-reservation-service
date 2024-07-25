@@ -66,17 +66,24 @@ public class AdminPolicyController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @Operation(summary = "❌[관리자] RoomOperationPolicy 정보 업데이트",
+    @Operation(summary = "✅[관리자] RoomOperationPolicy 정보 업데이트",
             description = "해당 RoomOperationPolicy id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PutMapping("/policy")
-    public ResponseEntity<RoomOperationPolicyDto> updatePolicy(@PathVariable Long roomOperationPolicyId,
-                                                                     @RequestBody RoomOperationPolicyUpdateDto policyDto) {
-        RoomOperationPolicy updatedPolicy = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, policyDto);
-        RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(updatedPolicy);
+    @PatchMapping("/policy/{roomOperationPolicyId}")
+    public ResponseEntity<ApiResponseDto<RoomOperationPolicyDto>> updatePolicy(
+            @PathVariable Long roomOperationPolicyId,
+            @RequestBody RoomOperationPolicyUpdateDto requestDto) {
 
-        return new ResponseEntity<>(policy, HttpStatus.OK);
+        RoomOperationPolicy updatedPolicy
+                = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, requestDto);
+
+        RoomOperationPolicyDto policyDto
+                = roomOperationPolicyService.dtoFrom(updatedPolicy);
+        ApiResponseDto<RoomOperationPolicyDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(),
+                "정상적으로 변경 되었습니다.", policyDto
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "✅[관리자] RoomOperationPolicy 삭제",
