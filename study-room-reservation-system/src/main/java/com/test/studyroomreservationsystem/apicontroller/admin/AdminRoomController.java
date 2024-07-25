@@ -45,10 +45,12 @@ public class AdminRoomController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{roomId}")
-    public ResponseEntity<RoomDto> getRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<ApiResponseDto<RoomDto>> getRoomById(@PathVariable Long roomId) {
         Room foundRoom = roomService.findRoomById(roomId);
         RoomDto room = roomService.dtoFrom(foundRoom);
-        return new ResponseEntity<>(room, HttpStatus.OK);
+        ApiResponseDto<RoomDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", room);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "✅[관리자] 모든 room 조회",
