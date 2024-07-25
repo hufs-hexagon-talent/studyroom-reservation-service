@@ -1,5 +1,6 @@
 package com.test.studyroomreservationsystem.apicontroller.any;
 
+import com.test.studyroomreservationsystem.dto.partition.PartitionPolicyResponseDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
@@ -30,10 +31,10 @@ public class AnyPartitionController {
             description = "날짜를 받으면 모든 룸의 정책에 따른 파티션 운영시간을 확인",
             security = {})
     @GetMapping("/policy/by-date")
-    ResponseEntity<ApiResponseDto<ApiResponseListDto<PartitionResponseDto>>> getPartitionPolicyByRoomAndDate(@RequestParam("date") LocalDate date) {
-        List<PartitionResponseDto> responseDtoList = roomPartitionService.getPartitionsPolicyByDate(date);
-        ApiResponseListDto<PartitionResponseDto> wrapped = new ApiResponseListDto<>(responseDtoList);
-        ApiResponseDto<ApiResponseListDto<PartitionResponseDto>> response
+    ResponseEntity<ApiResponseDto<ApiResponseListDto<PartitionPolicyResponseDto>>> getPartitionPolicyByRoomAndDate(@RequestParam("date") LocalDate date) {
+        List<PartitionPolicyResponseDto> responseDtoList = roomPartitionService.getPartitionsPolicyByDate(date);
+        ApiResponseListDto<PartitionPolicyResponseDto> wrapped = new ApiResponseListDto<>(responseDtoList);
+        ApiResponseDto<ApiResponseListDto<PartitionPolicyResponseDto>> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
