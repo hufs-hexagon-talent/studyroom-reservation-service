@@ -10,8 +10,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RoomOperationPolicyScheduleService {
-    RoomOperationPolicySchedule createSchedule(ScheduleRequestDto requestDto);
+    List<RoomOperationPolicySchedule> createSchedules(ScheduleRequestDto requestDto);
     RoomOperationPolicySchedule findScheduleById(Long scheduleId);
+    List<RoomOperationPolicySchedule> findScheduleByDate(LocalDate date);
     List<RoomOperationPolicySchedule> findAllSchedule();
     RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto);
     void deleteScheduleById(Long roomScheduleId);

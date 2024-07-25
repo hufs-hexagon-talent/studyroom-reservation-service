@@ -48,6 +48,12 @@ public class RoomPartitionServiceImpl implements RoomPartitionService {
     }
 
     @Override
+    public List<RoomPartition> findRoomPartitionsByRoomId(Long roomId) {
+        roomService.findRoomById(roomId);
+        return partitionRepository.findByRoom_RoomId(roomId);
+    }
+
+    @Override
     public List<RoomPartition> findAllRoomPartition() {
         return partitionRepository.findAll();
     }
