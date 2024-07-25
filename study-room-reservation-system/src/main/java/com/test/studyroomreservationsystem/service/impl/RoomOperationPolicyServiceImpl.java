@@ -41,10 +41,15 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
     @Override
     public RoomOperationPolicy updatePolicy(Long policyId, RoomOperationPolicyUpdateDto policyDto) {
         RoomOperationPolicy policy = findPolicyById(policyId);
-
-        policy.setOperationStartTime(policyDto.getOperationStartTime());
-        policy.setOperationEndTime(policyDto.getOperationEndTime());
-        policy.setEachMaxMinute(policyDto.getEachMaxMinute());
+        if (policyDto.getOperationStartTime() != null) {
+            policy.setOperationStartTime(policyDto.getOperationStartTime());
+        }
+        if (policyDto.getOperationEndTime() != null) {
+            policy.setOperationEndTime(policyDto.getOperationEndTime());
+        }
+        if (policyDto.getEachMaxMinute() != null) {
+            policy.setEachMaxMinute(policyDto.getEachMaxMinute());
+        }
 
         return policyRepository.save(policy);
     }

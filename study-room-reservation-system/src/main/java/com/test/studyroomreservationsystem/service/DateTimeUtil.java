@@ -41,17 +41,17 @@ public class DateTimeUtil {
     }
 
     // Convert UTC to KST
-    public static LocalTime convertUtcToKst(LocalTime utcTime) {
-        ZonedDateTime utcZonedDateTime = utcTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC"));
+    public static LocalDateTime convertUtcToKst(LocalDateTime utcDateTime) {
+        ZonedDateTime utcZonedDateTime = utcDateTime.atZone(ZoneId.of("UTC"));
         ZonedDateTime kstZonedDateTime = utcZonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
-        return kstZonedDateTime.toLocalTime();
+        return kstZonedDateTime.toLocalDateTime();
     }
 
     // Convert KST to UTC
-    public static LocalTime convertKstToUtc(LocalTime kstTime) {
-        ZonedDateTime kstZonedDateTime = kstTime.atDate(LocalDate.now()).atZone(ZoneId.of("Asia/Seoul"));
+    public static LocalDateTime convertKstToUtc(LocalDateTime kstDateTime) {
+        ZonedDateTime kstZonedDateTime = kstDateTime.atZone(ZoneId.of("Asia/Seoul"));
         ZonedDateTime utcZonedDateTime = kstZonedDateTime.withZoneSameInstant(ZoneId.of("UTC"));
-        return utcZonedDateTime.toLocalTime();
+        return utcZonedDateTime.toLocalDateTime();
     }
 }
 
