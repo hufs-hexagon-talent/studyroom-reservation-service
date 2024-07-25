@@ -8,26 +8,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @Builder
 public class ScheduleRequestDto {
-    private Long roomId;
     private Long roomOperationPolicyId;
-    private LocalDate policyApplicationDate;
+    private List<Long> roomIds;
+    private List<LocalDate> policyApplicationDates;
 
 
-    public ScheduleRequestDto(Long roomId, Long roomOperationPolicyId, LocalDate policyApplicationDate) {
-        this.roomId = roomId;
+    public ScheduleRequestDto(Long roomOperationPolicyId,
+                              List<Long> roomIds,
+                              List<LocalDate> policyApplicationDates) {
         this.roomOperationPolicyId = roomOperationPolicyId;
-        this.policyApplicationDate = policyApplicationDate;
+        this.roomIds = roomIds;
+        this.policyApplicationDates = policyApplicationDates;
     }
 
-    public RoomOperationPolicySchedule toEntity(Room room ,RoomOperationPolicy roomOperationPolicy) {
+    public RoomOperationPolicySchedule toEntity(RoomOperationPolicy roomOperationPolicy,
+                                                Room room ,
+                                                LocalDate policyApplicationDate) {
         return RoomOperationPolicySchedule.builder()
-                .room(room)
                 .roomOperationPolicy(roomOperationPolicy)
+                .room(room)
                 .policyApplicationDate(policyApplicationDate)
                 .build();
     }

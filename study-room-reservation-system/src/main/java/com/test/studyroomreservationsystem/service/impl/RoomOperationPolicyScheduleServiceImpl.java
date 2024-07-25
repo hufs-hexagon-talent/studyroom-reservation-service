@@ -3,29 +3,19 @@ package com.test.studyroomreservationsystem.service.impl;
 import com.test.studyroomreservationsystem.domain.entity.Room;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicy;
 import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySchedule;
-import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleRequestDto;
 import com.test.studyroomreservationsystem.dto.operationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
-import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
-import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
-import com.test.studyroomreservationsystem.exception.reservation.OperationClosedException;
-import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
-import com.test.studyroomreservationsystem.service.RoomPartitionService;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.notfound.ScheduleNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,27 +36,37 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
 
 
     @Override
-    public RoomOperationPolicySchedule createSchedule(ScheduleRequestDto requestDto) {
+    public List<RoomOperationPolicySchedule> createSchedules(ScheduleRequestDto requestDto) {
         Long roomOperationPolicyId = requestDto.getRoomOperationPolicyId();
-        Long roomId = requestDto.getRoomId();
-        LocalDate date = requestDto.getPolicyApplicationDate();
-        // 어떤 날에 대한 스케쥴(운영시간)을 만들때, 그 날에 부여된 스케쥴이 없어야만 함
-        if (isExistSchedule(roomId, date)) {
-        // 예외 처리
-            throw new ScheduleAlreadyExistException(roomId,date);
-        }
-        RoomOperationPolicySchedule scheduleEntity = requestDto.toEntity(
-                        roomService.findRoomById(roomId),
-                        policyService.findPolicyById(roomOperationPolicyId)
-        );
+        RoomOperationPolicy policy = policyService.findPolicyById(roomOperationPolicyId);
 
-        return scheduleRepository.save(scheduleEntity);
+        List<RoomOperationPolicySchedule> createSchedules = new ArrayList<>();
+
+        for (LocalDate date :requestDto.getPolicyApplicationDates()) {
+            for (Long roomId : requestDto.getRoomIds()) {
+                // 어떤 날에 대한 스케쥴(운영시간)을 만들때, 그 날에 부여된 스케쥴이 없어야만 함
+                Room room = roomService.findRoomById(roomId);
+                if (isExistSchedule(roomId, date)) {
+                    // 예외 처리
+                    throw new ScheduleAlreadyExistException(roomId,date);
+                }
+                RoomOperationPolicySchedule schedule = requestDto.toEntity(policy, room, date);
+                createSchedules.add(schedule);
+            }
+
+        }
+        return scheduleRepository.saveAll(createSchedules);
     }
 
     @Override
     public RoomOperationPolicySchedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
                 .orElseThrow(()->new ScheduleNotFoundException(scheduleId));
+    }
+
+    @Override
+    public List<RoomOperationPolicySchedule> findScheduleByDate(LocalDate date) {
+        return scheduleRepository.findByPolicyApplicationDate(date);
     }
 
     @Override
