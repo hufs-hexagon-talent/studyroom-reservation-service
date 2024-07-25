@@ -11,6 +11,7 @@ import java.util.List;
 public interface RoomPartitionService {
     RoomPartition createRoomPartition(PartitionRequestDto roomPartitionDto );
     RoomPartition findRoomPartitionById(Long roomPartitionId);
+    List<RoomPartition> findRoomPartitionsByRoomId(Long roomId);
     List<RoomPartition> findAllRoomPartition();
     List<RoomPartition> findRoomPartitionByRoomId(Long roomId);
     void deletePartitionById(Long roomPartitionId);

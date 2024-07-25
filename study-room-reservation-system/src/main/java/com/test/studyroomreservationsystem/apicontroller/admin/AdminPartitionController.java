@@ -33,7 +33,7 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/partition")
-    public ResponseEntity<ApiResponseDto<PartitionResponseDto>> createRoom(@RequestBody PartitionRequestDto requestDto) {
+    public ResponseEntity<ApiResponseDto<PartitionResponseDto>> createPartition(@RequestBody PartitionRequestDto requestDto) {
         RoomPartition createdRoomPartition = partitionService.createRoomPartition(requestDto);
         PartitionResponseDto responseDto = partitionService.dtoFrom(createdRoomPartition);
 
@@ -46,11 +46,27 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{partitionId}")
-    public ResponseEntity<ApiResponseDto<PartitionResponseDto>> getRoomById(@PathVariable Long partitionId) {
+    public ResponseEntity<ApiResponseDto<PartitionResponseDto>> getPartitionById(@PathVariable Long partitionId) {
         RoomPartition foundPartition = partitionService.findRoomPartitionById(partitionId);
         PartitionResponseDto responseDto = partitionService.dtoFrom(foundPartition);
         ApiResponseDto<PartitionResponseDto> response
-                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 조회 되었습니다.", responseDto);
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", responseDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @Operation(summary = "✅[관리자] roomID로 partition들 조회",
+            description = "room id로 조회 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @GetMapping("/rooms/{roomId}")
+    public ResponseEntity<ApiResponseDto<ApiResponseListDto<PartitionResponseDto>>> getPartitionsByRoomId(@PathVariable Long roomId) {
+        List<RoomPartition> partitions = partitionService.findRoomPartitionsByRoomId(roomId);
+        List<PartitionResponseDto> partitionsDto = partitions.stream()
+                .map(partitionService::dtoFrom)
+                .toList();
+        ApiResponseListDto<PartitionResponseDto> wrapped = new ApiResponseListDto<>(partitionsDto);
+        ApiResponseDto<ApiResponseListDto<PartitionResponseDto>> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -59,7 +75,7 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping
-    public ResponseEntity<ApiResponseDto<ApiResponseListDto<PartitionResponseDto>>> getAllRooms() {
+    public ResponseEntity<ApiResponseDto<ApiResponseListDto<PartitionResponseDto>>> getAllPartitions() {
         List<PartitionResponseDto> partitions = partitionService.findAllRoomPartition()
                 .stream()
                 .map(partitionService::dtoFrom)
@@ -89,7 +105,7 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{partitionId}")
-    public ResponseEntity<ApiResponseDto<Object> > deleteRoom(@PathVariable Long partitionId) {
+    public ResponseEntity<ApiResponseDto<Object> > deletePartition(@PathVariable Long partitionId) {
         partitionService.deletePartitionById(partitionId);
         ApiResponseDto<Object> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
