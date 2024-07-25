@@ -6,10 +6,7 @@ import com.test.studyroomreservationsystem.exception.NoShowLimitExceededExceptio
 import com.test.studyroomreservationsystem.exception.administrative.AdministrativeException;
 import com.test.studyroomreservationsystem.exception.administrative.ScheduleAlreadyExistException;
 import com.test.studyroomreservationsystem.exception.checkin.*;
-import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidCurrentPasswordException;
-import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidNewPasswordException;
-import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidValueException;
-import com.test.studyroomreservationsystem.exception.invaildvalue.InvalidReservationIdException;
+import com.test.studyroomreservationsystem.exception.invalidvalue.*;
 import com.test.studyroomreservationsystem.exception.notfound.*;
 import com.test.studyroomreservationsystem.exception.AccessDeniedException;
 import com.test.studyroomreservationsystem.exception.reservation.*;
@@ -85,6 +82,22 @@ public class AppExceptionController {
                 HttpStatus.BAD_REQUEST.toString(),
                 ex.getMessage()
                 );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidDatesException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidDatesException(InvalidValueException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidRoomIdsException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidRoomIdsException(InvalidValueException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                HttpStatus.BAD_REQUEST.toString(),
+                ex.getMessage()
+        );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 

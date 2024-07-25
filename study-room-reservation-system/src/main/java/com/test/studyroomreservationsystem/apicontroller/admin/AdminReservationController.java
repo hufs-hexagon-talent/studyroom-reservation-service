@@ -31,7 +31,7 @@ public class AdminReservationController {
     )
 
     @DeleteMapping("/admin/{reservationId}")
-    public ResponseEntity<ApiResponseDto<Objects>> verifyCheckInReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
+    public ResponseEntity<ApiResponseDto<Objects>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                                             @PathVariable Long reservationId) {
 
         reservationService.deleteReservationByAdmin(reservationId,currentUser);

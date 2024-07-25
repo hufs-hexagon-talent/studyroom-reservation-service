@@ -7,6 +7,8 @@ import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicy
 import com.test.studyroomreservationsystem.domain.repository.RoomRepository;
 import com.test.studyroomreservationsystem.dto.operationpolicyschedule.ScheduleRequestDto;
 import com.test.studyroomreservationsystem.dto.operationpolicyschedule.RoomOperationPolicyScheduleUpdateDto;
+import com.test.studyroomreservationsystem.exception.invalidvalue.InvalidDatesException;
+import com.test.studyroomreservationsystem.exception.invalidvalue.InvalidRoomIdsException;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyScheduleService;
 import com.test.studyroomreservationsystem.service.RoomOperationPolicyService;
 import com.test.studyroomreservationsystem.service.RoomService;
@@ -39,11 +41,18 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
     public List<RoomOperationPolicySchedule> createSchedules(ScheduleRequestDto requestDto) {
         Long roomOperationPolicyId = requestDto.getRoomOperationPolicyId();
         RoomOperationPolicy policy = policyService.findPolicyById(roomOperationPolicyId);
-
+        List<LocalDate> dates = requestDto.getPolicyApplicationDates();
+        if (dates == null || dates.isEmpty()) {
+            throw new InvalidDatesException();
+        }
+        List<Long> roomIds = requestDto.getRoomIds();
+        if (roomIds == null || roomIds.isEmpty()) {
+            throw new InvalidRoomIdsException();
+        }
         List<RoomOperationPolicySchedule> createSchedules = new ArrayList<>();
 
-        for (LocalDate date :requestDto.getPolicyApplicationDates()) {
-            for (Long roomId : requestDto.getRoomIds()) {
+        for (LocalDate date :dates) {
+            for (Long roomId : roomIds) {
                 // 어떤 날에 대한 스케쥴(운영시간)을 만들때, 그 날에 부여된 스케쥴이 없어야만 함
                 Room room = roomService.findRoomById(roomId);
                 if (isExistSchedule(roomId, date)) {
