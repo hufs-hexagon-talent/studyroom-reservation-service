@@ -86,16 +86,17 @@ public class RoomServiceImpl implements RoomService {
 
         RoomOperationPolicy roomOperationPolicy = schedule.getRoomOperationPolicy();
 
-        // todo : 이렇게되면 Policy 시작 시간이 9시전 이라면 큰 문제가 됨 수정해야해!!
+
         Instant operationStartTime
-                = date.atTime(
-                        DateTimeUtil.convertKstToUtc(roomOperationPolicy.getOperationStartTime()))
-                .atZone(ZoneOffset.UTC).toInstant();
+                = DateTimeUtil.convertKstToUtc(
+                        date.atTime(roomOperationPolicy.getOperationStartTime())
+        ).atZone(ZoneOffset.UTC).toInstant();
 
         Instant operationEndTime
-                = date.atTime(
-                        DateTimeUtil.convertKstToUtc(roomOperationPolicy.getOperationEndTime()))
-                .atZone(ZoneOffset.UTC).toInstant();
+                = DateTimeUtil.convertKstToUtc(
+                        date.atTime(roomOperationPolicy.getOperationEndTime())
+        ).atZone(ZoneOffset.UTC).toInstant();
+
         boolean after = operationStartTime.isAfter(reservationStartTime);
         boolean before = reservationEndTime.isBefore(operationEndTime);
 
