@@ -6,6 +6,7 @@ import com.test.studyroomreservationsystem.domain.entity.RoomOperationPolicySche
 import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.domain.repository.RoomOperationPolicyScheduleRepository;
 import com.test.studyroomreservationsystem.domain.repository.RoomPartitionRepository;
+import com.test.studyroomreservationsystem.dto.partition.PartitionPolicyResponseDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionRequestDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
 import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
@@ -62,9 +63,9 @@ public class RoomPartitionServiceImpl implements RoomPartitionService {
         partitionRepository.deleteById(roomPartitionId);
     }
     @Override
-    public List<PartitionResponseDto> getPartitionsPolicyByDate(LocalDate date) {
+    public List<PartitionPolicyResponseDto> getPartitionsPolicyByDate(LocalDate date) {
         List<RoomPartition> partitions = findAllRoomPartition();
-        List<PartitionResponseDto> responseList = new ArrayList<>();
+        List<PartitionPolicyResponseDto> responseList = new ArrayList<>();
 
         for (RoomPartition partition : partitions) {
             RoomOperationPolicy policy = null;
@@ -79,12 +80,13 @@ public class RoomPartitionServiceImpl implements RoomPartitionService {
             }catch (RoomPolicyNotFoundException e) {
                 // 정책이 없을 때는 policyId가 null로 유지됨
             }
-            responseList.add(new PartitionResponseDto(
+            responseList.add(new PartitionPolicyResponseDto(
                     partition.getRoomPartitionId(),
                     room.getRoomId(),
                     room.getRoomName(),
                     partition.getPartitionNumber(),
-                    policy));
+                    policy
+                    ));
         }
 
         return responseList;
