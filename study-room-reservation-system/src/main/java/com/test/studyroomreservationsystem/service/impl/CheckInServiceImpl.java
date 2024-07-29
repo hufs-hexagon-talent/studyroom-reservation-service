@@ -13,11 +13,9 @@ import com.test.studyroomreservationsystem.exception.checkin.OTPExpiredException
 import com.test.studyroomreservationsystem.exception.notfound.ReservationNotFoundException;
 import com.test.studyroomreservationsystem.exception.notfound.UserNotFoundException;
 import com.test.studyroomreservationsystem.service.*;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 

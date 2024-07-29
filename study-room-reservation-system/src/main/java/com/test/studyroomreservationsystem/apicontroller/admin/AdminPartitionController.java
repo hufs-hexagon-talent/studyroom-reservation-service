@@ -4,6 +4,7 @@ package com.test.studyroomreservationsystem.apicontroller.admin;
 import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.dto.partition.PartitionRequestDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
+import com.test.studyroomreservationsystem.dto.partition.PartitionUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
 import com.test.studyroomreservationsystem.service.RoomPartitionService;
@@ -88,18 +89,22 @@ public class AdminPartitionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
-//    @Operation(summary = "❌[관리자] room 정보 수정",
-//            description = "해당 room id의 정보 업데이트 API",
-//            security = {@SecurityRequirement(name = "JWT")}
-//    )
-//    @PutMapping("/{roomId}")
-//    public ResponseEntity<RoomDto> updateRoom(@PathVariable Long roomId,
-//                                              @RequestBody RoomUpdateDto roomDto) {
-//        Room updatedRoom = partitionService.updateRoom(roomId, roomDto);
-//        RoomDto room = partitionService.dtoFrom(updatedRoom);
-//
-//        return new ResponseEntity<>(room, HttpStatus.OK);
-//    }
+    @Operation(summary = "✅[관리자] partition 정보 수정",
+            description = "해당 partition id의 정보 업데이트 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @PutMapping("/{partitionId}")
+    public ResponseEntity<ApiResponseDto<PartitionResponseDto>> updatePartition(@PathVariable Long partitionId,
+                                              @RequestBody PartitionUpdateRequestDto requestDto) {
+        RoomPartition updatedPartition = partitionService.updateRoomPartition(partitionId, requestDto);
+        PartitionResponseDto partitionDto = partitionService.dtoFrom(updatedPartition);
+        ApiResponseDto<PartitionResponseDto> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 업데이트 되었습니다.", partitionDto);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
     @Operation(summary = "✅[관리자] partition 삭제",
             description = "해당 partition id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}

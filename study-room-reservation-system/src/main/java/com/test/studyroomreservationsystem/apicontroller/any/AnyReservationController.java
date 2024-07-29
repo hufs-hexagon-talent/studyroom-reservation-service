@@ -25,7 +25,7 @@ public class AnyReservationController {
         public AnyReservationController(ReservationService reservationService) {
             this.reservationService = reservationService;
         }
-        @Operation(summary = "🚧 해당 날짜 모든 파티션 예약 상태 확인 ",
+        @Operation(summary = "✅ 해당 날짜 모든 파티션 예약 상태 확인 ",
                 description = "날짜를 받으면 모든 파티션의 예약을 확인, 예약 현황 테이블을 그릴때 사용",
                 security = {})
         @GetMapping("/by-date")
@@ -42,7 +42,7 @@ public class AnyReservationController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
 
-        @Operation(summary = "🚧 특정 날짜, 특정 room 들 모든 예약 상태 확인 ",
+        @Operation(summary = "✅ 특정 날짜, 특정 room 들 모든 예약 상태 확인 ",
             description = "날짜를 받으면 특정 룸들의 예약을 확인",
             security = {})
         @GetMapping("/partitions/by-date")
