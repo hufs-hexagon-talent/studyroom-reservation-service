@@ -101,7 +101,7 @@ public class ReservationController {
     @GetMapping("/me/no-show")
     ResponseEntity<ApiResponseDto<UserNoShowCntResponseDto>> lookUpNoShowCount(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userId = currentUser.getUser().getUserId();
-        List<Reservation> reservations = reservationService.countNoShowsByUserIdAndPeriod(userId);
+        List<Reservation> reservations = reservationService.getNoShowReservations(userId);
         List<ReservationInfoResponseDto> reservationInfos = reservations.stream().map(reservationService::responseDtoFrom).toList();
 
         int count = reservations.size();
