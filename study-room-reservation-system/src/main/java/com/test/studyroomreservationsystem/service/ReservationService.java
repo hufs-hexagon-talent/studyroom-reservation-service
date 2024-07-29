@@ -22,10 +22,42 @@ public interface ReservationService {
     SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date);
     List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute);
     List<Reservation> getReservationsByUserIdAndToday(Long userId);
-    List<Reservation> getNotVisitedReservationsAfterRecentReservationStartTime(Long userId);
-    List<Reservation> countNoShowsByUserIdAndPeriod(Long userId);
+    List<Reservation> getCurrentReservations(Long userId);
+    List<Reservation> getNoShowReservations(Long userId);
 
 
-    ReservationInfoResponseDto responseDtoFrom(Reservation reservation);
+    default ReservationInfoResponseDto responseDtoFrom(Reservation reservation) {
+        return ReservationInfoResponseDto.builder()
+                .reservationId(reservation.getReservationId())
+                .userId(reservation.getUser().getUserId())
+                .roomId(reservation.getRoomPartition().getRoom().getRoomId())
+                .roomName(reservation.getRoomPartition().getRoom().getRoomName())
+                .roomPartitionId(reservation.getRoomPartition().getRoomPartitionId())
+                .partitionNumber(reservation.getRoomPartition().getPartitionNumber())
+                .startDateTime(reservation.getReservationStartTime())
+                .endDateTime(reservation.getReservationEndTime())
+                .reservationState(reservation.getState())
+                .build();
+
+
+    }
+    default List<SpecificRoomsReservationsDto.RoomReservation> responseDtoFrom(List<Reservation> reservations) {
+        List<SpecificRoomsReservationsDto.RoomReservation> roomReservations;
+        roomReservations = reservations.stream()
+                .map(reservation -> new SpecificRoomsReservationsDto.RoomReservation(
+                        reservation.getReservationId(),
+                        reservation.getRoomPartition().getRoom().getRoomId(),
+                        reservation.getRoomPartition().getRoom().getRoomName(),
+                        reservation.getRoomPartition().getRoomPartitionId(),
+                        reservation.getRoomPartition().getPartitionNumber(),
+                        reservation.getUser().getUserId(),
+                        reservation.getUser().getName(),
+                        reservation.getState(),
+                        reservation.getReservationStartTime(),
+                        reservation.getReservationEndTime()))
+                .toList();
+
+        return roomReservations;
+    }
 
 }

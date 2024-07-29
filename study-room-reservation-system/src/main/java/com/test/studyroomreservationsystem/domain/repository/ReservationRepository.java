@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +17,8 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     @Query("SELECT r " +
             "FROM Reservation r " +
             "WHERE r.roomPartition.roomPartitionId = :roomPartitionId " +
-            "AND (r.reservationStartTime < :endTime " +
-            "AND r.reservationEndTime > :startTime)"
+            "AND (r.reservationStartTime <= :endTime " +
+            "AND r.reservationEndTime >= :startTime)"
     )
     List<Reservation> findOverlappingReservations( @Param("roomPartitionId") Long roomPartitionId,
                                                   @Param("startTime") Instant startTime,
@@ -70,11 +69,12 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     @Query("SELECT r " +
             "FROM Reservation r " +
             "WHERE r.user.userId = :userId " +
-            "AND r.reservationStartTime > :startTime " +
-            "AND r.state = 'NOT_VISITED'")
-    List<Reservation> findByUserUserIdAndReservationStartTime(
+            "AND r.state = 'NOT_VISITED'" +
+            "AND r.reservationEndTime > :nowTime "
+            )
+    List<Reservation> findCurrentReservations(
             @Param("userId") Long userId,
-            @Param("startTime") Instant startTime);
+            @Param("nowTime") Instant nowTime);
 
     @Query("SELECT r " +
             "FROM Reservation r " +
