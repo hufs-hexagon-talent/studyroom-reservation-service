@@ -4,6 +4,7 @@ import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.dto.partition.PartitionPolicyResponseDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionRequestDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
+import com.test.studyroomreservationsystem.dto.partition.PartitionUpdateRequestDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,7 @@ public interface RoomPartitionService {
     List<RoomPartition> findRoomPartitionsByRoomId(Long roomId);
     List<RoomPartition> findAllRoomPartition();
     List<RoomPartition> findRoomPartitionByRoomId(Long roomId);
+    RoomPartition updateRoomPartition(Long partitionId, PartitionUpdateRequestDto updateRequestDto);
     void deletePartitionById(Long roomPartitionId);
     List<PartitionPolicyResponseDto> getPartitionsPolicyByDate(LocalDate date);
 

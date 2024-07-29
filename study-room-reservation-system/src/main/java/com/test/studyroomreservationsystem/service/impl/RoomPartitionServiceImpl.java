@@ -9,6 +9,7 @@ import com.test.studyroomreservationsystem.domain.repository.RoomPartitionReposi
 import com.test.studyroomreservationsystem.dto.partition.PartitionPolicyResponseDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionRequestDto;
 import com.test.studyroomreservationsystem.dto.partition.PartitionResponseDto;
+import com.test.studyroomreservationsystem.dto.partition.PartitionUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
 import com.test.studyroomreservationsystem.exception.notfound.PartitionNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;
@@ -61,6 +62,14 @@ public class RoomPartitionServiceImpl implements RoomPartitionService {
     @Override
     public List<RoomPartition> findRoomPartitionByRoomId(Long roomId) {
         return partitionRepository.findByRoom_RoomId(roomId);
+    }
+
+    @Override
+    public RoomPartition updateRoomPartition(Long partitionId, PartitionUpdateRequestDto updateRequestDto) {
+        // 업데이트 할 파티션이 존재하는지?
+        findRoomPartitionById(partitionId);
+
+        return null;
     }
 
     @Override

@@ -23,7 +23,11 @@ public class UserInfoUpdateRequestDto { // CR dto
 
     // of :  Dto -> Entity
     @Builder
-    public UserInfoUpdateRequestDto(String username, String serial, Boolean isAdmin, String name, String email) {
+    public UserInfoUpdateRequestDto(String username,
+                                    String serial,
+                                    Boolean isAdmin,
+                                    String name,
+                                    String email) {
         this.username = username;
         this.serial = serial;
         this.isAdmin = isAdmin;
