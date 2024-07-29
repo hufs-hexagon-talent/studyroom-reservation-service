@@ -22,7 +22,7 @@ public interface ReservationService {
     SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date);
     List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute);
     List<Reservation> getReservationsByUserIdAndToday(Long userId);
-    List<Reservation> getNotVisitedReservationsAfterNow(Long userId);
+    List<Reservation> getNotVisitedReservationsAfterRecentReservationStartTime(Long userId);
     List<Reservation> countNoShowsByUserIdAndPeriod(Long userId);
 
 

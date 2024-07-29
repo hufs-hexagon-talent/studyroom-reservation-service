@@ -138,10 +138,10 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> getNotVisitedReservationsAfterNow(Long userId) {
-        Instant now = Instant.now();
+    public List<Reservation> getNotVisitedReservationsAfterRecentReservationStartTime(Long userId) {
+        Instant startTime = findRecentReservationByUserId(userId).getReservationStartTime().minusMillis(1);
         // 현재 시점 으로 이후로 NOT_VISITED 인 예약 가져오기
-        return reservationRepository.findByUserUserIdAndReservationStartTime(userId, now);
+        return reservationRepository.findByUserUserIdAndReservationStartTime(userId, startTime);
     }
 
     @Override
@@ -277,7 +277,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private boolean isTooManyCurrent(Long userId) {
-        int size = getNotVisitedReservationsAfterNow(userId).size();
+        // 현재 시점 이후와
+        int size = getNotVisitedReservationsAfterRecentReservationStartTime(userId).size();
         return size >= reservationLimit;
     }
 
