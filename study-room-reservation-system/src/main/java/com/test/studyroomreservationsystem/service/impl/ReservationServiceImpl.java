@@ -20,7 +20,6 @@ import com.test.studyroomreservationsystem.security.CustomUserDetails;
 import com.test.studyroomreservationsystem.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -219,7 +218,6 @@ public class ReservationServiceImpl implements ReservationService {
         if (isReservationOverlapping(roomPartitionId, startDateTime, endDateTime)) {
             throw new OverlappingReservationException(partitionService.findRoomPartitionById(roomPartitionId));
         }
-
     }
     /*              오늘 가능한 예약 초과                  */
     @Override
@@ -252,19 +250,32 @@ public class ReservationServiceImpl implements ReservationService {
     /*              노쇼 횟수 초과                  */
     @Override
     public List<Reservation> getNoShowReservations(Long userId) {
+        Reservation recent = findRecentReservationByUserId(userId);
+        Instant reservationEndTime = recent.getReservationEndTime();
+        Instant now = Instant.now();
+        Instant endInstant;
 
-        ZonedDateTime endTime = DateTimeUtil.getOneDayBefore(DateTimeUtil.getEndOfTodayZoned());
-        ZonedDateTime startTime = DateTimeUtil.getMonthBefore(endTime, noShowCntMonth);
-        Instant startInstant = startTime.toInstant();
-        Instant endInstant = endTime.toInstant();
+    /*
+    * 노쇼 찾기
+    * 현재     →  예약 시작, 예약 종료     | 시작 전 으로 찾기
+    * 예약 시작 →  현재     →   예약 종료  | 시작 전 으로 찾기
+    * 예약 시작 →  예약 종료 →  현재       | 현재     로 찾기
+    * */
+        if (reservationEndTime.isAfter(now)) {
+            endInstant = recent.getReservationStartTime().minusMillis(1);
+        } else {
+            endInstant = now;
+        }
+        Instant startInstant = DateTimeUtil.getMonthBefore(endInstant, noShowCntMonth);
 
         return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
     }
     private boolean isUserBlocked(Long userId){
         List<Reservation> reservations = getNoShowReservations(userId);
         int noShowCnt = reservations.size();
-        
-        return noShowCnt > noShowLimit;
+
+        //        n 회 이상이면 블락
+        return noShowCnt >= noShowLimit;
     }
 
 

@@ -45,7 +45,7 @@ spring:
         otpLength : 8
         otpTTL : 300
         noShowCntMonth : 1
-        noShowLimit : 10
+        noShowLimit : 3
         reservationLimit : 1
         reservationLimitToday : 2
 
