@@ -35,7 +35,14 @@ public class DateTimeUtil {
     public static ZonedDateTime getMonthBefore(ZonedDateTime zonedDateTime, Long month) {
         return zonedDateTime.minusMonths(month);
     }
-
+    public static Instant getMonthBefore(Instant instant, Long months) {
+        // Instant를 LocalDateTime으로 변환 (UTC 기준)
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        // 주어진 개월 수를 뺌
+        LocalDateTime updatedDateTime = localDateTime.minusMonths(months);
+        // 다시 LocalDateTime을 Instant로 변환 (UTC 기준)
+        return updatedDateTime.toInstant(ZoneOffset.UTC);
+    }
     public static LocalDate getDateOfInstant(Instant instant) {
         return LocalDate.ofInstant(instant, ZoneId.systemDefault());
     }
