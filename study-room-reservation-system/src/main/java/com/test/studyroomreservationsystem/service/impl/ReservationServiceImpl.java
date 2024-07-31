@@ -98,6 +98,9 @@ public class ReservationServiceImpl implements ReservationService {
         if (reservation.getState() == ReservationState.VISITED) {
             throw new NotPossibleDeleteException();
         }
+        if (reservation.getReservationStartTime().isBefore(Instant.now())) {
+            throw new NotPossibleDeleteException();
+        }
         reservationRepository.deleteById(reservationId);
     }
 
