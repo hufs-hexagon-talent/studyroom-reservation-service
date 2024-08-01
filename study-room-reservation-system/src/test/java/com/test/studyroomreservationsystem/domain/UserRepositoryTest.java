@@ -49,7 +49,7 @@ public class UserRepositoryTest {
         assertThat(savedUser.getUsername()).isEqualTo(user.getUsername());
         assertThat(savedUser.getPassword()).isEqualTo(user.getPassword());
         assertThat(savedUser.getSerial()).isEqualTo(user.getSerial());
-        assertThat(savedUser.getIsAdmin()).isEqualTo(user.getIsAdmin());
+        assertThat(savedUser.isAdmin()).isEqualTo(user.isAdmin());
     }
 
     @Test

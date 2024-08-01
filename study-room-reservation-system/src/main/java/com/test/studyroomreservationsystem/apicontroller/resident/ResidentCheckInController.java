@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.apicontroller.admin;
+package com.test.studyroomreservationsystem.apicontroller.resident;
 
 import com.test.studyroomreservationsystem.dto.CheckInResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
@@ -20,14 +20,14 @@ import java.util.List;
 @Tag(name = "Check-In", description = "예약한 정보를 방문 처리 하는 API")
 @RestController
 @RequestMapping("/check-in")
-public class AdminCheckInController {
+public class ResidentCheckInController {
     private final CheckInService checkInService;
 
-    public AdminCheckInController(CheckInService checkInService) {
+    public ResidentCheckInController(CheckInService checkInService) {
         this.checkInService = checkInService;
     }
 
-    @Operation(summary = "✅[관리자] 예약한 유저 Check-In",
+    @Operation(summary = "✅[멀티지기] 예약한 유저 Check-In",
             description = "예약시간에 근접한 유저의 방문 처리",
             security = {@SecurityRequirement(name = "JWT")}
     )

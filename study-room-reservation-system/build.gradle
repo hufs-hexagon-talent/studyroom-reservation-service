@@ -20,7 +20,6 @@ configurations {
 repositories {
 	mavenCentral()
 }
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -39,8 +38,8 @@ dependencies {
 // Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 // migration
-//	implementation 'org.flywaydb:flyway-core'
-//	implementation 'org.flywaydb:flyway-mysql'
+	implementation 'org.flywaydb:flyway-core' //-> MySql 8.3 지원안함
+	implementation 'org.flywaydb:flyway-mysql:8.3.0'
 // Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 // Lombok
@@ -53,6 +52,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()

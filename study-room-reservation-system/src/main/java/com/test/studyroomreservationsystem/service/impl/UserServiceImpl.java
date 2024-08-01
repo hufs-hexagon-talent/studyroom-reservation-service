@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.service.impl;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.domain.entity.User.ServiceRole;
 import com.test.studyroomreservationsystem.domain.repository.UserRepository;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.user.editpassword.UserPasswordInfoResetRequestDto;
@@ -62,7 +63,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encodedPassword);
         user.setSerial(serial);
         user.setName(requestDto.getName());
-        user.setIsAdmin(Boolean.FALSE);
+        user.setServiceRole(ServiceRole.USER);
         user.setEmail(email);
         return userRepository.save(user);
     }

@@ -34,6 +34,7 @@ public class RoomOperationPolicySchedule {
 
     @Column(name = "policy_application_date")
     private LocalDate policyApplicationDate;
+
     @Builder
     public RoomOperationPolicySchedule(Long roomOperationPolicyScheduleId, Room room, RoomOperationPolicy roomOperationPolicy, LocalDate policyApplicationDate) {
         this.roomOperationPolicyScheduleId = roomOperationPolicyScheduleId;
