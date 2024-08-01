@@ -44,6 +44,7 @@ public class SecurityConfig {
 
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final String ROLE_RESIDENT = "ROLE_RESIDENT";
 
 
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
@@ -128,7 +129,7 @@ public class SecurityConfig {
                                         "/users/sign-up",
                                         "/users/reset-password").permitAll()
                                 .requestMatchers(
-                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN)
                                 .requestMatchers(
                                         "/users/**").hasAuthority(ROLE_ADMIN)
 
@@ -138,12 +139,15 @@ public class SecurityConfig {
                                         "/reservations/partitions/by-date/**").permitAll()
                                 .requestMatchers(
                                         "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
-
+                                // Policy
+                                .requestMatchers(
+                                        "/policies/**").hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
                                 // PolicySchedule
                                 .requestMatchers(
                                         "/schedules/available-dates").permitAll()
                                 .requestMatchers(
-                                        "/schedules/**").hasAuthority(ROLE_ADMIN)
+                                        "/schedules/**").hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
+
 
                                 // Room
                                 .requestMatchers(
@@ -155,18 +159,16 @@ public class SecurityConfig {
                                         "/partitions/policy/by-date").permitAll()
                                 .requestMatchers(
                                         "/partitions/**").hasAuthority(ROLE_ADMIN)
-                                // Policy
-                                .requestMatchers(
-                                        "/policies/**").hasAuthority(ROLE_ADMIN)
 
                                 // otp
                                 .requestMatchers(
                                         "/otp/**"
                                 ).hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+
                                 // check-in
                                 .requestMatchers(
                                         "/check-in/**"
-                                ).hasAuthority(ROLE_ADMIN)
+                                ).hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
 
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );

@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.dto;
 
-import com.test.studyroomreservationsystem.domain.ReservationState;
-import lombok.AllArgsConstructor;
+import com.test.studyroomreservationsystem.domain.entity.Reservation;
+import com.test.studyroomreservationsystem.domain.entity.Reservation.ReservationState;
 import lombok.Builder;
 import lombok.Getter;
 

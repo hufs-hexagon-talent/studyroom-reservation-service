@@ -26,7 +26,7 @@ public interface UserService {
                 .userId(user.getUserId())
                 .username(user.getUsername())
                 .serial(user.getSerial())
-                .isAdmin(user.getIsAdmin())
+                .serviceRole(user.getServiceRole())
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();

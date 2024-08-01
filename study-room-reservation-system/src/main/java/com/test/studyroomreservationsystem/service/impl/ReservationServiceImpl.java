@@ -1,7 +1,8 @@
 package com.test.studyroomreservationsystem.service.impl;
 
-import com.test.studyroomreservationsystem.domain.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.*;
+import com.test.studyroomreservationsystem.domain.entity.Reservation.ReservationState;
+import com.test.studyroomreservationsystem.domain.entity.User.ServiceRole;
 import com.test.studyroomreservationsystem.domain.repository.ReservationRepository;
 import com.test.studyroomreservationsystem.dto.reservation.*;
 import com.test.studyroomreservationsystem.exception.*;
@@ -111,7 +112,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new InvalidReservationIdException(reservationId);
         }
         User user = currentUser.getUser();
-        if (Boolean.FALSE.equals(user.getIsAdmin())) {
+        if (user.getServiceRole() != null && user.getServiceRole() != ServiceRole.ADMIN) {
             throw new AccessDeniedException();
         }
         reservationRepository.deleteById(reservationId);

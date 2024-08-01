@@ -1,7 +1,6 @@
 package com.test.studyroomreservationsystem.domain.entity;
 
 
-import com.test.studyroomreservationsystem.domain.ReservationState;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +16,9 @@ import java.time.Instant;
 public class Reservation {
 
     // MySQL pk 값 설정 위임하기
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reservation_id")
     private Long reservationId;
 
     @ManyToOne
@@ -35,6 +36,7 @@ public class Reservation {
     private Instant reservationEndTime;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('NOT_VISITED', 'VISITED')")
     private ReservationState state; // NOT_VISITED, VISITED
 
     @Builder
@@ -45,5 +47,8 @@ public class Reservation {
         this.reservationStartTime = reservationStartTime;
         this.reservationEndTime = reservationEndTime;
         this.state = state;
+    }
+    public enum ReservationState {
+        NOT_VISITED, VISITED
     }
 }

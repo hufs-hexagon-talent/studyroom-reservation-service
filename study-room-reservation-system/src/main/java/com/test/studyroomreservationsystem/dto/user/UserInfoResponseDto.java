@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.test.studyroomreservationsystem.domain.entity.User.*;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -19,7 +21,8 @@ public class UserInfoResponseDto { // CR dto
     @NotNull(message = "학번이 비어 있습니다")
     private String serial;
 
-    private Boolean isAdmin;
+    private ServiceRole serviceRole;
+
     @NotNull(message = "이름이 비어 있습니다")
     private String name;
 
@@ -27,11 +30,11 @@ public class UserInfoResponseDto { // CR dto
     private String email;
 
     // of :  Dto -> Entity
-    public UserInfoResponseDto(Long userId,String username, String serial, Boolean isAdmin, String name, String email) {
+    public UserInfoResponseDto(Long userId,String username, String serial, ServiceRole serviceRole, String name, String email) {
         this.userId = userId;
         this.username = username;
         this.serial = serial;
-        this.isAdmin = isAdmin;
+        this.serviceRole = serviceRole;
         this.name = name;
         this.email = email;
     }
@@ -41,7 +44,7 @@ public class UserInfoResponseDto { // CR dto
                 .userId(userId)
                 .username(username)
                 .serial(serial)
-                .isAdmin(isAdmin)
+                .serviceRole(serviceRole)
                 .name(name)
                 .email(email)
                 .build();

@@ -10,7 +10,9 @@ import lombok.*;
 @Table(name = "user")
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "username", unique = true)
@@ -22,28 +24,34 @@ public class User {
     @Column(name="serial", unique = true)
     private String serial;
 
-    @Column(name="email", unique = true)
+    @Column(name="email")
     private String email;
 
     @Column(name="name")
     private String name; // 진짜 이름
 
-    @Column(name="is_admin")
-    private Boolean isAdmin = false; // 기본값
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('USER', 'ADMIN', 'RESIDENT') NOT NULL DEFAULT 'USER'")
+    private ServiceRole serviceRole; // 기본값 USER
 
 
     @Builder
-    public User(Long userId, String username, String password, String serial,String email, Boolean isAdmin, String name) {
+    public User(Long userId,
+                String username,
+                String password,
+                String serial,
+                String email,
+                ServiceRole serviceRole,
+                String name) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.serial = serial;
         this.email = email;
-        this.isAdmin = isAdmin != null ? isAdmin : false; // null 체크 후 기본값 할당
+        this.serviceRole = serviceRole != null ? serviceRole : ServiceRole.USER; // null 체크 후 기본값 할당
         this.name = name;
     }
-    public Boolean getIsAdmin() {
-        return isAdmin != null && isAdmin; // null을 안전하게 처리
+    public enum ServiceRole {
+        USER, ADMIN, RESIDENT
     }
-
 }

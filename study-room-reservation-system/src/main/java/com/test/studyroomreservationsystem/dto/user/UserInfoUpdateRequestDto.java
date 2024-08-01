@@ -2,6 +2,7 @@ package com.test.studyroomreservationsystem.dto.user;
 
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.domain.entity.User.ServiceRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;
@@ -14,7 +15,7 @@ public class UserInfoUpdateRequestDto { // CR dto
 
     private String username;
     private String serial;
-    private Boolean isAdmin;
+    private ServiceRole serviceRole;
     private String name;
 
     @Email(message = "유효한 이메일 주소를 입력하세요")
@@ -25,12 +26,12 @@ public class UserInfoUpdateRequestDto { // CR dto
     @Builder
     public UserInfoUpdateRequestDto(String username,
                                     String serial,
-                                    Boolean isAdmin,
+                                    ServiceRole serviceRole,
                                     String name,
                                     String email) {
         this.username = username;
         this.serial = serial;
-        this.isAdmin = isAdmin;
+        this.serviceRole = serviceRole;
         this.name = name;
         this.email = email;
     }
@@ -42,8 +43,8 @@ public class UserInfoUpdateRequestDto { // CR dto
         if (this.serial != null) {
             user.setSerial(this.serial);
         }
-        if (this.isAdmin != null) {
-            user.setIsAdmin(this.isAdmin);
+        if (this.serviceRole != null) {
+            user.setServiceRole(this.serviceRole);
         }
         if (this.name != null) {
             user.setName(this.name);

@@ -2,7 +2,7 @@ server:
     port: 8080
 spring:
     datasource:
-        url: ${ SPRING_DATASOURCE_URL }
+        url: ${SPRING_DATASOURCE_URL}
         username: ${SPRING_DATASOURCE_USERNAME}
         password: ${SPRING_DATASOURCE_PASSWORD}
         driver-class-name: com.mysql.cj.jdbc.Driver
@@ -11,7 +11,6 @@ spring:
         redis:
             host: ${SPRING_REDIS_HOST}
             port: ${SPRING_REDIS_PORT}
-#            password: ${SPRING_REDIS_PORT}
     service:
         allowedStartMinute: 15
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
@@ -26,7 +25,7 @@ spring:
         show-sql: false
         properties:
             hibernate:
-                dialect: org.hibernate.dialect.MySQLDialect
+#                dialect: org.hibernate.dialect.MySQLDialect
     jwt: # openssl rand -hex 32 ( HS256 )
         secret: ${SPRING_JWT_SECRET}
         header: Authorization
@@ -46,8 +45,8 @@ spring:
     mail:
         host: smtp.gmail.com
         port: 587
-        username: hwangbbang9@gmail.com
-        password: crta nqkq kkcy msow # todo .env 로 빼기
+        username: ${SPRING_MAIL_USERNAME}
+        password: ${SPRING_MAIL_PASSWORD}
         properties:
             mail:
                 smtp:
@@ -60,6 +59,6 @@ spring:
         enabled: true
         baseline-on-migrate: true
         baseline-version: 1
-        url: ${ SPRING_DATASOURCE_URL }
+        url: ${SPRING_DATASOURCE_URL}
         user: ${SPRING_DATASOURCE_USERNAME}
         password: ${SPRING_DATASOURCE_PASSWORD}
