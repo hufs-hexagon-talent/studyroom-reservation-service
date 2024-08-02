@@ -67,7 +67,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new ReservationNotFoundException(reservationId));
     }
 
-    @Override // todo 검사
+    @Override
     public Reservation findRecentReservationByUserId(Long userId) {
         return reservationRepository.findTopByUserUserIdOrderByReservationStartTimeDesc(userId)
                 .orElseThrow(() -> new ReservationNotFoundException("Recent reservation not found for user " + userId));
@@ -254,7 +254,12 @@ public class ReservationServiceImpl implements ReservationService {
     /*              노쇼 횟수 초과                  */
     @Override
     public List<Reservation> getNoShowReservations(Long userId) {
-        Reservation recent = findRecentReservationByUserId(userId);
+        Reservation recent;
+        try {
+            recent = findRecentReservationByUserId(userId);
+        } catch (ReservationNotFoundException e) {
+            return new ArrayList<>();
+        }
         Instant reservationEndTime = recent.getReservationEndTime();
         Instant now = Instant.now();
         Instant endInstant;
@@ -274,6 +279,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
     }
+
     private boolean isUserBlocked(Long userId){
         List<Reservation> reservations = getNoShowReservations(userId);
         int noShowCnt = reservations.size();
