@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -86,8 +87,8 @@ public class ReservationController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/me/{reservationId}")
-    public ResponseEntity<ApiResponseDto<Objects>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                     @PathVariable Long reservationId) {
+    public ResponseEntity<ApiResponseDto<Objects>> deleteReservationBySelf(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                           @PathVariable Long reservationId) {
         reservationService.deleteReservationBySelf(reservationId, currentUser);
         ApiResponseDto<Objects> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
@@ -102,7 +103,8 @@ public class ReservationController {
     ResponseEntity<ApiResponseDto<UserNoShowCntResponseDto>> lookUpNoShowCount(@AuthenticationPrincipal CustomUserDetails currentUser) {
         Long userId = currentUser.getUser().getUserId();
         List<Reservation> reservations = reservationService.getNoShowReservations(userId);
-        List<ReservationInfoResponseDto> reservationInfos = reservations.stream().map(reservationService::responseDtoFrom).toList();
+        List<ReservationInfoResponseDto> reservationInfos
+                = reservations.stream().map(reservationService::responseDtoFrom).toList();
 
         int count = reservations.size();
         UserNoShowCntResponseDto userNoShowCntDto = new UserNoShowCntResponseDto(count,reservationInfos);
