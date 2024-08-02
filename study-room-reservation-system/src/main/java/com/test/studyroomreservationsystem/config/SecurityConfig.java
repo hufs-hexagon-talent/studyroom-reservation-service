@@ -141,19 +141,20 @@ public class SecurityConfig {
                                         "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
                                 // Policy
                                 .requestMatchers(
-                                        "/policies/**").hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
+                                        "/policies/**").hasAnyAuthority(ROLE_ADMIN)
                                 // PolicySchedule
                                 .requestMatchers(
                                         "/schedules/available-dates").permitAll()
                                 .requestMatchers(
-                                        "/schedules/**").hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
+                                        "/schedules/**").hasAnyAuthority(ROLE_ADMIN)
 
 
                                 // Room
                                 .requestMatchers(
                                         "/rooms/policy/by-date/**").permitAll()
                                 .requestMatchers(
-                                        "/rooms/**").hasAuthority(ROLE_ADMIN)
+                                        "/rooms/**").hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
+
                                 // RoomPartition
                                 .requestMatchers(
                                         "/partitions/policy/by-date").permitAll()
