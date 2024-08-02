@@ -24,7 +24,7 @@ public class User {
     @Column(name="serial", unique = true)
     private String serial;
 
-    @Column(name="email")
+    @Column(name="email", unique = true)
     private String email;
 
     @Column(name="name")
