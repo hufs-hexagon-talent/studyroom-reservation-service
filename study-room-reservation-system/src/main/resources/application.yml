@@ -53,7 +53,7 @@ spring:
         host: smtp.gmail.com
         port: 587
         username: hwangbbang9@gmail.com
-        password: crta nqkq kkcy msow # todo .env 로 빼기
+        password: crta nqkq kkcy msow 
         properties:
             mail:
                 smtp:
