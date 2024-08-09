@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Value("${spring.service.reservationLimit}") private int reservationLimit;
     @Value("${spring.service.reservationLimitToday}") private int reservationLimitToday;
 
+    @Transactional
     @Override
     public Reservation createReservation(ReservationRequestDto reservationRequestDto, User user) {
         Long roomPartitionId = reservationRequestDto.getRoomPartitionId();
