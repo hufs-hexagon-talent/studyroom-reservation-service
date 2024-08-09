@@ -6,7 +6,7 @@ import java.util.List;
 @Getter
 public class ApiResponseListDto<T> {
         private List<T> items;
-
+        public ApiResponseListDto() {}
         public ApiResponseListDto(List<T> items) {
             this.items = items;
         }
