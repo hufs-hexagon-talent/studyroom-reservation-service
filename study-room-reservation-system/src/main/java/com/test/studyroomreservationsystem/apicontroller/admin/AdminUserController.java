@@ -1,6 +1,7 @@
 package com.test.studyroomreservationsystem.apicontroller.admin;
 
 import com.test.studyroomreservationsystem.domain.entity.User;
+import com.test.studyroomreservationsystem.dto.user.SingUpRequestDto;
 import com.test.studyroomreservationsystem.dto.user.UserInfoUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseDto;
 import com.test.studyroomreservationsystem.dto.util.ApiResponseListDto;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,6 +83,24 @@ public class AdminUserController {
 
         ApiResponseDto<ApiResponseListDto<UserInfoResponseDto>> response
                 = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @Operation(summary = "✅ [관리자] 회원 등록",
+            description = "user 등록 API",
+            security = {@SecurityRequirement(name = "JWT")}
+    )
+    @PostMapping
+    public ResponseEntity<ApiResponseDto<ApiResponseListDto<UserInfoResponseDto>>> signUpUsers(@RequestBody List<SingUpRequestDto> singUpRequestDtos) {
+        List<UserInfoResponseDto> users = userService.signUpUsers(singUpRequestDtos)
+                        .stream().map(userService::dtoFrom)
+                        .toList();
+
+        ApiResponseListDto<UserInfoResponseDto> wrapped = new ApiResponseListDto<>(users);
+
+        ApiResponseDto<ApiResponseListDto<UserInfoResponseDto>> response
+                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 등록 되었습니다.", wrapped);
 
         return new ResponseEntity<>(response,HttpStatus.OK);
     }

@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface UserService {
     User signUpProcess(SingUpRequestDto requestDto);
+    List<User> signUpUsers(List<SingUpRequestDto> requestDtos);
     User findUserById(Long userId);
     User findByUsername(String username);
     User findByEmail(String email);

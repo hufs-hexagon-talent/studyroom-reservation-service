@@ -11,6 +11,7 @@ import com.test.studyroomreservationsystem.exception.invalidvalue.InvalidNewPass
 import com.test.studyroomreservationsystem.exception.invalidvalue.InvalidCurrentPasswordException;
 import com.test.studyroomreservationsystem.exception.user.EmailAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.user.SerialAlreadyExistsException;
+import com.test.studyroomreservationsystem.exception.user.SignUpNotPossibleException;
 import com.test.studyroomreservationsystem.service.UserService;
 import com.test.studyroomreservationsystem.exception.user.UsernameAlreadyExistsException;
 import com.test.studyroomreservationsystem.exception.notfound.UserNotFoundException;
@@ -18,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -66,6 +69,19 @@ public class UserServiceImpl implements UserService {
         user.setServiceRole(ServiceRole.USER);
         user.setEmail(email);
         return userRepository.save(user);
+    }
+    /*-------------------------------------------------*/
+    @Override
+    @Transactional(rollbackFor = SignUpNotPossibleException.class)
+    public List<User> signUpUsers(List<SingUpRequestDto> requestDtos) {
+        List<User> userList= new ArrayList<>();
+
+        for (SingUpRequestDto requestDto : requestDtos) {
+            User user = signUpProcess(requestDto);
+//            todo : 내 생각엔 이부분 안티 패턴 , 프로세스마다 저장하다가 예외터지면 롤백하는 건 문제가있음, 하나하나 말고 리스트 통으로 하는 방법,,?
+            userList.add(user);
+        }
+        return userList;
     }
 
 
