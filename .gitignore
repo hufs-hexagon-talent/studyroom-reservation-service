@@ -4,3 +4,5 @@
 study-room-reservation-system/src/main/resources/application.yml
 
 docker-compose.yml
+
+study-room-reservation-system/mysql/seed.sql
