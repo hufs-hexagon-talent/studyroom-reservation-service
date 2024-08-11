@@ -16,7 +16,7 @@ spring:
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength: 8
         otpTTL: 300
-        noShowCntMonth : 1
+        noShowCntMonth : 3
         noShowLimit : 3
         reservationLimit : 1
         reservationLimitToday : 2
