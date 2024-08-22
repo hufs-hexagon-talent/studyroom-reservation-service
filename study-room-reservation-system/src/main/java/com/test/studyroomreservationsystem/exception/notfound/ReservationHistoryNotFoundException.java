@@ -4,5 +4,8 @@ public class ReservationHistoryNotFoundException extends RuntimeException implem
     public ReservationHistoryNotFoundException(Long userId) {
         super("Reservation History not found with user id: " + userId);
     }
+    public ReservationHistoryNotFoundException(String serial) {
+        super("Reservation History not found with user serial: " + serial);
+    }
 
 }

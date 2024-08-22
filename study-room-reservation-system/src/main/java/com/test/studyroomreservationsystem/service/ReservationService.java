@@ -16,8 +16,11 @@ public interface ReservationService {
     Reservation findRecentReservationByUserId(Long userId);
     List<Reservation> findAllReservation();
     List<Reservation> findAllReservationByUser(Long userId);
+    List<Reservation> findAllReservationByAdmin(String serial, CustomUserDetails currentUser);
     void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser);
     void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser);
+
+    Reservation updateReservationInfo(Long reservationId, ReservationInfoUpdateRequestDto requestDto);
     List<PartitionsReservationResponseDto> getReservationsByAllPartitionsAndDate(LocalDate date);
     SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date);
     List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute);

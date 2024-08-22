@@ -89,6 +89,17 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<Reservation> findAllReservationByAdmin(String serial, CustomUserDetails currentUser) {
+        User admin = currentUser.getUser();
+        if (admin.getServiceRole() != null && admin.getServiceRole() != ServiceRole.ADMIN) {
+            throw new AccessDeniedException();
+        }
+        User foundUser = userService.findBySerial(serial);
+        return reservationRepository.findAllByUser(foundUser).orElseThrow(
+                () -> new ReservationHistoryNotFoundException(serial));
+    }
+
+    @Override
     public void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser) {
         Reservation reservation = findReservationById(reservationId);
         if (reservation == null) {
@@ -118,6 +129,12 @@ public class ReservationServiceImpl implements ReservationService {
             throw new AccessDeniedException();
         }
         reservationRepository.deleteById(reservationId);
+    }
+    @Override
+    public Reservation updateReservationInfo(Long reservationId, ReservationInfoUpdateRequestDto requestDto) {
+        Reservation reservation = findReservationById(reservationId);
+        requestDto.toEntity(reservation);
+        return reservationRepository.save(reservation);
     }
 
     @Override
