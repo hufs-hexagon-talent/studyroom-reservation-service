@@ -27,8 +27,6 @@ src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-origi
 src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"/></code>
 <code><img title="GithubActions" alt="githubactions" width="40px"
 src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg" /></code>
-<code><img title="Spring JPA" alt="spring_jpa" width="40px"
-src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" /></code>
 <code><img title="Spring" alt="spring" width="40px"
 src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" /></code>
 <code><img title="Swagger" alt="swagger" width="40px"
@@ -42,7 +40,7 @@ src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-o
 - **Java 17**
 
 ### ORM
-- **Spring Data JPA**: Simplified data persistence using JPA.
+- **Spring Data JPA**
 
 ### Database
 - **MySQL 8.0**
@@ -71,4 +69,4 @@ src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-o
 
 
 ## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any improvements.
+개선 사항이 있으면 이슈를 열거나 풀 리퀘스트를 제출해 주세요.
