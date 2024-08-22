@@ -66,6 +66,7 @@ src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-o
   
 
 ## Architecture
+![세미나실 drawio](https://github.com/user-attachments/assets/b199cfad-2a2e-42fa-bec0-151d8c2ed8f1)
 
 
 ## Contributing
