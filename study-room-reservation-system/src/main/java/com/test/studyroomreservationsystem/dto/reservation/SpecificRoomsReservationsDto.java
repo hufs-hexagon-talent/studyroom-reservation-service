@@ -31,8 +31,10 @@ public class SpecificRoomsReservationsDto {
         private final ReservationState state;
         private final Instant startDateTime;
         private final Instant endDateTime;
+        private final Instant createAt;
+        private final Instant updateAt;
 
-        public RoomReservation(Long reservationId, Long roomId, String roomName, Long roomPartitionId, String partitionNumber, Long userId, String name, ReservationState state, Instant startDateTime, Instant endDateTime) {
+        public RoomReservation(Long reservationId, Long roomId, String roomName, Long roomPartitionId, String partitionNumber, Long userId, String name, ReservationState state, Instant startDateTime, Instant endDateTime, Instant createAt, Instant updateAt) {
             this.reservationId = reservationId;
             this.roomId = roomId;
             this.roomName = roomName;
@@ -43,6 +45,8 @@ public class SpecificRoomsReservationsDto {
             this.state = state;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;
+            this.createAt = createAt;
+            this.updateAt = updateAt;
         }
     }
 

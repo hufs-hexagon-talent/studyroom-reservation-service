@@ -70,15 +70,14 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             "FROM Reservation r " +
             "WHERE r.user.userId = :userId " +
             "AND r.state = 'NOT_VISITED'" +
-            "AND r.reservationEndTime > :nowTime "
-            )
+            "AND r.reservationEndTime > :nowTime ")
     List<Reservation> findCurrentReservations(
             @Param("userId") Long userId,
             @Param("nowTime") Instant nowTime);
 
     @Query("SELECT r " +
             "FROM Reservation r " +
-            "WHERE r.reservationStartTime BETWEEN :startOfToday AND :endOfToday " +
+            "WHERE r.createAt BETWEEN :startOfToday AND :endOfToday " +
             "AND r.user.userId = :userId")
     List<Reservation> findByUserIdAndReservationStartTime(
             @Param("userId") Long userId,

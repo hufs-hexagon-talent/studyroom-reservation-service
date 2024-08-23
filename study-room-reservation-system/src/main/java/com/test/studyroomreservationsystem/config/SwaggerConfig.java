@@ -31,6 +31,6 @@ public class SwaggerConfig {
         return new Info()
                 .title("HUFS Reservation Service") // API의 제목
                 .description("User Side, Admin Side API") // API에 대한 설명
-                .version("1.1.4"); // API의 버전
+                .version("1.2.4"); // API의 버전
     }
 }
