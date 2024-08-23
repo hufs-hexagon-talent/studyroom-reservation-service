@@ -1,8 +1,10 @@
 package com.test.studyroomreservationsystem.service;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 public class DateTimeUtil {
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss");
 
     public static ZonedDateTime getZonedStartOfToday() {
         LocalDate localDate = LocalDate.now();
@@ -53,7 +55,9 @@ public class DateTimeUtil {
         // 다시 LocalDateTime을 Instant로 변환 (UTC 기준)
         return updatedDateTime.toInstant(ZoneOffset.UTC);
     }
-
+    public static LocalDateTime instantToLocalDateTime(Instant instant) {
+        return LocalDateTime.ofInstant(instant, ZoneId.of("Asia/Seoul"));
+    }
     public static LocalDate getDateOfInstant(Instant instant) {
         return LocalDate.ofInstant(instant, ZoneId.of("Asia/Seoul"));
     }
