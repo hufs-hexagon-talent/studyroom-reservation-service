@@ -98,10 +98,13 @@ public class RoomServiceImpl implements RoomService {
                         date.atTime(roomOperationPolicy.getOperationEndTime())
         ).atZone(ZoneOffset.UTC).toInstant();
 
-        boolean after = operationStartTime.isAfter(reservationStartTime);
-        boolean before = reservationEndTime.isBefore(operationEndTime);
+        boolean operationBefore = reservationStartTime.isBefore(operationStartTime);
+        log.info("reservationstartTime < operationStartTime 인지 {}", operationBefore);
 
-        if (after || before) {
+        boolean operationAfter = reservationEndTime.isAfter(operationEndTime);
+        log.info("operationEndTime < reservationEndTime 인지 {}", operationAfter);
+
+        if (operationAfter || operationBefore) {
             throw new OperationClosedException(
                     room,
                     operationStartTime, operationEndTime,
