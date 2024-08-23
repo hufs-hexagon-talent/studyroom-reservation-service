@@ -75,6 +75,7 @@ public class RoomServiceImpl implements RoomService {
         Room room = findRoomById(roomId);
         LocalDate date = reservationStartTime.atZone(ZoneOffset.UTC).toLocalDate();
 
+
         // 룸과 날짜로 정책 찾기
         RoomOperationPolicySchedule schedule
                 = scheduleRepository.findByRoomAndPolicyApplicationDate(room, date)
@@ -100,7 +101,7 @@ public class RoomServiceImpl implements RoomService {
         boolean after = operationStartTime.isAfter(reservationStartTime);
         boolean before = reservationEndTime.isBefore(operationEndTime);
 
-        if (!after && !before) {
+        if (after || before) {
             throw new OperationClosedException(
                     room,
                     operationStartTime, operationEndTime,
