@@ -199,8 +199,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date) {
-        Instant startTime = DateTimeUtil.getStartOfDateInstant(date);
-        Instant endTime = DateTimeUtil.getEndOfDateInstant(date);
+        Instant startTime = DateTimeUtil.getInstantStartOfDate(date);
+        Instant endTime = DateTimeUtil.getInstantEndOfDate(date);
 
         List<Reservation> reservations
                 = reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(partitionIds, startTime, endTime);
@@ -212,10 +212,20 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private void validateRoomAvailability(Long userId,Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
+        List<Reservation> noShowReservations = getNoShowReservations(userId);
         //  이용 불가 한 학생
-        if (isUserBlocked(userId)) {
-            throw new NoShowLimitExceededException();
+        if (isUserBlocked(noShowReservations)) {
+            Instant earliestNoShowStartTime = noShowReservations.stream()
+                    .map(Reservation::getReservationStartTime)
+                    .min(Instant::compareTo)
+                    .orElse(Instant.now());
+
+            LocalDateTime blockStartTime = DateTimeUtil.convertUtcToKst(Instant.now());
+            LocalDateTime blockEndTime = DateTimeUtil.convertUtcToKst(DateTimeUtil.getInstantMonthAfter(earliestNoShowStartTime, noShowCntMonth));
+
+            throw new NoShowLimitExceededException(blockStartTime, blockEndTime);
         }
+
         Long roomId = partitionService.findRoomPartitionById(roomPartitionId).getRoom().getRoomId();
         //  운영이 하지 않음 (운영 정책 없음), 운영이 종료 되었음 (운영 정책 있음)
         isOperating(roomId, startDateTime, endDateTime);
@@ -229,28 +239,32 @@ public class ReservationServiceImpl implements ReservationService {
         if (isInvalidReservationTime(startDateTime, endDateTime)) {
             throw new InvalidReservationTimeException();
         }
+
         // 현재 가능한 예약 초과 : 사용자는 2개 이상의 예약(NOT_VISITED)을 보유할 수 없음
         if (isTooManyCurrent(userId)) {
             throw new TooManyCurrentReservationsException(reservationLimit);
         }
+
         // 오늘 가능한 예약 초과 : 사용자는 하루에 2개 까지 예약을 생성할 수 있음
         if (isTooManyToday(userId)) {
             throw new TooManyTodayReservationsException(reservationLimitToday);
         }
+
         // 이미 다른 사용자의 예약이 있음
         if (isReservationOverlapping(roomPartitionId, startDateTime, endDateTime)) {
             throw new OverlappingReservationException(partitionService.findRoomPartitionById(roomPartitionId));
         }
     }
+    
     /*              오늘 가능한 예약 초과                  */
+    // KST ->  UTC
     @Override
     public List<Reservation> getReservationsByUserIdAndToday(Long userId) {
-        return reservationRepository.findByUserIdAndReservationStartTime(
-                userId,
-                DateTimeUtil.getStartOfTodayInstant(),
-                DateTimeUtil.getEndOfTodayInstant()
-        );
+        Instant start = DateTimeUtil.getInstantStartOfToday();
+        Instant end = DateTimeUtil.getInstantEndOfToday();
+        return reservationRepository.findByUserIdAndReservationStartTime(userId, start, end);
     }
+
     private boolean isTooManyToday(Long userId) {
         int size = getReservationsByUserIdAndToday(userId).size();
         return size >= reservationLimitToday;
@@ -263,6 +277,7 @@ public class ReservationServiceImpl implements ReservationService {
         // 현재 시점 보다 이후 reservationEndTime 이며 NOT_VISITED 인 예약 가져오기
         return reservationRepository.findCurrentReservations(userId, nowTime);
     }
+
     private boolean isTooManyCurrent(Long userId) {
         // 현재 시점 이후와
         int size = getCurrentReservations(userId).size();
@@ -282,7 +297,6 @@ public class ReservationServiceImpl implements ReservationService {
         Instant reservationEndTime = recent.getReservationEndTime();
         Instant now = Instant.now();
         Instant endInstant;
-
     /*
     * 노쇼 찾기
     * 현재     →  예약 시작, 예약 종료     | 시작 전 으로 찾기
@@ -294,19 +308,16 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             endInstant = now;
         }
-        Instant startInstant = DateTimeUtil.getMonthBefore(endInstant, noShowCntMonth);
+        Instant startInstant = DateTimeUtil.getInstantMonthBefore(endInstant, noShowCntMonth);
 
         return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
     }
 
-    private boolean isUserBlocked(Long userId){
-        List<Reservation> reservations = getNoShowReservations(userId);
+    private boolean isUserBlocked(List<Reservation> reservations){
         int noShowCnt = reservations.size();
-
         //        n 회 이상이면 블락
         return noShowCnt >= noShowLimit;
     }
-
 
     /*              잘못된 예약 시간인지?                  */
     private boolean isInvalidReservationTime(Instant startDateTime, Instant endDateTime) {

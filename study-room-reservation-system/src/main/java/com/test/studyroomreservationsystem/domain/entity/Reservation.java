@@ -2,16 +2,19 @@ package com.test.studyroomreservationsystem.domain.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Getter @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EntityListeners(AuditingEntityListener.class)  // AuditingEntityListener 등록
 @Table(name="reservation")
 public class Reservation {
 
@@ -39,15 +42,12 @@ public class Reservation {
     @Column(columnDefinition = "ENUM('NOT_VISITED', 'VISITED')")
     private ReservationState state; // NOT_VISITED, VISITED
 
-    @Builder
-    public Reservation(Long reservationId, User user, RoomPartition roomPartition, Instant reservationStartTime, Instant reservationEndTime, ReservationState state) {
-        this.reservationId = reservationId;
-        this.user = user;
-        this.roomPartition = roomPartition;
-        this.reservationStartTime = reservationStartTime;
-        this.reservationEndTime = reservationEndTime;
-        this.state = state;
-    }
+    @CreatedDate  // 엔티티가 처음 생성될 때 자동으로 설정되는 필드
+    private Instant createAt;
+
+    @LastModifiedDate  // 엔티티가 생성되거나 수정될 때 자동으로 설정되는 필드
+    private Instant updateAt;
+
     public enum ReservationState {
         NOT_VISITED, VISITED
     }

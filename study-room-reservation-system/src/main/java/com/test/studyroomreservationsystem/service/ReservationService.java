@@ -40,6 +40,8 @@ public interface ReservationService {
                 .startDateTime(reservation.getReservationStartTime())
                 .endDateTime(reservation.getReservationEndTime())
                 .reservationState(reservation.getState())
+                .createAt(reservation.getCreateAt())
+                .updateAt(reservation.getUpdateAt())
                 .build();
 
 
@@ -57,7 +59,9 @@ public interface ReservationService {
                         reservation.getUser().getName(),
                         reservation.getState(),
                         reservation.getReservationStartTime(),
-                        reservation.getReservationEndTime()))
+                        reservation.getReservationEndTime(),
+                        reservation.getCreateAt(),
+                        reservation.getUpdateAt()))
                 .toList();
 
         return roomReservations;

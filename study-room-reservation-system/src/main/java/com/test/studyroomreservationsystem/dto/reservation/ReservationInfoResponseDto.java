@@ -21,26 +21,8 @@ public class ReservationInfoResponseDto {
     private Instant startDateTime;
     private Instant endDateTime;
     private ReservationState reservationState;
-
-    public ReservationInfoResponseDto(Long reservationId,
-                                      Long userId,
-                                      Long roomId,
-                                      String roomName,
-                                      Long roomPartitionId,
-                                      String partitionNumber,
-                                      Instant startDateTime,
-                                      Instant endDateTime,
-                                      ReservationState reservationState) {
-        this.reservationId = reservationId;
-        this.userId = userId;
-        this.roomId = roomId;
-        this.roomName = roomName;
-        this.roomPartitionId = roomPartitionId;
-        this.partitionNumber = partitionNumber;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.reservationState = reservationState;
-    }
+    private Instant createAt;
+    private Instant updateAt;
 
     public Reservation toEntity(User user, RoomPartition roomPartition) {
         return Reservation.builder()
