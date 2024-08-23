@@ -16,7 +16,7 @@ import java.util.List;
 public class ScheduleRequestDto {
     private Long roomOperationPolicyId;
     private List<Long> roomIds;
-    private List<LocalDate> policyApplicationDates;
+    private List<LocalDate> policyApplicationDates; // KST
 
 
     public ScheduleRequestDto(Long roomOperationPolicyId,
