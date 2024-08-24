@@ -29,6 +29,8 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.test.studyroomreservationsystem.service.DateTimeUtil.*;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final RoomPartitionService partitionService;
     private final UserService userService;
     private final RoomOperationPolicyScheduleService scheduleService;
-    @Value("${spring.service.noShowCntMonth}") private Long noShowCntMonth;
+    @Value("${spring.service.noShowBlockMonth}") private Long noShowBlockMonth;
     @Value("${spring.service.noShowLimit}") private int noShowLimit;
     @Value("${spring.service.reservationLimit}") private int reservationLimit;
     @Value("${spring.service.reservationLimitToday}") private int reservationLimitToday;
@@ -160,11 +162,11 @@ public class ReservationServiceImpl implements ReservationService {
                 RoomOperationPolicySchedule schedule = scheduleService.findScheduleByRoomAndDate(room, date);
                 RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
 
-                Instant operationStartTime = DateTimeUtil.convertKstToUtc(
+                Instant operationStartTime = convertKstToUtc(
                         date.atTime(policy.getOperationStartTime())
                 ).atZone(ZoneOffset.UTC).toInstant();
 
-                Instant operationEndTime = DateTimeUtil.convertKstToUtc(
+                Instant operationEndTime = convertKstToUtc(
                         date.atTime(policy.getOperationEndTime())
                 ).atZone(ZoneOffset.UTC).toInstant();
 
@@ -199,8 +201,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public SpecificRoomsReservationsDto getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date) {
-        Instant startTime = DateTimeUtil.getInstantStartOfDate(date);
-        Instant endTime = DateTimeUtil.getInstantEndOfDate(date);
+        Instant startTime = getInstantStartOfDate(date);
+        Instant endTime = getInstantEndOfDate(date);
 
         List<Reservation> reservations
                 = reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(partitionIds, startTime, endTime);
@@ -212,18 +214,25 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private void validateRoomAvailability(Long userId,Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
+
         List<Reservation> noShowReservations = getNoShowReservations(userId);
         //  이용 불가 한 학생
         if (isUserBlocked(noShowReservations)) {
-            Instant earliestNoShowStartTime = noShowReservations.stream()
-                    .map(Reservation::getReservationStartTime)
-                    .min(Instant::compareTo)
-                    .orElse(Instant.now());
+//            noshowReservation 중에서 가장 마지막으로 생성된 예약을 가져온다.
+            Instant startBlockTime = getLatestNoShowTime(noShowReservations);
+//            가장 마지막으로 생성된 예약의 날짜부터 noShowCntMonth 달 후 까지 블락기간이다.
+//            즉,  noShowCntMonth 달 후, 다음날 부터는 이용가능
+            Instant endBlockTime = getInstantOneDayAfterStartOfDay(getInstantMonthAfter(startBlockTime, noShowBlockMonth)).minusNanos(1);
 
-            LocalDateTime blockStartTime = DateTimeUtil.convertUtcToKst(Instant.now());
-            LocalDateTime blockEndTime = DateTimeUtil.convertUtcToKst(DateTimeUtil.getInstantMonthAfter(earliestNoShowStartTime, noShowCntMonth));
+//            블락기간이 끝났다면 noshowReservation 들의 state를 PROCESSED 로 변경한다.
+            if (getInstantCurrent().isAfter(endBlockTime)) {
+                changeStateToProcessd(noShowReservations);
+            }
+//            블락기간이 끝나지 않아다면, NoShowLimitExceededException 예외를 터트린다.
+            else {
+                throw new NoShowLimitExceededException(startBlockTime,endBlockTime);
+            }
 
-            throw new NoShowLimitExceededException(blockStartTime, blockEndTime);
         }
 
         Long roomId = partitionService.findRoomPartitionById(roomPartitionId).getRoom().getRoomId();
@@ -255,13 +264,28 @@ public class ReservationServiceImpl implements ReservationService {
             throw new OverlappingReservationException(partitionService.findRoomPartitionById(roomPartitionId));
         }
     }
-    
+
+    private static Instant getLatestNoShowTime(List<Reservation> noShowReservations) {
+        return noShowReservations.stream()
+                .map(Reservation::getCreateAt)
+                .max(Instant::compareTo)
+                .orElseThrow(ReservationNotFoundException::new);
+    }
+
+    @Transactional
+    private void changeStateToProcessd(List<Reservation> noShowReservations) {
+        noShowReservations.forEach(reservation -> {
+            reservation.setState(ReservationState.PROCESSED);
+        });
+        reservationRepository.saveAll(noShowReservations);
+    }
+
     /*              오늘 가능한 예약 초과                  */
     // KST ->  UTC
     @Override
     public List<Reservation> getReservationsByUserIdAndToday(Long userId) {
-        Instant start = DateTimeUtil.getInstantStartOfToday();
-        Instant end = DateTimeUtil.getInstantEndOfToday();
+        Instant start = getInstantStartOfToday();
+        Instant end = getInstantEndOfToday();
         return reservationRepository.findByUserIdAndReservationStartTime(userId, start, end);
     }
 
@@ -308,9 +332,8 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             endInstant = now;
         }
-        Instant startInstant = DateTimeUtil.getInstantMonthBefore(endInstant, noShowCntMonth);
 
-        return reservationRepository.countNoShowsByUserIdAndPeriod(userId, startInstant, endInstant);
+        return reservationRepository.countNoShowsByUserIdAndPeriod(userId, endInstant);
     }
 
     private boolean isUserBlocked(List<Reservation> reservations){
