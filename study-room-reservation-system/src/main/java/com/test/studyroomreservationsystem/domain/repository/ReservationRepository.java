@@ -59,10 +59,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             "FROM Reservation r " +
             "WHERE r.user.userId = :userId " +
             "AND r.state = 'NOT_VISITED' " +
-            "AND r.reservationStartTime BETWEEN :startTime AND :endTime")
+            "AND r.reservationStartTime <= :endTime")
     List<Reservation> countNoShowsByUserIdAndPeriod(
             @Param("userId") Long userId,
-            @Param("startTime") Instant startTime,
             @Param("endTime") Instant endTime
     );
 

@@ -16,7 +16,7 @@ spring:
         randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
         otpLength: 8
         otpTTL: 300
-        noShowCntMonth : 3
+        noShowBlockMonth : 3
         noShowLimit : 3
         reservationLimit : 1
         reservationLimitToday : 2
@@ -58,7 +58,7 @@ spring:
     flyway:
         enabled: true
         baseline-on-migrate: true
-        baseline-version: 1
+        baseline-version: 0
         url: ${SPRING_DATASOURCE_URL}
         user: ${SPRING_DATASOURCE_USERNAME}
         password: ${SPRING_DATASOURCE_PASSWORD}

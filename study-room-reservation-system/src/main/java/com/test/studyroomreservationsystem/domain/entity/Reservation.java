@@ -39,8 +39,8 @@ public class Reservation {
     private Instant reservationEndTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('NOT_VISITED', 'VISITED')")
-    private ReservationState state; // NOT_VISITED, VISITED
+    @Column(columnDefinition = "ENUM('NOT_VISITED', 'VISITED', 'PROCESSED')")
+    private ReservationState state; // NOT_VISITED, VISITED, PROCESSED
 
     @CreatedDate  // 엔티티가 처음 생성될 때 자동으로 설정되는 필드
     private Instant createAt;
@@ -49,6 +49,6 @@ public class Reservation {
     private Instant updateAt;
 
     public enum ReservationState {
-        NOT_VISITED, VISITED
+        NOT_VISITED, VISITED, PROCESSED
     }
 }
