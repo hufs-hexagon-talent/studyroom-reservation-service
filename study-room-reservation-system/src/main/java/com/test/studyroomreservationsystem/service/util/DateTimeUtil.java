@@ -1,4 +1,4 @@
-package com.test.studyroomreservationsystem.service;
+package com.test.studyroomreservationsystem.service.util;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;

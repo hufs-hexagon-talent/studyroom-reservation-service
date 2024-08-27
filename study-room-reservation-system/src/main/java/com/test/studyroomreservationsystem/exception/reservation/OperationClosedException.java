@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.exception.reservation;
 
 import com.test.studyroomreservationsystem.domain.entity.Room;
-import com.test.studyroomreservationsystem.service.DateTimeUtil;
+import com.test.studyroomreservationsystem.service.util.DateTimeUtil;
 
 import java.time.Instant;
 
