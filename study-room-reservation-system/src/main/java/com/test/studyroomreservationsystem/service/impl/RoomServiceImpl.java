@@ -9,7 +9,7 @@ import com.test.studyroomreservationsystem.dto.room.RoomDto;
 import com.test.studyroomreservationsystem.dto.room.RoomUpdateRequestDto;
 import com.test.studyroomreservationsystem.dto.room.RoomResponseDto;
 import com.test.studyroomreservationsystem.exception.reservation.OperationClosedException;
-import com.test.studyroomreservationsystem.service.DateTimeUtil;
+import com.test.studyroomreservationsystem.service.util.DateTimeUtil;
 import com.test.studyroomreservationsystem.service.RoomService;
 import com.test.studyroomreservationsystem.exception.notfound.RoomNotFoundException;
 import com.test.studyroomreservationsystem.exception.reservation.RoomPolicyNotFoundException;

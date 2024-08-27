@@ -4,7 +4,6 @@ import com.test.studyroomreservationsystem.domain.entity.Reservation;
 import com.test.studyroomreservationsystem.domain.entity.Reservation.ReservationState;
 import com.test.studyroomreservationsystem.domain.entity.RoomPartition;
 import com.test.studyroomreservationsystem.domain.entity.User;
-import com.test.studyroomreservationsystem.service.DateTimeUtil;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

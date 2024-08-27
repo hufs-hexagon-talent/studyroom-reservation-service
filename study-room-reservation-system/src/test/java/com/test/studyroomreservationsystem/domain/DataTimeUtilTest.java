@@ -1,6 +1,6 @@
 package com.test.studyroomreservationsystem.domain;
 
-import com.test.studyroomreservationsystem.service.DateTimeUtil;
+import com.test.studyroomreservationsystem.service.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package com.test.studyroomreservationsystem.exception;
 
 import com.test.studyroomreservationsystem.exception.reservation.ReservationNotPossibleException;
-import com.test.studyroomreservationsystem.service.DateTimeUtil;
+import com.test.studyroomreservationsystem.service.util.DateTimeUtil;
 
 import java.time.Instant;
 
