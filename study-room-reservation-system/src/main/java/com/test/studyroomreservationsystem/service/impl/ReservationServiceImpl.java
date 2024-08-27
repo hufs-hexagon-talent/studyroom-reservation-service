@@ -29,7 +29,7 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.test.studyroomreservationsystem.service.DateTimeUtil.*;
+import static com.test.studyroomreservationsystem.service.util.DateTimeUtil.*;
 
 @Service
 @Slf4j
@@ -355,6 +355,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     /*                다른 예약과 겹치지 않는지 확인                  */
+    /* 사용자가 예약하려는 시간 startDateTime ~ endDateTime */
     private boolean isReservationOverlapping(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
         List<Reservation> reservations = reservationRepository.findOverlappingReservations(roomPartitionId, startDateTime, endDateTime);
         return !reservations.isEmpty();
