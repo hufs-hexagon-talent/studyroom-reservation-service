@@ -34,6 +34,10 @@ public class User {
     @Column(columnDefinition = "ENUM('USER', 'ADMIN', 'RESIDENT') NOT NULL DEFAULT 'USER'")
     private ServiceRole serviceRole; // 기본값 USER
 
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
 
     @Builder
     public User(Long userId,

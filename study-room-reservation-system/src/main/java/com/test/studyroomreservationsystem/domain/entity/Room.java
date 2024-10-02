@@ -19,6 +19,11 @@ public class Room {
 
     @Column(name="room_name")
     private String roomName;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
     @Builder
     public Room(Long roomId, String roomName) {
         this.roomId = roomId;
