@@ -1,7 +1,7 @@
 package hufs.computer.studyroom.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hufs.computer.studyroom.dto.util.ErrorResponseDto;
+import hufs.computer.studyroom.common.util.ErrorResponseDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
