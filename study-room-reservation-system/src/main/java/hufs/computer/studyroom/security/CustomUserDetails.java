@@ -1,6 +1,6 @@
 package hufs.computer.studyroom.security;
 
-import hufs.computer.studyroom.domain.entity.User;
+import hufs.computer.studyroom.domain.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

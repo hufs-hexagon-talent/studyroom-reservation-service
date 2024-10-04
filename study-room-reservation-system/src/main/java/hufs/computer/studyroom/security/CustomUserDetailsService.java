@@ -1,7 +1,7 @@
 package hufs.computer.studyroom.security;
 
-import hufs.computer.studyroom.domain.entity.User;
-import hufs.computer.studyroom.domain.repository.UserRepository;
+import hufs.computer.studyroom.domain.user.entity.User;
+import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
