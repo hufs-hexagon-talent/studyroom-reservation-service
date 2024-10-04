@@ -26,26 +26,37 @@ dependencies {
 
 //ORM
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 // swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
 // security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
+
 // JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
 // Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 // migration
 	implementation 'org.flywaydb:flyway-core' //-> MySql 8.3 지원안함
 	implementation 'org.flywaydb:flyway-mysql:8.3.0'
+
 // Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 // Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+
+// MapStruct (Lombok 보다 뒤에 있어야 함)
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
 // H2 Database for testing
 	testImplementation 'com.h2database:h2'
