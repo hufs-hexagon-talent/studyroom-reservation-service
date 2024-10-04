@@ -2,7 +2,8 @@ package hufs.computer.studyroom.security.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hufs.computer.studyroom.dto.util.ErrorResponseDto;
+import hufs.computer.studyroom.common.util.ErrorResponseDto;
+import hufs.computer.studyroom.common.util.ErrorResponseDto;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
