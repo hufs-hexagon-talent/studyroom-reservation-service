@@ -1,6 +1,6 @@
 package hufs.computer.studyroom.common;
 
-import hufs.computer.studyroom.common.error.exception.checkin.KeyNotFoundException;
+import hufs.computer.studyroom.common.error.exception.todo.checkin.KeyNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
