@@ -1,31 +1,22 @@
 package hufs.computer.studyroom.domain.partition.service;
 
+import hufs.computer.studyroom.domain.partition.dto.request.CreatePartitionRequest;
+import hufs.computer.studyroom.domain.partition.dto.request.ModifyPartitionRequest;
+import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponse;
+import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponses;
+import hufs.computer.studyroom.domain.partition.dto.response.PartitionPolicyResponses;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
-import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
-import hufs.computer.studyroom.domain.partition.dto.PartitionPolicyResponseDto;
-import hufs.computer.studyroom.domain.partition.dto.PartitionRequestDto;
-import hufs.computer.studyroom.domain.partition.dto.PartitionResponseDto;
-import hufs.computer.studyroom.domain.partition.dto.PartitionUpdateRequestDto;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface RoomPartitionService {
-    RoomPartition createRoomPartition(PartitionRequestDto roomPartitionDto );
-    RoomPartition findRoomPartitionById(Long roomPartitionId);
-    List<RoomPartition> findRoomPartitionsByRoomId(Long roomId);
-    List<RoomPartition> findAllRoomPartition();
-    List<RoomPartition> findRoomPartitionByRoomId(Long roomId);
-    RoomPartition updateRoomPartition(Long partitionId, PartitionUpdateRequestDto updateRequestDto);
-    void deletePartitionById(Long roomPartitionId);
-    List<PartitionPolicyResponseDto> getPartitionsPolicyByDate(LocalDate date);
+    PartitionInfoResponse createRoomPartition(CreatePartitionRequest request );
+    PartitionInfoResponse findRoomPartitionById(Long roomPartitionId);
+    PartitionInfoResponse modifyPartition(Long partitionId, ModifyPartitionRequest updateRequestDto);
+    PartitionInfoResponses findByRoomId(Long roomId);
+    PartitionInfoResponses findAll();
+    Void deletePartitionById(Long roomPartitionId);
+    PartitionPolicyResponses getPartitionsPolicyByDate(LocalDate date);
 
-    default PartitionResponseDto dtoFrom(RoomPartition roomPartition) {
-        return PartitionResponseDto.builder()
-                .roomPartitionId(roomPartition.getRoomPartitionId())
-                .roomId(roomPartition.getRoom().getRoomId())
-                .roomName(roomPartition.getRoom().getRoomName())
-                .partitionNumber(roomPartition.getPartitionNumber())
-                .build();
-    }
 }
