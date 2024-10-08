@@ -60,16 +60,18 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public RoomInfoResponse updateRoom(Long roomId, ModifyRoomRequest request) {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
-        Department department = departmentRepository.findById(request.departmentId()).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
-
-        room.setRoomName(request.roomName());
-        room.setDepartment(department);
+        if (request.roomName() != null) {
+            room.setRoomName(request.roomName());
+        }
+        if (request.departmentId() != null) {
+            Department department = departmentRepository.findById(request.departmentId()).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
+            room.setDepartment(department);
+        }
 
         roomRepository.save(room);
         return roomMapper.toInfoResponse(room);
     }
-//   todo:  roomPartition 이아니라 그냥 room 에서 관리하자
-//    room id 로 partition 들 을 조회
+
     @Override
     public PartitionInfoResponses findPartitionsByRoomId(Long roomId) {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));

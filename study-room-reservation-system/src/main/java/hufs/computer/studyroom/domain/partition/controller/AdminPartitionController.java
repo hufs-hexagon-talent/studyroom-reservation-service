@@ -58,10 +58,10 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PutMapping("/{partitionId}")
-    public ResponseEntity<Void> updatePartition(@PathVariable Long partitionId,
+    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> updatePartition(@PathVariable Long partitionId,
                                                 @RequestBody ModifyPartitionRequest requestDto) {
-        partitionService.modifyPartition(partitionId, requestDto);
-        return ResponseFactory.noContent();
+        var result = partitionService.modifyPartition(partitionId, requestDto);
+        return ResponseFactory.modified(result);
     }
 
 
@@ -70,8 +70,8 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{partitionId}")
-    public ResponseEntity<Void> deletePartition(@PathVariable Long partitionId) {
+    public ResponseEntity<SuccessResponse<Void>> deletePartition(@PathVariable Long partitionId) {
         partitionService.deletePartitionById(partitionId);
-        return ResponseFactory.noContent();
+        return ResponseFactory.deleted();
     }
 }
