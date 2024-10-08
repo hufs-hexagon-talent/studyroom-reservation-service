@@ -5,15 +5,12 @@ import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkRequest;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
-import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.domain.schedule.dto.ScheduleResponseDto;
 import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
 import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
