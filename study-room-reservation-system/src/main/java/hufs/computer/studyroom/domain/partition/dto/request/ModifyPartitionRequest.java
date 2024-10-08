@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "파티션 수정 요청 DTO")
 public record ModifyPartitionRequest(
         @Schema(description = "룸 ID", example = "1")
         @NotNull(message = "Room ID를 입력해주세요.")
