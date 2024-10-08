@@ -1,30 +1,22 @@
 package hufs.computer.studyroom.domain.schedule.service;
 
 import hufs.computer.studyroom.domain.room.entity.Room;
+import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkRequest;
+import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
+import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
+import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.domain.schedule.dto.ScheduleRequestDto;
-import hufs.computer.studyroom.domain.schedule.dto.ScheduleResponseDto;
-import hufs.computer.studyroom.domain.schedule.dto.RoomOperationPolicyScheduleUpdateDto;
+import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public interface RoomOperationPolicyScheduleService {
-    List<RoomOperationPolicySchedule> createSchedules(ScheduleRequestDto requestDto);
-    RoomOperationPolicySchedule findScheduleById(Long scheduleId);
-    List<RoomOperationPolicySchedule> findScheduleByDate(LocalDate date);
-    List<RoomOperationPolicySchedule> findAllSchedule();
-    RoomOperationPolicySchedule updateSchedule(Long scheduleId, RoomOperationPolicyScheduleUpdateDto scheduleDto);
+    ScheduleInfoResponses createSchedules(CreateScheduleBulkRequest request);
+    ScheduleInfoResponse findScheduleById(Long scheduleId);
+    ScheduleInfoResponses findScheduleByDate(LocalDate date);
+    ScheduleInfoResponse updateSchedule(Long scheduleId, ModifyScheduleRequest scheduleDto);
     void deleteScheduleById(Long roomScheduleId);
     RoomOperationPolicySchedule findScheduleByRoomAndDate(Room room, LocalDate date);
-    List<LocalDate> getAvailableDatesFromToday();
-    default ScheduleResponseDto dtoFrom(RoomOperationPolicySchedule schedule) {
-        return ScheduleResponseDto.builder()
-                .roomOperationPolicyScheduleId(schedule.getRoomOperationPolicyScheduleId())
-                .roomOperationPolicyId(schedule.getRoomOperationPolicy().getRoomOperationPolicyId())
-                .roomId(schedule.getRoom().getRoomId())
-                .policyApplicationDate(schedule.getPolicyApplicationDate())
-                .build();
-    }
+    AvailableDateResponses getAvailableDatesFromToday();
 
 }

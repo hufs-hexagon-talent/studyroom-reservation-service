@@ -8,7 +8,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ScheduleErrorCode implements ErrorCode{
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE-001", "해당 일정은 존재하지 않습니다."),
-    SCHEDULE_ALREADY_EXISTS(HttpStatus.CONFLICT, "SCHEDULE-002", "이미 존재하는 일정입니다.");
+    SCHEDULE_ALREADY_EXISTS(HttpStatus.CONFLICT, "SCHEDULE-002", "이미 존재하는 일정입니다."),
+    INVALID_DATES(HttpStatus.BAD_REQUEST, "SCHEDULE-003", "유효하지 않은 날짜 목록입니다."),
+    INVALID_ROOM_IDS(HttpStatus.BAD_REQUEST, "SCHEDULE-004", "유효하지 않은 방 ID 목록입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

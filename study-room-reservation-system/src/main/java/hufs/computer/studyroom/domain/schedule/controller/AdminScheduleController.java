@@ -1,11 +1,13 @@
 package hufs.computer.studyroom.domain.schedule.controller;
 
+import hufs.computer.studyroom.common.response.SuccessResponse;
+import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkRequest;
+import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
+import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.common.util.ApiResponseDto;
-import hufs.computer.studyroom.domain.schedule.dto.ScheduleRequestDto;
 import hufs.computer.studyroom.domain.schedule.dto.ScheduleResponseDto;
-import hufs.computer.studyroom.domain.schedule.dto.RoomOperationPolicyScheduleUpdateDto;
-import hufs.computer.studyroom.common.util.ApiResponseListDto;
+import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
 import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -16,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
@@ -35,40 +36,19 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping()
-     ResponseEntity<ApiResponseDto<ApiResponseListDto<ScheduleResponseDto>>> createSchedules(@RequestBody ScheduleRequestDto requestDto) {
-
-        List<RoomOperationPolicySchedule> createdSchedules
-                = scheduleService.createSchedules(requestDto);
-
-        List<ScheduleResponseDto> createdSchedulesDto = createdSchedules.stream()
-                .map(scheduleService::dtoFrom)
-                .toList();
-
-        ApiResponseListDto<ScheduleResponseDto> wrapped = new ApiResponseListDto<>(createdSchedulesDto);
-
-        ApiResponseDto<ApiResponseListDto<ScheduleResponseDto>> response
-                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", wrapped);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+     ResponseEntity<SuccessResponse<ScheduleInfoResponses>> createSchedules(@RequestBody CreateScheduleBulkRequest request) {
+        var result = scheduleService.createSchedules(request);
+        return ResponseFactory.created(result);
     }
-
 
     @Operation(summary = "✅[관리자] schedule 조회",
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{roomOperationPolicyScheduleId}")
-     ResponseEntity<ApiResponseDto<ScheduleResponseDto>> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
-
-        RoomOperationPolicySchedule foundSchedule
-                = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
-
-        ScheduleResponseDto foundScheduleDto
-                = scheduleService.dtoFrom(foundSchedule);
-        ApiResponseDto<ScheduleResponseDto> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", foundScheduleDto);
-
-        return new ResponseEntity<>(response,HttpStatus.OK);
+     ResponseEntity<SuccessResponse<ScheduleInfoResponse>> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
+        var result = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
+        return ResponseFactory.success(result);
     }
 
     @Operation(summary = "✅[관리자] 해당날짜의 schedule 들 조회",
@@ -76,36 +56,24 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("date/{policyApplicationDate}")
-    ResponseEntity<ApiResponseDto<ApiResponseListDto<ScheduleResponseDto>>> getSchedules(@PathVariable LocalDate policyApplicationDate) {
-        List<RoomOperationPolicySchedule> schedules = scheduleService.findScheduleByDate(policyApplicationDate);
-        List<ScheduleResponseDto> schedulesDto = schedules.stream()
-                .map(scheduleService::dtoFrom)
-                .toList();
-        ApiResponseListDto<ScheduleResponseDto> wrapped = new ApiResponseListDto<>(schedulesDto);
-
-        ApiResponseDto<ApiResponseListDto<ScheduleResponseDto>> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    ResponseEntity<SuccessResponse<ScheduleInfoResponses>> getSchedules(@PathVariable LocalDate policyApplicationDate) {
+        var result = scheduleService.findScheduleByDate(policyApplicationDate);
+        return ResponseFactory.success(result);
     }
 
 
-    @Operation(summary = "❌[관리자] schedule 업데이트",
+    @Operation(summary = "✅[관리자] schedule 업데이트",
             description = "해당 스케쥴 업데이트",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PutMapping("/schedule")
-    ResponseEntity<ScheduleResponseDto>
-    updateSchedule(@PathVariable Long roomOperationPolicyScheduleId,
-                   @RequestBody RoomOperationPolicyScheduleUpdateDto scheduleUpdateDto) {
+    ResponseEntity<SuccessResponse<ScheduleInfoResponse>> modifySchedule(
+            @PathVariable Long roomOperationPolicyScheduleId,
+            @RequestBody ModifyScheduleRequest request) {
 
-        RoomOperationPolicySchedule updatedSchedule
-                = scheduleService.updateSchedule(roomOperationPolicyScheduleId, scheduleUpdateDto);
+        var result = scheduleService.updateSchedule(roomOperationPolicyScheduleId, request);
+        return ResponseFactory.modified(result);
 
-        ScheduleResponseDto updatedScheduleDto
-                = scheduleService.dtoFrom(updatedSchedule);
-
-        return new ResponseEntity<>(updatedScheduleDto, HttpStatus.OK);
     }
 
     @Operation(summary = "✅[관리자] schedule 삭제",
@@ -113,10 +81,9 @@ public class AdminScheduleController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{roomOperationPolicyScheduleId}")
-     ResponseEntity<ApiResponseDto<Object>> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
+     ResponseEntity<SuccessResponse<Void>> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
         scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
-        ApiResponseDto<Object> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseFactory.deleted();
     }
 }
 
