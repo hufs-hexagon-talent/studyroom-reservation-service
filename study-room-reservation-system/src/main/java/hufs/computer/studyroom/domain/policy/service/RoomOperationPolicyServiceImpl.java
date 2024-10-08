@@ -2,13 +2,14 @@ package hufs.computer.studyroom.domain.policy.service;
 
 import hufs.computer.studyroom.common.error.code.PolicyErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.error.exception.todo.reservation.OperationClosedException;
 import hufs.computer.studyroom.common.util.DateTimeUtil;
+import hufs.computer.studyroom.domain.policy.dto.request.CreateOperationPolicyRequest;
+import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponse;
+import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponses;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.policy.mapper.RoomOperationPolicyMapper;
 import hufs.computer.studyroom.domain.policy.repository.RoomOperationPolicyRepository;
-import hufs.computer.studyroom.domain.policy.dto.RoomOperationPolicyDto;
-import hufs.computer.studyroom.domain.policy.dto.RoomOperationPolicyUpdateDto;
-import hufs.computer.studyroom.common.error.exception.todo.notfound.PolicyNotFoundException;
+import hufs.computer.studyroom.domain.policy.dto.request.ModifyOperationPolicyRequest;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
@@ -28,28 +29,32 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
 
     private final RoomOperationPolicyRepository policyRepository;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
+    private final RoomOperationPolicyMapper policyMapper;
 
     @Override
-    public RoomOperationPolicy createPolicy(RoomOperationPolicyDto policyDto) {
-        RoomOperationPolicy policyEntity = policyDto.toEntity();
-        return policyRepository.save(policyEntity);
+    public OperationPolicyInfoResponse createPolicy(CreateOperationPolicyRequest request) {
+        RoomOperationPolicy roomOperationPolicy = policyMapper.toRoomOperationPolicy(request);
+        RoomOperationPolicy savedPolicy = policyRepository.save(roomOperationPolicy);
+
+        return policyMapper.toInfoResponse(savedPolicy);
     }
 
 
     @Override
-    public RoomOperationPolicy findPolicyById(Long policyId) {
-        return policyRepository.findById(policyId)
-                .orElseThrow(() -> new PolicyNotFoundException(policyId));
+    public OperationPolicyInfoResponse findPolicyById(Long policyId) {
+        RoomOperationPolicy policy = policyRepository.findById(policyId).orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
+        return policyMapper.toInfoResponse(policy);
     }
 
     @Override
-    public List<RoomOperationPolicy> findAllPolicies() {
-        return policyRepository.findAll();
+    public OperationPolicyInfoResponses findAllPolicies() {
+        List<RoomOperationPolicy> policies = policyRepository.findAll();
+        return policyMapper.toOperationPolicyInfoResponses(policies);
     }
 
     @Override
-    public RoomOperationPolicy updatePolicy(Long policyId, RoomOperationPolicyUpdateDto policyDto) {
-        RoomOperationPolicy policy = findPolicyById(policyId);
+    public OperationPolicyInfoResponse updatePolicy(Long policyId, ModifyOperationPolicyRequest policyDto) {
+        RoomOperationPolicy policy = policyRepository.findById(policyId).orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
         if (policyDto.getOperationStartTime() != null) {
             policy.setOperationStartTime(policyDto.getOperationStartTime());
         }
@@ -59,8 +64,8 @@ public class RoomOperationPolicyServiceImpl implements RoomOperationPolicyServic
         if (policyDto.getEachMaxMinute() != null) {
             policy.setEachMaxMinute(policyDto.getEachMaxMinute());
         }
-
-        return policyRepository.save(policy);
+        RoomOperationPolicy savedPolicy = policyRepository.save(policy);
+        return policyMapper.toInfoResponse(savedPolicy);
     }
 
     @Override
