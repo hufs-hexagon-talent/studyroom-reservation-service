@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "파티션 생성 요청 DTO")
 public record CreatePartitionRequest(
 
         @Schema(description = "룸 ID", example = "1")

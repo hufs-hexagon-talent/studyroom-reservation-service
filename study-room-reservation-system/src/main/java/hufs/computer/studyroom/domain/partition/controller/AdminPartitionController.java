@@ -70,7 +70,7 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{partitionId}")
-    public ResponseEntity<Void > deletePartition(@PathVariable Long partitionId) {
+    public ResponseEntity<Void> deletePartition(@PathVariable Long partitionId) {
         partitionService.deletePartitionById(partitionId);
         return ResponseFactory.noContent();
     }
