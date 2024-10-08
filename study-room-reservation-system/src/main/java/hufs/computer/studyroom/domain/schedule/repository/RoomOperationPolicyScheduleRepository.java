@@ -1,17 +1,9 @@
 package hufs.computer.studyroom.domain.schedule.repository;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.domain.room.entity.Room;
-import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.domain.room.entity.Room;
-import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.domain.room.entity.Room;
-import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import hufs.computer.studyroom.domain.room.entity.Room;
-import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,4 +40,5 @@ public interface RoomOperationPolicyScheduleRepository extends JpaRepository<Roo
     List<LocalDate> findAvailableRoomsGroupedByDate(@Param("startDate") LocalDate startDate);
 
 
+    boolean existsByRoomIdAndPolicyApplicationDateAndRoomOperationPolicyScheduleIdNot(Long roomId, LocalDate date, Long scheduleId);
 }
