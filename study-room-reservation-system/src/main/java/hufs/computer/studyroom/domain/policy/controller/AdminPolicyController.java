@@ -1,19 +1,17 @@
 package hufs.computer.studyroom.domain.policy.controller;
-import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
-import hufs.computer.studyroom.common.util.ApiResponseDto;
-import hufs.computer.studyroom.common.util.ApiResponseListDto;
-import hufs.computer.studyroom.domain.policy.dto.RoomOperationPolicyDto;
-import hufs.computer.studyroom.domain.policy.dto.RoomOperationPolicyUpdateDto;
+import hufs.computer.studyroom.common.response.SuccessResponse;
+import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.domain.policy.dto.request.CreateOperationPolicyRequest;
+import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponse;
+import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponses;
+import hufs.computer.studyroom.domain.policy.dto.request.ModifyOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.service.RoomOperationPolicyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "RoomOperationPolicy", description = "Room 운영 정책 관련 API")
 @RestController
@@ -29,61 +27,44 @@ public class AdminPolicyController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/policy")
-    public ResponseEntity<ApiResponseDto<RoomOperationPolicyDto>> createPolicy(@RequestBody RoomOperationPolicyDto policyDto) {
-
-        RoomOperationPolicy createdPolicy = roomOperationPolicyService.createPolicy(policyDto);
-        RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(createdPolicy);
-        ApiResponseDto<RoomOperationPolicyDto> response
-                = new ApiResponseDto<>(HttpStatus.CREATED.toString(), "정상적으로 생성 되었습니다.", policy);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<SuccessResponse<OperationPolicyInfoResponse>> createPolicy(@RequestBody CreateOperationPolicyRequest policyDto) {
+        var result = roomOperationPolicyService.createPolicy(policyDto);
+        return ResponseFactory.created(result);
     }
+
+
     @Operation(summary = "✅[관리자] RoomOperationPolicy 조회",
             description = "RoomOperationPolicy id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{roomOperationPolicyId}")
-    public ResponseEntity<ApiResponseDto<RoomOperationPolicyDto>> getPolicy(@PathVariable Long roomOperationPolicyId) {
-        RoomOperationPolicy foundPolicy = roomOperationPolicyService.findPolicyById(roomOperationPolicyId);// dto 로 전환
-        RoomOperationPolicyDto policy = roomOperationPolicyService.dtoFrom(foundPolicy);
-        ApiResponseDto<RoomOperationPolicyDto> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", policy);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<SuccessResponse<OperationPolicyInfoResponse>> getPolicy(@PathVariable Long roomOperationPolicyId) {
+        var result = roomOperationPolicyService.findPolicyById(roomOperationPolicyId);
+        return ResponseFactory.success(result);
     }
+
     @Operation(summary = "✅[관리자] 모든 RoomOperationPolicy 조회",
             description = "모든 RoomOperationPolicy 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping
-    public ResponseEntity<ApiResponseDto<ApiResponseListDto<RoomOperationPolicyDto>>> getAllPolices() {
-        List<RoomOperationPolicyDto> policies = roomOperationPolicyService.findAllPolicies()
-                .stream()
-                .map(roomOperationPolicyService::dtoFrom)
-                .toList();
-
-        ApiResponseListDto<RoomOperationPolicyDto> wrapped = new ApiResponseListDto<>(policies);
-        ApiResponseDto<ApiResponseListDto<RoomOperationPolicyDto>> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
-
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<SuccessResponse<OperationPolicyInfoResponses>> getAllPolices() {
+        var result = roomOperationPolicyService.findAllPolicies();
+        return ResponseFactory.success(result);
     }
+
     @Operation(summary = "✅[관리자] RoomOperationPolicy 정보 업데이트",
             description = "해당 RoomOperationPolicy id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PatchMapping("/policy/{roomOperationPolicyId}")
-    public ResponseEntity<ApiResponseDto<RoomOperationPolicyDto>> updatePolicy(
+    public ResponseEntity<SuccessResponse<OperationPolicyInfoResponse>> updatePolicy(
             @PathVariable Long roomOperationPolicyId,
-            @RequestBody RoomOperationPolicyUpdateDto requestDto) {
+            @RequestBody ModifyOperationPolicyRequest requestDto) {
 
-        RoomOperationPolicy updatedPolicy
-                = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, requestDto);
+        var result = roomOperationPolicyService.updatePolicy(roomOperationPolicyId, requestDto);
 
-        RoomOperationPolicyDto policyDto
-                = roomOperationPolicyService.dtoFrom(updatedPolicy);
-        ApiResponseDto<RoomOperationPolicyDto> response = new ApiResponseDto<>(HttpStatus.OK.toString(),
-                "정상적으로 변경 되었습니다.", policyDto
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseFactory.modified(result);
     }
 
     @Operation(summary = "✅[관리자] RoomOperationPolicy 삭제",
@@ -91,10 +72,9 @@ public class AdminPolicyController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{roomOperationPolicyId}")
-    public ResponseEntity<Object> deletePolicy(@PathVariable Long roomOperationPolicyId) {
+    public ResponseEntity<SuccessResponse<Void>> deletePolicy(@PathVariable Long roomOperationPolicyId) {
         roomOperationPolicyService.deletePolicy(roomOperationPolicyId);
-        ApiResponseDto<Object> response = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseFactory.deleted();
     }
 
 }
