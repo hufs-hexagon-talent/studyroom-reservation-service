@@ -57,7 +57,7 @@ public class AdminPartitionController {
             description = "해당 partition id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PutMapping("/{partitionId}")
+    @PatchMapping("/{partitionId}")
     public ResponseEntity<SuccessResponse<PartitionInfoResponse>> updatePartition(@PathVariable Long partitionId,
                                                 @RequestBody ModifyPartitionRequest requestDto) {
         var result = partitionService.modifyPartition(partitionId, requestDto);

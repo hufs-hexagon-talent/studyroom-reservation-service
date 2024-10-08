@@ -65,12 +65,17 @@ public class RoomPartitionServiceImpl implements RoomPartitionService {
 
 
     @Override
-    public PartitionInfoResponse modifyPartition(Long partitionId, ModifyPartitionRequest updateRequestDto) {
+    public PartitionInfoResponse modifyPartition(Long partitionId, ModifyPartitionRequest request) {
         // 업데이트 할 파티션이 존재하는지?
         RoomPartition roomPartition = partitionRepository.findById(partitionId).orElseThrow(() -> new CustomException(RoomErrorCode.PARTITION_NOT_FOUND));
-        Room room = roomRepository.findById(updateRequestDto.roomId()).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
-        roomPartition.setRoom(room);
-        roomPartition.setPartitionNumber(updateRequestDto.partitionNumber());
+        if (request.partitionNumber() != null) {
+            roomPartition.setPartitionNumber(request.partitionNumber());
+        }
+        if (request.roomId() != null) {
+            Room room = roomRepository.findById(request.roomId()).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
+            roomPartition.setRoom(room);
+        }
+
         RoomPartition updatedPartition = partitionRepository.save(roomPartition);
         return partitionMapper.toInfoResponse(updatedPartition);
     }
