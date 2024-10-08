@@ -1,11 +1,11 @@
 package hufs.computer.studyroom.domain.policy.service;
 
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
-import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
 import hufs.computer.studyroom.domain.policy.dto.RoomOperationPolicyDto;
 import hufs.computer.studyroom.domain.policy.dto.RoomOperationPolicyUpdateDto;
-import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.room.entity.Room;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface RoomOperationPolicyService {
@@ -14,6 +14,7 @@ public interface RoomOperationPolicyService {
     void deletePolicy(Long policyId);
     RoomOperationPolicy findPolicyById(Long policyId);
     List<RoomOperationPolicy> findAllPolicies();
+    void validateRoomOperation(Room room, Instant reservationStartTime, Instant reservationEndTime);
 
     default RoomOperationPolicyDto dtoFrom(RoomOperationPolicy roomOperationPolicy) {
         return RoomOperationPolicyDto.builder()
