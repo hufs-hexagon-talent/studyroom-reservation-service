@@ -11,7 +11,9 @@ import java.util.List;
 
 public class ResponseFactory {
     private static final String SUCCESS_MESSAGE = "요청이 성공적으로 처리되었습니다.";
+    private static final String MODIFY_MESSAGE = "리소스가 성공적으로 수정되었습니다.";
     private static final String CREATED_MESSAGE = "리소스가 성공적으로 생성되었습니다.";
+    private static final String DELETE_MESSAGE = "리소스가 성공적으로 삭제되었습니다.";
 
     private ResponseFactory() {
         throw new UnsupportedOperationException("팩토리 유틸리티 메소드는 인스턴스화 할 수 없습니다.");
@@ -23,6 +25,14 @@ public class ResponseFactory {
 
     public static <T> ResponseEntity<SuccessResponse<T>> created(T data) {
         return buildSuccessResponse(CREATED_MESSAGE, HttpStatus.CREATED, data);
+    }
+
+    public static <T> ResponseEntity<SuccessResponse<T>> modified(T data) {
+        return buildSuccessResponse(MODIFY_MESSAGE, HttpStatus.OK, data);
+    }
+
+    public static <T> ResponseEntity<SuccessResponse<Void>> deleted() {
+        return buildSuccessResponse(DELETE_MESSAGE, HttpStatus.OK, null);
     }
 
     public static ResponseEntity<Void> noContent() {

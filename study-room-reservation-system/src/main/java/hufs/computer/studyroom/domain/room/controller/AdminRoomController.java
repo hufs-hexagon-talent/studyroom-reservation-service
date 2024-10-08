@@ -46,15 +46,15 @@ public class AdminRoomController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "❌[관리자] room 정보 수정",
+    @Operation(summary = "✅[관리자] room 정보 수정",
             description = "해당 room id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
-    @PutMapping("/{roomId}")
-    public ResponseEntity<CreateRoomRequest> updateRoom(@PathVariable Long roomId,
+    @PatchMapping("/{roomId}")
+    public ResponseEntity<SuccessResponse<RoomInfoResponse>> updateRoom(@PathVariable Long roomId,
                                                         @RequestBody ModifyRoomRequest request) {
         var result = roomService.updateRoom(roomId, request);
-        return ResponseFactory.success(result);
+        return ResponseFactory.modified(result);
     }
 
     @Operation(summary = "✅[관리자] room 삭제",
@@ -62,12 +62,11 @@ public class AdminRoomController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId) {
+    public ResponseEntity<SuccessResponse<Void>> deleteRoom(@PathVariable Long roomId) {
         roomService.deleteRoom(roomId);
-        return ResponseFactory.noContent();
+        return ResponseFactory.deleted();
     }
 
-    //    todo RoomController로 이동
     @Operation(summary = "✅[관리자] roomID로 partition들 조회",
             description = "room id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
