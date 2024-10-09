@@ -1,21 +1,20 @@
 package hufs.computer.studyroom.domain.user.service;
 
-import hufs.computer.studyroom.common.error.exception.invalidvalue.InvalidCurrentPasswordException;
-import hufs.computer.studyroom.common.error.exception.invalidvalue.InvalidNewPasswordException;
-import hufs.computer.studyroom.common.error.exception.notfound.UserNotFoundException;
-import hufs.computer.studyroom.common.error.exception.user.EmailAlreadyExistsException;
-import hufs.computer.studyroom.common.error.exception.user.SerialAlreadyExistsException;
-import hufs.computer.studyroom.common.error.exception.user.SignUpNotPossibleException;
-import hufs.computer.studyroom.common.error.exception.user.UsernameAlreadyExistsException;
-import hufs.computer.studyroom.domain.user.dto.SingUpRequestDto;
-import hufs.computer.studyroom.domain.user.dto.UserInfoUpdateRequestDto;
-import hufs.computer.studyroom.domain.user.dto.UserPasswordInfoResetRequestDto;
-import hufs.computer.studyroom.domain.user.dto.UserPasswordInfoUpdateRequestDto;
+import hufs.computer.studyroom.common.error.code.DepartmentErrorCode;
+import hufs.computer.studyroom.common.error.code.UserErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.department.entity.Department;
+import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
+import hufs.computer.studyroom.domain.user.dto.request.*;
+import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
+import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.entity.User.ServiceRole;
+import hufs.computer.studyroom.security.jwt.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,132 +24,103 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
+    private final UserMapper userMapper;
+    private final JWTUtil jwtUtil;
 
-    @Autowired
-    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userRepository = userRepository;
+    /*-------------------------------------------------*/
+    @Override
+    public UserInfoResponse signUpProcess(SignUpRequest request) {
+        validateUser(request);
+        String encodedPassword = bCryptPasswordEncoder.encode(request.password());
+        Department department = departmentRepository.findById(request.departmentId()).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
+
+        User user = userMapper.toUser(request, encodedPassword, ServiceRole.USER, department);
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toInfoResponse(savedUser);
     }
     /*-------------------------------------------------*/
     @Override
-    public User signUpProcess(SingUpRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = requestDto.getPassword();
-        String serial = requestDto.getSerial();
-        String email = requestDto.getEmail();
+    @Transactional
+    public UserInfoResponses signUpUsers(SignUpBulkRequest request) {
+        List<SignUpRequest> signUpRequests = request.signUpRequests();
 
-        // 해당 로그인 ID 가 이미 존재하는 아이디인지?
-        boolean existsByUsername = userRepository.existsByUsername(username);
-        if (existsByUsername) {
-            throw (new UsernameAlreadyExistsException(username));
-        }
-        // 해당 학번이 이미 존재 하는지?
-        boolean existsBySerial = userRepository.existsBySerial(serial);
-        if (existsBySerial) {
-            throw (new SerialAlreadyExistsException(serial));
-        }
-        boolean existsByEmail = userRepository.existsByEmail(email);
-        if (existsByEmail) {
-            throw (new EmailAlreadyExistsException(email));
+        // 1. 유효성 검증 실패 시 롤백 처리
+        for (SignUpRequest signUpRequest : signUpRequests) {
+            validateUser(signUpRequest);  // 각 사용자의 유효성 먼저 검증
         }
 
-        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        // 2. 모든 사용자의 유효성 검증이 통과된 후 회원가입 처리
+        List<UserInfoResponse> responses = new ArrayList<>();
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(encodedPassword);
-        user.setSerial(serial);
-        user.setName(requestDto.getName());
-        user.setServiceRole(ServiceRole.USER);
-        user.setEmail(email);
-        return userRepository.save(user);
+        // 모든 사용자의 유효성 검증이 통과된 후 회원가입 처리
+        for (SignUpRequest signUpRequest : signUpRequests) {
+            responses.add(signUpProcess(signUpRequest));
+        }
+
+        // 3. 저장한 사용자들 반환
+        return userMapper.toInfoResponses(responses);
     }
     /*-------------------------------------------------*/
     @Override
-    @Transactional(rollbackFor = SignUpNotPossibleException.class)
-    public List<User> signUpUsers(List<SingUpRequestDto> requestDtos) {
-        List<User> userList= new ArrayList<>();
-
-        for (SingUpRequestDto requestDto : requestDtos) {
-            User user = signUpProcess(requestDto);
-//            todo : 내 생각엔 이부분 안티 패턴 , 프로세스마다 저장하다가 예외터지면 롤백하는 건 문제가있음, 하나하나 말고 리스트 통으로 하는 방법,,?
-            userList.add(user);
-        }
-        return userList;
+    public UserInfoResponse findUserById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        return userMapper.toInfoResponse(user);
     }
 
-
-    @Override
-    public User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-    }
     @Override
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+        return userRepository.findByUsername(username).orElseThrow(() -> new CustomException(UserErrorCode.USERNAME_ALREADY_EXISTS));
     }
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(UserErrorCode.EMAIL_ALREADY_EXISTS));
     }
     @Override
     public User findBySerial(String serial) {
-        return userRepository.findBySerial(serial)
-                .orElseThrow(() -> new UserNotFoundException(serial));
+        return userRepository.findBySerial(serial).orElseThrow(() -> new CustomException(UserErrorCode.SERIAL_ALREADY_EXISTS));
     }
 
     @Override
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public UserInfoResponses findAllUsers() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toInfoResponses(userMapper.toInfoResponseList(users));
     }
 
     @Override
-    public User updateUserInfo(Long userId, UserInfoUpdateRequestDto requestDto) {
-        User user = findUserById(userId);
-        requestDto.toEntity(user);
-        return userRepository.save(user);
+    public UserInfoResponse updateUserInfo(Long userId, ModifyUserInfoRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        Department department = departmentRepository.findById(request.departmentId()).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
+        userMapper.updateUserFromRequest(request, user, department);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toInfoResponse(updatedUser);
     }
 
 
     @Override
-    public User resetUserPassword(Long userId, UserPasswordInfoUpdateRequestDto userInfoUpdateRequestDto) {
-        User user = findUserById(userId);
-        String currentPassword = userInfoUpdateRequestDto.getPrePassword();
-
+    public UserInfoResponse resetUserPasswordWithToken(ResetPasswordRequest request) {
+        String email = jwtUtil.getEmail(request.token());
+        Long userId = findByEmail(email).getUserId();
+        return resetUserPassword(userId, request.newPassword());
+    }
+    @Override
+    public UserInfoResponse resetUserPasswordWithOldPassword(Long userId, ModifyPasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
         // 기존 비밀번호 검증
-        if (!bCryptPasswordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new InvalidCurrentPasswordException();
+        if (!bCryptPasswordEncoder.matches(request.prePassword(), user.getPassword())) {
+            throw new CustomException(UserErrorCode.INVALID_CURRENT_PASSWORD);
         }
-        // 새 비밀번호 암호화 및 업데이트
-        String newPassword = userInfoUpdateRequestDto.getNewPassword();
-        if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
-            throw new InvalidNewPasswordException();
-        }
-        String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
-        user.setPassword(encodeNewPassword);
-
-        return userRepository.save(user);
+        return resetUserPassword(userId, request.newPassword());
     }
 
-    @Override
-    public User resetUserPassword(Long userId, UserPasswordInfoResetRequestDto resetRequestDto) {
-        User user = findUserById(userId);
-        // 새 비밀번호 암호화 및 업데이트
-        String newPassword = resetRequestDto.getNewPassword();
-        if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
-            throw new InvalidNewPasswordException();
-        }
-        String encodeNewPassword = bCryptPasswordEncoder.encode(newPassword);
-        user.setPassword(encodeNewPassword);
 
-        return userRepository.save(user);
-    }
 
     @Override
     public void deleteUser(Long userId) {
@@ -158,5 +128,32 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
-    
+    private void validateUser(SignUpRequest request) {
+        // 해당 로그인 ID 가 이미 존재하는지 확인
+        if (userRepository.existsByUsername(request.username())) {
+            throw new CustomException(UserErrorCode.USERNAME_ALREADY_EXISTS);
+        }
+        // 학번 중복 확인
+        if (userRepository.existsBySerial(request.serial())) {
+            throw new CustomException(UserErrorCode.SERIAL_ALREADY_EXISTS);
+        }
+        // 이메일 중복 확인
+        if (userRepository.existsByEmail(request.email())) {
+            throw new CustomException(UserErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+    }
+
+    private UserInfoResponse resetUserPassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        // 새 비밀번호 암호화 및 업데이트
+        if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
+            throw new CustomException(UserErrorCode.INVALID_NEW_PASSWORD);
+        }
+        String encodedNewPassword = bCryptPasswordEncoder.encode(newPassword);
+        user.setPassword(encodedNewPassword);
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toInfoResponse(savedUser);
+    }
+
 }
