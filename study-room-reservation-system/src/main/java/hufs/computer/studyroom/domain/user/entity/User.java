@@ -8,6 +8,7 @@ import lombok.*;
 @Getter @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user")
 public class User {
 
@@ -39,23 +40,6 @@ public class User {
     @JoinColumn(name = "department_id")
     private Department department;
 
-
-    @Builder
-    public User(Long userId,
-                String username,
-                String password,
-                String serial,
-                String email,
-                ServiceRole serviceRole,
-                String name) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
-        this.serial = serial;
-        this.email = email;
-        this.serviceRole = serviceRole != null ? serviceRole : ServiceRole.USER; // null 체크 후 기본값 할당
-        this.name = name;
-    }
     public enum ServiceRole {
         USER, ADMIN, RESIDENT
     }
