@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.domain.auth.dto;
+package hufs.computer.studyroom.domain.reservation.dto;
 
 import lombok.Getter;
 
