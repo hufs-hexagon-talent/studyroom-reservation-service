@@ -1,86 +1,82 @@
 package hufs.computer.studyroom.domain.reservation.controller;
 
-import hufs.computer.studyroom.domain.reservation.dto.ReservationInfoResponseDto;
-import hufs.computer.studyroom.domain.reservation.service.ReservationService;
-import hufs.computer.studyroom.domain.reservation.service.ReservationService;
-import hufs.computer.studyroom.domain.reservation.entity.Reservation;
-import hufs.computer.studyroom.domain.reservation.dto.ReservationInfoResponseDto;
-import hufs.computer.studyroom.domain.reservation.dto.ReservationInfoUpdateRequestDto;
-import hufs.computer.studyroom.common.util.ApiResponseDto;
-import hufs.computer.studyroom.common.util.ApiResponseListDto;
+import hufs.computer.studyroom.common.response.SuccessResponse;
+import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationStateRequest;
+import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponse;
+import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
+import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
+import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.security.CustomUserDetails;
-import hufs.computer.studyroom.domain.reservation.dto.ReservationInfoResponseDto;
-import hufs.computer.studyroom.domain.reservation.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
 @RequestMapping("/reservations")
+@RequiredArgsConstructor
 public class AdminReservationController {
-    private final ReservationService reservationService;
-
-    public AdminReservationController(ReservationService reservationService) {
-        this.reservationService = reservationService;
-    }
+    private final ReservationCommandService reservationCommandService;
+    private final ReservationQueryService reservationQueryService;
 
     @Operation(summary = "✅[관리자] 사용자 예약 삭제",
             description = "관리용 예약 삭제",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
-
+            security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/admin/{reservationId}")
-    public ResponseEntity<ApiResponseDto<Objects>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                            @PathVariable Long reservationId) {
+    public ResponseEntity<SuccessResponse<Void>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                      @PathVariable Long reservationId) {
 
-        reservationService.deleteReservationByAdmin(reservationId,currentUser);
-        ApiResponseDto<Objects> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 삭제 되었습니다.", null);
+        reservationCommandService.deleteReservationByAdmin(reservationId,currentUser);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseFactory.deleted();
+    }
+
+    @Operation(summary = "✅[관리자] 특정 예약 상태 변경",
+            description = "관리용 예약 수정",
+            security = {@SecurityRequirement(name = "JWT")})
+    @PatchMapping("/admin/{reservationId}")
+    public ResponseEntity<SuccessResponse<ReservationInfoResponse>> updateReservationInfoByAdmin(@PathVariable Long reservationId,
+                                                                                                 @RequestBody ModifyReservationStateRequest request) {
+        var result = reservationCommandService.updateReservationState(reservationId, request);
+
+        return ResponseFactory.modified(result);
     }
 
     @Operation(summary = "✅[관리자] 학번으로 사용자 예약들 조회",
             description = "관리용 예약 조회",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
+            security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/admin/{serial}")
-    public ResponseEntity<ApiResponseDto<ApiResponseListDto<ReservationInfoResponseDto>>> getReservationBySerial(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                                                                 @PathVariable String serial) {
-        List<ReservationInfoResponseDto> responseDtoList = reservationService.findAllReservationByAdmin(serial, currentUser)
-                .stream()
-                .map(reservationService::responseDtoFrom)
-                .toList();
-        ApiResponseListDto<ReservationInfoResponseDto> wrapped = new ApiResponseListDto<>(responseDtoList);
-        ApiResponseDto<ApiResponseListDto<ReservationInfoResponseDto>> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
+    public ResponseEntity<SuccessResponse<ReservationInfoResponses>> getReservationBySerial(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                                             @PathVariable String serial) {
+//        todo : 관리자 검증 애노테이션 생성
+        var result = reservationQueryService.findAllReservationBySerial(serial, currentUser);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseFactory.success(result);
     }
-    @Operation(summary = "✅[관리자] 특정 예약 상태 변경",
-            description = "관리용 예약 수정",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
-    @PatchMapping("/admin/{reservationId}")
-    public ResponseEntity<ApiResponseDto<ReservationInfoResponseDto>> updateReservationInfoByAdmin(@PathVariable Long reservationId,
-                                                                                                   @RequestBody ReservationInfoUpdateRequestDto requestDto) {
-        Reservation reservation = reservationService.updateReservationInfo(reservationId, requestDto);
-        ReservationInfoResponseDto reservationInfoDto = reservationService.responseDtoFrom(reservation);
 
-        ApiResponseDto<ReservationInfoResponseDto> response
-                = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 수정 되었습니다.", reservationInfoDto);
+//todo : 추후 신에게 검토
+    @Operation(summary = "✅ [관리자] 특정 날짜 + 특정 partition 들에 대한 모든 예약 상태 확인 ",
+            description = "파티션 별 로 예약 관리를 위해 날짜와 특정 파티션들에 대한 모든 예약을 확인",
+            security = {})
+    @GetMapping("/partitions/by-date")
+    public ResponseEntity<SuccessResponse<ReservationInfoResponses>> getReservationsByPartitionsAndDate(
+            @RequestParam("date") LocalDate date,
+            @RequestParam("partitionIds") List<Long> partitionIds) {
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+                var result = reservationQueryService.getReservationsByPartitionsAndDate(partitionIds, date);
+
+
+        return ResponseFactory.success(result);
     }
 
 }

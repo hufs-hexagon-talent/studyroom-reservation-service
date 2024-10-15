@@ -1,65 +1,35 @@
 package hufs.computer.studyroom.domain.reservation.controller;
 
-import hufs.computer.studyroom.domain.reservation.service.ReservationService;
-import hufs.computer.studyroom.domain.reservation.service.ReservationService;
-import hufs.computer.studyroom.domain.reservation.dto.SpecificRoomsReservationsDto;
-import hufs.computer.studyroom.common.util.ApiResponseDto;
-import hufs.computer.studyroom.common.util.ApiResponseListDto;
-import hufs.computer.studyroom.domain.reservation.dto.PartitionsReservationResponseDto;
-import hufs.computer.studyroom.domain.reservation.service.ReservationService;
+import hufs.computer.studyroom.common.response.SuccessResponse;
+import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.domain.reservation.dto.response.AllPartitionsReservationStatusResponse;
+import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 @Tag(name = "Reservation", description = "예약 정보 관련 API")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/reservations")
 public class AnyReservationController {
+        private final ReservationQueryService reservationQueryService;
 
-        private final ReservationService reservationService;
-
-        @Autowired
-        public AnyReservationController(ReservationService reservationService) {
-            this.reservationService = reservationService;
-        }
-        @Operation(summary = "✅ 해당 날짜 모든 파티션 예약 상태 확인 ",
-                description = "날짜를 받으면 모든 파티션의 예약을 확인, 예약 현황 테이블을 그릴때 사용",
+        @Operation(summary = "✅ 특정 날짜 ,특정 부서가 관리하는 모든 파티션의 예약 상태 조회",
+                description = "날짜를 받으면 룸(파티션 집합)들의 예약을 확인, 예약 현황 테이블을 그릴때 사용",
                 security = {})
-        @GetMapping("/by-date")
-        ResponseEntity<ApiResponseDto<ApiResponseListDto<PartitionsReservationResponseDto>>> getPartitionReservationsByDate(@RequestParam("date") LocalDate date) {
-            List<PartitionsReservationResponseDto> responseDtoList
-                    = reservationService.getReservationsByAllPartitionsAndDate(date);
+        @GetMapping("/by-date/{departmentId}")
+        ResponseEntity<SuccessResponse<AllPartitionsReservationStatusResponse>> getPartitionReservationsByDepartmentAndDate(
+                @PathVariable("departmentId") Long departmentId,
+                @RequestParam("date") LocalDate date) {
+            var result = reservationQueryService.getPartitionReservationsByDepartmentAndDate(departmentId, date);
 
-            ApiResponseListDto<PartitionsReservationResponseDto> wrapped
-                    = new ApiResponseListDto<>(responseDtoList);
-
-            ApiResponseDto<ApiResponseListDto<PartitionsReservationResponseDto>> response
-                    = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", wrapped);
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return ResponseFactory.success(result);
         }
 
-        @Operation(summary = "✅ 특정 날짜, 특정 room 들 모든 예약 상태 확인 ",
-            description = "날짜를 받으면 특정 룸들의 예약을 확인",
-            security = {})
-        @GetMapping("/partitions/by-date")
-        public ResponseEntity<ApiResponseDto<SpecificRoomsReservationsDto>> getReservationsByPartitionsByDate(
-                @RequestParam("date") LocalDate date,
-                @RequestParam("partitionIds") List<Long> partitionIds) {
-
-            SpecificRoomsReservationsDto responseDto
-                    = reservationService.getReservationsByPartitionsAndDate(partitionIds, date);
-
-            ApiResponseDto<SpecificRoomsReservationsDto> response
-                    = new ApiResponseDto<>(HttpStatus.OK.toString(), "정상적으로 조회 되었습니다.", responseDto);
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
     }
 
 

@@ -27,8 +27,6 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
     Optional<List<Reservation>> findAllByUser(User user);
 
-    Optional<Reservation> findTopByUserUserIdOrderByReservationStartTimeDesc(Long userId);
-
     // 검증을 위한 예약 가져오기 , userId , partitionIDs, 현재 시간, 현재 state 가 NOT_VISITED
     @Query(value =
             "SELECT * FROM reservation r WHERE r.user_id = :userId " +
@@ -55,31 +53,25 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             @Param("endTime") Instant endTime
     );
 
-    @Query("SELECT r " +
-            "FROM Reservation r " +
-            "WHERE r.user.userId = :userId " +
-            "AND r.state = 'NOT_VISITED' " +
-            "AND r.reservationStartTime <= :endTime")
-    List<Reservation> countNoShowsByUserIdAndPeriod(
-            @Param("userId") Long userId,
-            @Param("endTime") Instant endTime
-    );
 
-    @Query("SELECT r " +
-            "FROM Reservation r " +
-            "WHERE r.user.userId = :userId " +
-            "AND r.state = 'NOT_VISITED'" +
-            "AND r.reservationEndTime > :nowTime ")
-    List<Reservation> findCurrentReservations(
-            @Param("userId") Long userId,
-            @Param("nowTime") Instant nowTime);
+    // 사용자의 No Show 상태인 예약을 조회하는 메서드
+    @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED'")
+    List<Reservation> findNoShowReservationsByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT r " +
-            "FROM Reservation r " +
-            "WHERE r.createAt BETWEEN :startOfToday AND :endOfToday " +
-            "AND r.user.userId = :userId")
-    List<Reservation> findByUserIdAndReservationStartTime(
-            @Param("userId") Long userId,
-            @Param("startOfToday") Instant startOfToday,
-            @Param("endOfToday") Instant endOfToday);
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED' AND r.reservationEndTime > CURRENT_TIMESTAMP")
+    long countCurrentReservationsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.userId = :userId AND r.reservationStartTime BETWEEN :todayStart AND :todayEnd")
+    long countTodayReservationsByUserId(@Param("userId") Long userId, @Param("todayStart") Instant todayStart, @Param("todayEnd") Instant todayEnd);
+
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reservation r WHERE r.roomPartition.roomPartitionId = :roomPartitionId AND (r.reservationStartTime < :endDateTime AND r.reservationEndTime > :startDateTime)")
+    boolean existsOverlappingReservation(@Param("roomPartitionId") Long roomPartitionId, @Param("startDateTime") Instant startDateTime, @Param("endDateTime") Instant endDateTime);
+
+
+//todo : JPQL 로 수정
+//    예약 시작 시간이 가장 최신인 예약을 가져오는 메서드
+//    @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId ORDER BY r.reservationStartTime DESC")
+//    Reservation findRecentReservationByUserId(Long userId);
+
+
 }
