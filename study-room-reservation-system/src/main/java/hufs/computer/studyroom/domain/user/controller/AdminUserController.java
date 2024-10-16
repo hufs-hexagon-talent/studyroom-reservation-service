@@ -6,7 +6,8 @@ import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpBulkRequest;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
-import hufs.computer.studyroom.domain.user.service.UserService;
+import hufs.computer.studyroom.domain.user.service.UserCommandService;
+import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class AdminUserController {
-    private final UserService userService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
 
     // request param -> json request
     @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
@@ -27,7 +29,7 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/{userId}")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> getUserById(@PathVariable Long userId) {
-        var result = userService.findUserById(userId);
+        var result = userQueryService.findUserById(userId);
         return ResponseFactory.success(result);
     }
 
@@ -36,7 +38,7 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping
     public ResponseEntity<SuccessResponse<UserInfoResponses>> getAllUsers() {
-        var result = userService.findAllUsers();
+        var result = userQueryService.findAllUsers();
         return ResponseFactory.success(result);
     }
 
@@ -45,7 +47,7 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping
     public ResponseEntity<SuccessResponse<UserInfoResponses>> signUpUsers(@RequestBody SignUpBulkRequest bulkRequest) {
-        var result = userService.signUpUsers(bulkRequest);
+        var result = userCommandService.signUpUsers(bulkRequest);
         return ResponseFactory.created(result);
     }
 
@@ -55,7 +57,7 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/{userId}")
     public ResponseEntity<SuccessResponse<Void>> deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+        userCommandService.deleteUser(userId);
         return ResponseFactory.deleted();
     }
 
@@ -65,7 +67,7 @@ public class AdminUserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> updateUserInfo(@PathVariable Long userId,
                                                                               @RequestBody ModifyUserInfoRequest request) {
-        var result = userService.updateUserInfo(userId,request);
+        var result = userCommandService.updateUserInfo(userId,request);
         return ResponseFactory.modified(result);
     }
 }
