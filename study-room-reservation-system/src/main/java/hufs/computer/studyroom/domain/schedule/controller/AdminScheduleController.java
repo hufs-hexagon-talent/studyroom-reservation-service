@@ -6,11 +6,12 @@ import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkReq
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
 import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
-import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleServiceImpl;
+import hufs.computer.studyroom.domain.schedule.service.ScheduleCommandService;
+import hufs.computer.studyroom.domain.schedule.service.ScheduleQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +20,11 @@ import java.time.LocalDate;
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
 @RequestMapping("/schedules")
+@RequiredArgsConstructor
 public class AdminScheduleController {
-    private final RoomOperationPolicyScheduleServiceImpl scheduleService;
+    private final ScheduleCommandService scheduleCommandService;
+    private final ScheduleQueryService scheduleQueryService;
 
-    @Autowired
-    public AdminScheduleController(RoomOperationPolicyScheduleServiceImpl scheduleService) {
-        this.scheduleService = scheduleService;
-    }
 
     // todo : 트랜잭션
     @Operation(summary = "✅[관리자] 여러 schedule 생성",
@@ -34,7 +33,7 @@ public class AdminScheduleController {
     )
     @PostMapping()
      ResponseEntity<SuccessResponse<ScheduleInfoResponses>> createSchedules(@RequestBody CreateScheduleBulkRequest request) {
-        var result = scheduleService.createSchedules(request);
+        var result = scheduleCommandService.createSchedules(request);
         return ResponseFactory.created(result);
     }
 
@@ -44,7 +43,7 @@ public class AdminScheduleController {
     )
     @GetMapping("/{roomOperationPolicyScheduleId}")
      ResponseEntity<SuccessResponse<ScheduleInfoResponse>> getScheduleById(@PathVariable Long roomOperationPolicyScheduleId) {
-        var result = scheduleService.findScheduleById(roomOperationPolicyScheduleId);
+        var result = scheduleQueryService.findScheduleById(roomOperationPolicyScheduleId);
         return ResponseFactory.success(result);
     }
 
@@ -54,7 +53,7 @@ public class AdminScheduleController {
     )
     @GetMapping("date/{policyApplicationDate}")
     ResponseEntity<SuccessResponse<ScheduleInfoResponses>> getSchedules(@PathVariable LocalDate policyApplicationDate) {
-        var result = scheduleService.findScheduleByDate(policyApplicationDate);
+        var result = scheduleQueryService.findScheduleByDate(policyApplicationDate);
         return ResponseFactory.success(result);
     }
 
@@ -68,7 +67,7 @@ public class AdminScheduleController {
             @PathVariable Long roomOperationPolicyScheduleId,
             @RequestBody ModifyScheduleRequest request) {
 
-        var result = scheduleService.updateSchedule(roomOperationPolicyScheduleId, request);
+        var result = scheduleCommandService.updateSchedule(roomOperationPolicyScheduleId, request);
         return ResponseFactory.modified(result);
 
     }
@@ -79,7 +78,7 @@ public class AdminScheduleController {
     )
     @DeleteMapping("/{roomOperationPolicyScheduleId}")
      ResponseEntity<SuccessResponse<Void>> deleteSchedule(@PathVariable Long roomOperationPolicyScheduleId) {
-        scheduleService.deleteScheduleById(roomOperationPolicyScheduleId);
+        scheduleCommandService.deleteScheduleById(roomOperationPolicyScheduleId);
         return ResponseFactory.deleted();
     }
 }
