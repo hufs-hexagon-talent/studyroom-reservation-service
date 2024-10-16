@@ -2,7 +2,6 @@ package hufs.computer.studyroom.domain.schedule.mapper;
 
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
 import hufs.computer.studyroom.domain.room.entity.Room;
-import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkRequest;
 import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
@@ -15,7 +14,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RoomOperationPolicyScheduleMapper {
+
     // CreateScheduleBulkRequest의 단일 Schedule -> RoomOperationPolicySchedule 변환
+    @Mapping(target = "roomOperationPolicyScheduleId", ignore = true)
+    @Mapping(source = "policy", target = "roomOperationPolicy")
     RoomOperationPolicySchedule toRoomOperationPolicySchedule(RoomOperationPolicy policy, Room room, LocalDate policyApplicationDate);
 
     // 단일 RoomOperationPolicySchedule -> ScheduleInfoResponse 변환

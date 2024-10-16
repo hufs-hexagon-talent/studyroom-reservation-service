@@ -1,23 +1,19 @@
 package hufs.computer.studyroom.domain.schedule.service;
 
-import hufs.computer.studyroom.common.error.code.PolicyErrorCode;
 import hufs.computer.studyroom.common.error.code.RoomErrorCode;
 import hufs.computer.studyroom.common.error.code.ScheduleErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.error.exception.todo.notfound.ScheduleNotFoundException;
-import hufs.computer.studyroom.domain.policy.repository.RoomOperationPolicyRepository;
-import hufs.computer.studyroom.domain.room.entity.Room;
+import hufs.computer.studyroom.common.service.CommonHelperService;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.room.entity.Room;
+import hufs.computer.studyroom.domain.room.repository.RoomRepository;
 import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkRequest;
-import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
+import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.mapper.RoomOperationPolicyScheduleMapper;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
-import hufs.computer.studyroom.domain.room.repository.RoomRepository;
-import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
-import hufs.computer.studyroom.domain.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,22 +23,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
-public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPolicyScheduleService {
+public class ScheduleCommandService {
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final RoomRepository roomRepository;
-    private final RoomService roomService;
-    private final RoomOperationPolicyRepository policyRepository;
     private final RoomOperationPolicyScheduleMapper scheduleMapper;
+    private final CommonHelperService commonHelperService;
 
-    /*
-    * Command
-    * */
-    @Override
     public ScheduleInfoResponses createSchedules(CreateScheduleBulkRequest request) {
-        RoomOperationPolicy policy = policyRepository.findById(request.roomOperationPolicyId()).orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
+        RoomOperationPolicy policy = commonHelperService.getPolicyById(request.roomOperationPolicyId());
 
         List<LocalDate> dates = request.policyApplicationDates();
         if (dates == null || dates.isEmpty()) {throw new CustomException(ScheduleErrorCode.INVALID_DATES);
@@ -67,56 +58,31 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         List<RoomOperationPolicySchedule> schedules = scheduleRepository.saveAll(createSchedules);
         return scheduleMapper.toScheduleInfoResponses(schedules);
     }
-    /*
-     * Command
-     * */
-    @Override
-    public void deleteScheduleById(Long roomScheduleId) {
-        findScheduleById(roomScheduleId); // 찾아보고 없으면 예외처리
-        scheduleRepository.deleteById(roomScheduleId);
+
+    public void deleteScheduleById(Long scheduleId) {
+        // todo : 추후 validator 리팩토링
+        commonHelperService.getScheduleById(scheduleId); // 찾아보고 없으면 예외처리
+        scheduleRepository.deleteById(scheduleId);
     }
 
-    /*
-    * Query
-    * */
-    @Override
-    public ScheduleInfoResponse findScheduleById(Long scheduleId) {
-        RoomOperationPolicySchedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
-        return scheduleMapper.toScheduleInfoResponse(schedule);
-    }
-    /*
-     * Query
-     * */
-    @Override
-    public ScheduleInfoResponses findScheduleByDate(LocalDate date) {
-        List<RoomOperationPolicySchedule> schedules = scheduleRepository.findByPolicyApplicationDate(date);
-        return scheduleMapper.toScheduleInfoResponses(schedules);
-    }
-
-
-
-    @Override
-    public RoomOperationPolicySchedule findScheduleByRoomAndDate(Room room, LocalDate date) {
-        return scheduleRepository.findByRoomAndPolicyApplicationDate(room, date).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
-    }
-
-
-    @Override
     @Transactional
     public ScheduleInfoResponse updateSchedule(Long scheduleId, ModifyScheduleRequest request) {
-        RoomOperationPolicySchedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+        //todo mapper쪽으로 위임 할 지?
+
+        // todo : 추후 validator 리팩토링
+        RoomOperationPolicySchedule schedule = commonHelperService.getScheduleById(scheduleId);
 
         // 운영 정책 업데이트
         if (request.roomOperationPolicyId() != null) {
-            RoomOperationPolicy policy = policyRepository.findById(request.roomOperationPolicyId())
-                    .orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
+            // todo : 추후 validator 리팩토링?
+            RoomOperationPolicy policy = commonHelperService.getPolicyById(request.roomOperationPolicyId());
             schedule.setRoomOperationPolicy(policy);
         }
 
         // 룸 업데이트
         if (request.roomId() != null) {
-            Room room = roomRepository.findById(request.roomId())
-                    .orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
+            // todo : 추후 validator 리팩토링?
+            Room room = commonHelperService.getRoomById(request.roomId());
             schedule.setRoom(room);
         }
 
@@ -135,21 +101,12 @@ public class RoomOperationPolicyScheduleServiceImpl implements RoomOperationPoli
         return scheduleMapper.toScheduleInfoResponse(updatedSchedule);
     }
 
-
-    @Override
-    public AvailableDateResponses getAvailableDatesFromToday() {
-        LocalDate today = LocalDate.now();
-        List<LocalDate> dates = scheduleRepository.findAvailableRoomsGroupedByDate(today);
-        return scheduleMapper.toAvailableDateResponses(dates);
-    }
-
     /*
-    * util
-    * */
+     * util
+     * */
     private boolean isScheduleAlreadyExists(Long roomId, LocalDate date, Long excludeScheduleId) {
-        return scheduleRepository.existsByRoomIdAndPolicyApplicationDateAndRoomOperationPolicyScheduleIdNot(
+        return scheduleRepository.existsByRoomRoomIdAndPolicyApplicationDateAndRoomOperationPolicyScheduleIdNot(
                 roomId, date, excludeScheduleId
         );
     }
-
 }

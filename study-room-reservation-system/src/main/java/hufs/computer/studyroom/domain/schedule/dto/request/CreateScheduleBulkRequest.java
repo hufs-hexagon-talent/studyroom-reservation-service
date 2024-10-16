@@ -14,11 +14,11 @@ public record CreateScheduleBulkRequest(
         @NotNull(message = "운영 정책 ID를 입력해주세요.")
         Long roomOperationPolicyId,
 
-        @Schema(description = "방 ID 목록", example = "[1,2,3]")
+        @Schema(description = "방 ID 목록", example = "[1,2]")
         @NotNull(message = "방 ID 목록을 입력해주세요.")
         List<Long>roomIds,
 
-        @Schema(description = "정책 적용 날짜 목록", example = "[ 2024-10-08, 2024-10-09 ]")
+        @Schema(description = "정책 적용 날짜 목록", example = "[\"2024-10-16\", \"2024-10-17\"]")
         @NotNull(message = "정책을 적용할 날짜들을 입력해주세요.")
         List<LocalDate> policyApplicationDates // KST
 ){

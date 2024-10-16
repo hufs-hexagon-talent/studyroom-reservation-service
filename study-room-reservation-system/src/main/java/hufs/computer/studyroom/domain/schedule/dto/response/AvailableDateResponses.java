@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 @Schema(description = "운영 정책이 설정된 날짜 목록 응답 DTO")
 public record AvailableDateResponses(
-        @Schema(description = "운영 정책이 설정된 날짜들", example = "[ 2024-10-08, 2024-10-09] ")
+        @Schema(description = "운영 정책이 설정된 날짜들", example = "[\"2024-10-16\", \"2024-10-17\"]")
         List<LocalDate> availableDates
 ) {}
