@@ -7,7 +7,8 @@ import hufs.computer.studyroom.domain.partition.dto.request.CreatePartitionReque
 import hufs.computer.studyroom.domain.partition.dto.request.ModifyPartitionRequest;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponse;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponses;
-import hufs.computer.studyroom.domain.partition.service.RoomPartitionService;
+import hufs.computer.studyroom.domain.partition.service.PartitionCommandService;
+import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/partitions")
 public class AdminPartitionController {
-    private final RoomPartitionService partitionService;
+    private final PartitionCommandService partitionCommandService;
+    private final PartitionQueryService partitionQueryService;
 
 
     @Operation(summary = "✅[관리자] Room의 Partition 생성",
@@ -28,10 +30,11 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/partition")
-    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> createPartition(@RequestBody CreatePartitionRequest requestDto) {
-        var result = partitionService.createRoomPartition(requestDto);
+    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> createPartition(@RequestBody CreatePartitionRequest request) {
+        var result = partitionCommandService.createRoomPartition(request);
         return ResponseFactory.created(result);
     }
+
 
     @Operation(summary = "✅[관리자] partition 조회",
             description = "partition id로 조회 API",
@@ -39,9 +42,10 @@ public class AdminPartitionController {
     )
     @GetMapping("/{partitionId}")
     public ResponseEntity<SuccessResponse<PartitionInfoResponse>> getPartitionById(@PathVariable Long partitionId) {
-        var result = partitionService.findRoomPartitionById(partitionId);
+        var result = partitionQueryService.findRoomPartitionById(partitionId);
         return ResponseFactory.success(result);
     }
+
 
     @Operation(summary = "✅[관리자] 모든 partition 조회",
             description = "모든 partition 조회 API",
@@ -49,10 +53,12 @@ public class AdminPartitionController {
     )
     @GetMapping
     public ResponseEntity<SuccessResponse<PartitionInfoResponses>> getAllPartitions() {
-        var result = partitionService.findAll();
+        var result = partitionQueryService.findAll();
         return ResponseFactory.success(result);
 
     }
+
+
     @Operation(summary = "✅[관리자] partition 정보 수정",
             description = "해당 partition id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
@@ -60,7 +66,7 @@ public class AdminPartitionController {
     @PatchMapping("/{partitionId}")
     public ResponseEntity<SuccessResponse<PartitionInfoResponse>> updatePartition(@PathVariable Long partitionId,
                                                 @RequestBody ModifyPartitionRequest requestDto) {
-        var result = partitionService.modifyPartition(partitionId, requestDto);
+        var result = partitionCommandService.modifyPartition(partitionId, requestDto);
         return ResponseFactory.modified(result);
     }
 
@@ -71,7 +77,7 @@ public class AdminPartitionController {
     )
     @DeleteMapping("/{partitionId}")
     public ResponseEntity<SuccessResponse<Void>> deletePartition(@PathVariable Long partitionId) {
-        partitionService.deletePartitionById(partitionId);
+        partitionCommandService.deletePartitionById(partitionId);
         return ResponseFactory.deleted();
     }
 }
