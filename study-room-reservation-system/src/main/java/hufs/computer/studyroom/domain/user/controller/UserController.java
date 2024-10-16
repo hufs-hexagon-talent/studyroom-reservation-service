@@ -7,8 +7,9 @@ import hufs.computer.studyroom.domain.user.dto.request.ResetPasswordRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpRequest;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.entity.User;
+import hufs.computer.studyroom.domain.user.service.UserCommandService;
+import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import hufs.computer.studyroom.security.CustomUserDetails;
-import hufs.computer.studyroom.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,13 +25,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
 
     @Operation(summary = "✅ 회원가입",
             description = "아이디, 비밀번호, 학번, 이름")
     @PostMapping("/sign-up")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> signUpProcess(@RequestBody SignUpRequest request) {
-        var result = userService.signUpProcess(request);
+        var result = userCommandService.signUpProcess(request);
         return ResponseFactory.created(result);
     }
 
@@ -39,7 +41,7 @@ public class UserController {
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        var result = userService.findUserById(currentUser.getUser().getUserId());
+        var result = userQueryService.findUserById(currentUser.getUser().getUserId());
         return ResponseFactory.success(result);
     }
 
@@ -51,7 +53,7 @@ public class UserController {
     public ResponseEntity<SuccessResponse<UserInfoResponse>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                           @RequestBody ModifyPasswordRequest request) {
         User user = currentUser.getUser();
-        var result = userService.resetUserPasswordWithOldPassword(user.getUserId(), request);
+        var result = userCommandService.resetUserPasswordWithOldPassword(user.getUserId(), request);
         return ResponseFactory.modified(result);
     }
 
@@ -59,7 +61,7 @@ public class UserController {
             description = "JWT 토큰과 새로운 비밀번호를 사용하여 비밀번호를 재설정하는 API")
     @PostMapping("/reset-password")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
-        var result = userService.resetUserPasswordWithToken(request);// 비밀번호 업데이트
+        var result = userCommandService.resetUserPasswordWithToken(request);// 비밀번호 업데이트
         return ResponseFactory.modified(result);
     }
 }
