@@ -26,7 +26,7 @@ public interface RoomMapper {
 
     // Room 업데이트
     @Mapping(target = "department", source = "department")
-    Room updateRoom(ModifyRoomRequest request, Department department, @MappingTarget Room room);
+    void updateRoom(ModifyRoomRequest request, Department department, @MappingTarget Room room);
 
     default RoomInfoResponses toRoomInfoResponses(List<Room> rooms) {
         List<RoomInfoResponse> responses = rooms.stream()

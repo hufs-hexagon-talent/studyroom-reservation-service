@@ -30,9 +30,9 @@ public class RoomCommandService {
     public RoomInfoResponse updateRoom(Long roomId, ModifyRoomRequest request) {
         Room room = commonHelperService.getRoomById(roomId);
         Department department = commonHelperService.getDepartmentById(request.departmentId());
-        Room modified = roomMapper.updateRoom(request, department, room);
+        roomMapper.updateRoom(request, department, room);
 
-        roomRepository.save(modified);
+        roomRepository.save(room);
         return roomMapper.toInfoResponse(room);
     }
 
