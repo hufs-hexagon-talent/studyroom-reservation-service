@@ -16,12 +16,15 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     // SignUpRequest -> User 엔티티 변환
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "password", source = "encodedPassword")
     @Mapping(target = "serviceRole", source = "serviceRole")
     @Mapping(target = "department", source = "department")
     User toUser(SignUpRequest request, String encodedPassword, ServiceRole serviceRole, Department department);
 
     // User -> SignUpRequest DTO로 변환
+    @Mapping(source = "department.departmentId", target = "departmentId")
+    @Mapping(source = "department.departmentName", target = "departmentName")
     UserInfoResponse toInfoResponse(User user);
 
     // ModifyUserInfoRequest -> 기존 User 엔티티 수정
