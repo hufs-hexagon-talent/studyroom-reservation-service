@@ -11,4 +11,6 @@ public interface RoomPartitionRepository extends JpaRepository<RoomPartition,Lon
 //   RoomID로 PartitionId들 찾기
     List<RoomPartition> findByRoom_RoomId(Long roomId);
 
+    //   특정 Department에 속하는 모든 RoomPartition을 조회
+    List<RoomPartition> findAllByRoomDepartmentDepartmentId(Long departmentId);
 }
