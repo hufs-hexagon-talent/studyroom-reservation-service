@@ -7,6 +7,7 @@ import hufs.computer.studyroom.common.util.todo.ApiResponseListDto;
 import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
 import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleService;
 import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleServiceImpl;
+import hufs.computer.studyroom.domain.schedule.service.ScheduleQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +24,13 @@ import java.util.List;
 @RequestMapping("/schedules")
 @RequiredArgsConstructor
 public class AnyScheduleController {
-    private final RoomOperationPolicyScheduleService scheduleService;
-
+    private final ScheduleQueryService scheduleQueryService;
     @Operation(summary = "✅ 현재로 부터 미래까지 운영 정책이 설정된 방이 있는 날짜를 조회",
             description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회"
     )
     @GetMapping("/available-dates")
     public ResponseEntity<SuccessResponse<AvailableDateResponses>> getAvailableDatesFromToday() {
-        var result = scheduleService.getAvailableDatesFromToday();
+        var result = scheduleQueryService.getAvailableDatesFromToday();
         return ResponseFactory.success(result);
     }
 }
