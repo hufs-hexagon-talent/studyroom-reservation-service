@@ -9,9 +9,9 @@ import java.time.LocalTime;
 @Schema
 @Builder
 public record ModifyOperationPolicyRequest (
-        @Schema() LocalTime operationStartTime,
-        @Schema() LocalTime operationEndTime,
-        @Schema() Integer eachMaxMinute
+        @Schema(description = "[수정] 운영 시작 시간") LocalTime operationStartTime,
+        @Schema(description = "[수정] 운영 종료 시간") LocalTime operationEndTime,
+        @Schema(description = "[수정] 최대 예약 시간") Integer eachMaxMinute
 ){
 
 }
