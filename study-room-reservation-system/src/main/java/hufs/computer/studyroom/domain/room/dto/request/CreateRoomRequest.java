@@ -1,6 +1,7 @@
 package hufs.computer.studyroom.domain.room.dto.request;
 
 
+import hufs.computer.studyroom.common.validation.annotation.ExistDepartment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -14,5 +15,6 @@ public record CreateRoomRequest(
 
         @Schema(description = "관리 학과 ID", example = "1")
         @NotNull(message = "관리 학과 ID를 입력해주세요.")
+        @ExistDepartment
         Long departmentId)
 {}

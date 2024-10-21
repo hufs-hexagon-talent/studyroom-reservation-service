@@ -1,6 +1,7 @@
 package hufs.computer.studyroom.domain.room.service;
 
-import hufs.computer.studyroom.common.service.CommonHelperService;
+import hufs.computer.studyroom.common.error.code.RoomErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponses;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.partition.mapper.RoomPartitionMapper;
@@ -24,10 +25,9 @@ public class RoomQueryService {
     private final RoomPartitionRepository partitionRepository;
     private final RoomPartitionMapper partitionMapper;
     private final RoomMapper roomMapper;
-    private final CommonHelperService commonHelperService;
 
     public RoomInfoResponse findRoomById(Long roomId) {
-        Room room = commonHelperService.getRoomById(roomId);
+        Room room = getRoomById(roomId);
         return roomMapper.toInfoResponse(room);
     }
 
@@ -38,10 +38,15 @@ public class RoomQueryService {
 
 
     public PartitionInfoResponses findPartitionsByRoomId(Long roomId) {
-        Room room = commonHelperService.getRoomById(roomId); // todo 유효성 검사로
         List<RoomPartition> partitions = partitionRepository.findByRoom_RoomId(roomId);
         return partitionMapper.toPartitionInfoResponses(partitions);
     }
 
+    public Room getRoomById(Long id) {
+        return roomRepository.findById(id).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
+    }
+    public boolean existByRoomId(Long roomId) {
+        return roomRepository.existsById(roomId);
+    }
 
 }

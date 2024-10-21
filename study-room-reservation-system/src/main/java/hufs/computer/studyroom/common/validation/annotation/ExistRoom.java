@@ -1,7 +1,6 @@
 package hufs.computer.studyroom.common.validation.annotation;
 
 import hufs.computer.studyroom.common.validation.validator.ExistRoomValidator;
-import hufs.computer.studyroom.common.validation.validator.ExistUserValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
