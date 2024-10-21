@@ -2,7 +2,6 @@ package hufs.computer.studyroom.domain.user.service;
 
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.service.CommonHelperService;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
 import hufs.computer.studyroom.domain.user.entity.User;
@@ -20,7 +19,6 @@ import java.util.List;
 public class UserQueryService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final CommonHelperService commonHelperService;
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new CustomException(UserErrorCode.USERNAME_ALREADY_EXISTS));
@@ -36,8 +34,16 @@ public class UserQueryService {
     }
 
     public UserInfoResponse findUserById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        User user = getUserById(userId);
         return userMapper.toInfoResponse(user);
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+    }
+
+    public boolean existByUserId(Long userId) {return userRepository.existsById(userId);}
+    public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
+    public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
+    public boolean existByEmail(String email) {return userRepository.existsByEmail(email);}
 }

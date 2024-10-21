@@ -28,6 +28,8 @@ public interface UserMapper {
     UserInfoResponse toInfoResponse(User user);
 
     // ModifyUserInfoRequest -> 기존 User 엔티티 수정
+    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "password", ignore = true)
     @Mapping(target = "department", source = "department")
     void updateUserFromRequest(ModifyUserInfoRequest request, @MappingTarget User user, Department department);
 

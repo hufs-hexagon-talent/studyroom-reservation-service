@@ -13,6 +13,7 @@ import hufs.computer.studyroom.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class UserController {
     @Operation(summary = "✅ 회원가입",
             description = "아이디, 비밀번호, 학번, 이름")
     @PostMapping("/sign-up")
-    public ResponseEntity<SuccessResponse<UserInfoResponse>> signUpProcess(@RequestBody SignUpRequest request) {
+    public ResponseEntity<SuccessResponse<UserInfoResponse>> signUpProcess(@Valid @RequestBody SignUpRequest request) {
         var result = userCommandService.signUpProcess(request);
         return ResponseFactory.created(result);
     }
