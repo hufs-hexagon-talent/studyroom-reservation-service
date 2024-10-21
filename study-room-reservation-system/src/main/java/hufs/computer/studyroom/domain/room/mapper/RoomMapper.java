@@ -25,6 +25,7 @@ public interface RoomMapper {
     RoomInfoResponse toInfoResponse(Room room);
 
     // Room 업데이트
+    @Mapping(target = "roomId", ignore = true)
     @Mapping(target = "department", source = "department")
     void updateRoom(ModifyRoomRequest request, Department department, @MappingTarget Room room);
 

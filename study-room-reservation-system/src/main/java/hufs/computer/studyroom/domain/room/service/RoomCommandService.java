@@ -1,7 +1,7 @@
 package hufs.computer.studyroom.domain.room.service;
 
-import hufs.computer.studyroom.common.service.CommonHelperService;
 import hufs.computer.studyroom.domain.department.entity.Department;
+import hufs.computer.studyroom.domain.department.service.DepartmentService;
 import hufs.computer.studyroom.domain.room.dto.request.CreateRoomRequest;
 import hufs.computer.studyroom.domain.room.dto.request.ModifyRoomRequest;
 import hufs.computer.studyroom.domain.room.dto.response.RoomInfoResponse;
@@ -18,18 +18,19 @@ import org.springframework.stereotype.Service;
 public class RoomCommandService {
     private final RoomRepository roomRepository;
     private final RoomMapper roomMapper;
-    private final CommonHelperService commonHelperService;
+    private final RoomQueryService roomQueryService;
+    private final DepartmentService departmentService;
 
     public RoomInfoResponse createRoom(CreateRoomRequest request) {
-        Department department = commonHelperService.getDepartmentById(request.departmentId());
+        Department department = departmentService.getDepartmentById(request.departmentId());
         Room room = roomMapper.toRoom(request, department);
         roomRepository.save(room);
         return roomMapper.toInfoResponse(room);
     }
 
     public RoomInfoResponse updateRoom(Long roomId, ModifyRoomRequest request) {
-        Room room = commonHelperService.getRoomById(roomId);
-        Department department = commonHelperService.getDepartmentById(request.departmentId());
+        Room room = roomQueryService.getRoomById(roomId);
+        Department department = departmentService.getDepartmentById(request.departmentId());
         roomMapper.updateRoom(request, department, room);
 
         roomRepository.save(room);
@@ -37,7 +38,6 @@ public class RoomCommandService {
     }
 
     public void deleteRoom(Long roomId) {
-        commonHelperService.getRoomById(roomId);
         roomRepository.deleteById(roomId);
     }
 }
