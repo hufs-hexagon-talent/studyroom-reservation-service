@@ -1,5 +1,6 @@
 package hufs.computer.studyroom.domain.reservation.mapper;
 
+import hufs.computer.studyroom.domain.checkin.dto.response.CheckInResponse;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
 import hufs.computer.studyroom.domain.reservation.dto.request.CreateReservationRequest;
@@ -12,6 +13,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.time.Instant;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -40,6 +42,13 @@ public interface ReservationMapper {
     ReservationInfoResponse toInfoResponse(Reservation reservation);
 
     // ModifyReservationInfoRequest -> 기존 Reservation 엔티티의 state 수정
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "roomPartition", ignore = true)
+    @Mapping(target = "reservationStartTime", ignore = true)
+    @Mapping(target = "reservationEndTime", ignore = true)
+    @Mapping(target = "createAt", ignore = true) // createAt은 엔티티 생성 시 자동으로 설정됨
+    @Mapping(target = "updateAt", ignore = true) // updateAt은 수정 시 자동으로 설정됨
+    @Mapping(target = "reservationId", ignore = true) // 예약 ID는 자동 생성됨
     void updateStateFromRequest(ModifyReservationStateRequest request, @MappingTarget Reservation reservation);
 
     // Reservation -> TimeRange 변환
@@ -78,5 +87,10 @@ public interface ReservationMapper {
                 .map(this::toInfoResponse)
                 .toList();
         return new ReservationInfoResponses(reservationInfoResponses);
+    }
+    // List<Reservation>와 CheckIn 시간 -> CheckInResponse 생성
+    default CheckInResponse toCheckInResponse(List<Reservation> reservations, Instant checkInTime) {
+        ReservationInfoResponses reservationInfoResponses = toInfoResponses(reservations);
+        return new CheckInResponse(reservationInfoResponses, checkInTime);
     }
 }
