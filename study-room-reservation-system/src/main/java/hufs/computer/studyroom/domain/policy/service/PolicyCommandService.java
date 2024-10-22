@@ -1,6 +1,6 @@
 package hufs.computer.studyroom.domain.policy.service;
 
-import hufs.computer.studyroom.common.service.CommonHelperService;
+import hufs.computer.studyroom.common.validation.annotation.ExistPolicy;
 import hufs.computer.studyroom.domain.policy.dto.request.CreateOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.dto.request.ModifyOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponse;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class PolicyCommandService {
     private final RoomOperationPolicyRepository policyRepository;
     private final RoomOperationPolicyMapper policyMapper;
-    private final CommonHelperService commonHelperService;
+    private final PolicyQueryService policyQueryService;
 
     public OperationPolicyInfoResponse createPolicy(CreateOperationPolicyRequest request) {
         RoomOperationPolicy roomOperationPolicy = policyMapper.toRoomOperationPolicy(request);
@@ -27,7 +27,7 @@ public class PolicyCommandService {
     }
 
     public OperationPolicyInfoResponse updatePolicy(Long policyId, ModifyOperationPolicyRequest request) {
-        RoomOperationPolicy policy = commonHelperService.getPolicyById(policyId);
+        RoomOperationPolicy policy = policyQueryService.getPolicyById(policyId);
 
         policyMapper.updatePolicy(request, policy);
 
@@ -35,8 +35,7 @@ public class PolicyCommandService {
         return policyMapper.toInfoResponse(savedPolicy);
     }
 
-    public void deletePolicy(Long policyId) {
-        commonHelperService.getPolicyById(policyId); // todo validator 로 이관
+    public void deletePolicy(@ExistPolicy Long policyId) {
         policyRepository.deleteById(policyId);
     }
 }
