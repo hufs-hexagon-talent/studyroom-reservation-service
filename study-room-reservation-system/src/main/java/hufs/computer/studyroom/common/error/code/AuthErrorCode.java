@@ -25,7 +25,11 @@ public enum AuthErrorCode implements ErrorCode{
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "AUTH-012", "쿠키에 refreshToken 이 없습니다."),
     ACCESS_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "AUTH-013", "요청 헤더에 accessToken 이 없습니다."),
     // 권한 애러
-    USER_NOT_EXIST(HttpStatus.UNAUTHORIZED, "AUTH-014", "가입한 사용자가 존재하지 않습니다.");
+    USER_NOT_EXIST(HttpStatus.UNAUTHORIZED, "AUTH-014", "가입한 사용자가 존재하지 않습니다."),
+
+    // 메일 인증 코드
+    AUTH_CODE_MISMATCH(HttpStatus.CONFLICT, "AUTH-015", "인증 코드가 일치하지않습니다."),
+    EMAIL_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-016", "이메일 생성 또는 전송에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

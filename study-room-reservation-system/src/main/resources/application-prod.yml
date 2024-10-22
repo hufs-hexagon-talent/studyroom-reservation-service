@@ -20,6 +20,7 @@ spring:
         noShowLimit : 3
         reservationLimit : 1
         reservationLimitToday : 2
+        authCodeExpiryTime : 5
 
     jpa:
         show-sql: false
