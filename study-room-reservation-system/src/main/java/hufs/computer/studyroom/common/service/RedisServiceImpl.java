@@ -1,6 +1,7 @@
-package hufs.computer.studyroom.common;
+package hufs.computer.studyroom.common.service;
 
-import hufs.computer.studyroom.common.error.exception.todo.checkin.KeyNotFoundException;
+import hufs.computer.studyroom.common.error.code.RedisErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -39,13 +40,12 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-
     public String getValue(String key) {
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Object value = valueOperations.get(key);
 
         if (value == null) {
-                throw new KeyNotFoundException();
+                throw new CustomException(RedisErrorCode.REDIS_KEY_NOT_FOUND);
         }
         return String.valueOf(value);
     }

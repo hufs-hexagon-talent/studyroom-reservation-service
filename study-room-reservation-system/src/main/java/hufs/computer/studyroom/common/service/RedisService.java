@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common;
+package hufs.computer.studyroom.common.service;
 
 import org.springframework.stereotype.Service;
 

@@ -4,7 +4,7 @@ import hufs.computer.studyroom.common.error.code.CheckInErrorCode;
 import hufs.computer.studyroom.common.error.code.RedisErrorCode;
 import hufs.computer.studyroom.common.error.code.RoomErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.domain.auth.service.RedisService;
+import hufs.computer.studyroom.common.service.RedisService;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.room.service.RoomQueryService;
 import hufs.computer.studyroom.domain.user.service.UserQueryService;
