@@ -37,11 +37,13 @@ public class RoomQueryService {
     }
 
 
-    public PartitionInfoResponses findPartitionsByRoomId(Long roomId) {
-        List<RoomPartition> partitions = partitionRepository.findByRoom_RoomId(roomId);
+    public PartitionInfoResponses getPartitionInfosByRoomId(Long roomId) {
+        List<RoomPartition> partitions = getPartitionsByRoomId(roomId);
         return partitionMapper.toPartitionInfoResponses(partitions);
     }
-
+    public List<RoomPartition> getPartitionsByRoomId(Long roomId) {
+        return  partitionRepository.findByRoom_RoomId(roomId);
+    }
     public Room getRoomById(Long id) {
         return roomRepository.findById(id).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
     }

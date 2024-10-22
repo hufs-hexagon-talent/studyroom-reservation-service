@@ -81,7 +81,7 @@ public class AdminRoomController {
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<SuccessResponse<PartitionInfoResponses>> getPartitionsByRoomId(
             @ExistRoom @PathVariable Long roomId) {
-        var result = roomQueryService.findPartitionsByRoomId(roomId);
+        var result = roomQueryService.getPartitionInfosByRoomId(roomId);
 
         return ResponseFactory.success(result);
     }
