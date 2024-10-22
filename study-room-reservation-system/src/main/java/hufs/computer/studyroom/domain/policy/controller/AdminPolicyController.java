@@ -1,6 +1,7 @@
 package hufs.computer.studyroom.domain.policy.controller;
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.common.validation.annotation.ExistPolicy;
 import hufs.computer.studyroom.domain.policy.dto.request.CreateOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponse;
 import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponses;
@@ -12,12 +13,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "RoomOperationPolicy", description = "Room 운영 정책 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/policies")
+@Validated
 public class AdminPolicyController {
     private final PolicyCommandService policyCommandService;
     private final PolicyQueryService policyQueryService;
@@ -36,7 +39,7 @@ public class AdminPolicyController {
             description = "RoomOperationPolicy id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/{roomOperationPolicyId}")
-    public ResponseEntity<SuccessResponse<OperationPolicyInfoResponse>> getPolicy(@PathVariable Long roomOperationPolicyId) {
+    public ResponseEntity<SuccessResponse<OperationPolicyInfoResponse>> getPolicy(@ExistPolicy @PathVariable Long roomOperationPolicyId) {
         var result = policyQueryService.findPolicyById(roomOperationPolicyId);
         return ResponseFactory.success(result);
     }
@@ -55,7 +58,7 @@ public class AdminPolicyController {
             security = {@SecurityRequirement(name = "JWT")})
     @PatchMapping("/policy/{roomOperationPolicyId}")
     public ResponseEntity<SuccessResponse<OperationPolicyInfoResponse>> updatePolicy(
-            @PathVariable Long roomOperationPolicyId,
+            @ExistPolicy @PathVariable Long roomOperationPolicyId,
             @RequestBody ModifyOperationPolicyRequest requestDto) {
 
         var result = policyCommandService.updatePolicy(roomOperationPolicyId, requestDto);
@@ -67,7 +70,7 @@ public class AdminPolicyController {
             description = "해당 RoomOperationPolicy id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/{roomOperationPolicyId}")
-    public ResponseEntity<SuccessResponse<Void>> deletePolicy(@PathVariable Long roomOperationPolicyId) {
+    public ResponseEntity<SuccessResponse<Void>> deletePolicy(@ExistPolicy @PathVariable Long roomOperationPolicyId) {
         policyCommandService.deletePolicy(roomOperationPolicyId);
         return ResponseFactory.deleted();
     }

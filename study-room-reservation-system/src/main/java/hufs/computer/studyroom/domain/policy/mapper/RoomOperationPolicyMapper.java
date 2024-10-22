@@ -19,6 +19,7 @@ public interface RoomOperationPolicyMapper {
     RoomOperationPolicy toRoomOperationPolicy(CreateOperationPolicyRequest request);
 
     // ModifyOperationPolicyRequest -> RoomOperationPolicy 업데이트 (기존 엔티티 수정)
+    @Mapping(target = "roomOperationPolicyId", ignore = true)
     void updatePolicy(ModifyOperationPolicyRequest request, @MappingTarget RoomOperationPolicy policy);
 
     // RoomOperationPolicy -> OperationPolicyInfoResponse 변환
