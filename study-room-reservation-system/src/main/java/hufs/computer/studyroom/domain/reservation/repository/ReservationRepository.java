@@ -25,8 +25,6 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
                                                   @Param("endTime") Instant endTime
     );
 
-    Optional<List<Reservation>> findAllByUser(User user);
-
     // 검증을 위한 예약 가져오기 , userId , partitionIDs, 현재 시간, 현재 state 가 NOT_VISITED
     @Query(value =
             "SELECT * FROM reservation r WHERE r.user_id = :userId " +
@@ -67,11 +65,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reservation r WHERE r.roomPartition.roomPartitionId = :roomPartitionId AND (r.reservationStartTime < :endDateTime AND r.reservationEndTime > :startDateTime)")
     boolean existsOverlappingReservation(@Param("roomPartitionId") Long roomPartitionId, @Param("startDateTime") Instant startDateTime, @Param("endDateTime") Instant endDateTime);
 
+//    예약 시작 시간이 가장 최신인 예약을 가져오는 메서드 / reservationStartTime ( 예약 시작 시간 ) 기준
+    Optional<Reservation> findTopByUserUserIdOrderByReservationStartTimeDesc(Long userId);
 
-//todo : JPQL 로 수정
-//    예약 시작 시간이 가장 최신인 예약을 가져오는 메서드
-//    @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId ORDER BY r.reservationStartTime DESC")
-//    Reservation findRecentReservationByUserId(Long userId);
-
-
+// 해당 유저의 모든 reservation 로그 찾기
+    Optional<List<Reservation>> findAllByUserUserId(Long userId);
 }

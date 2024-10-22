@@ -1,10 +1,9 @@
 package hufs.computer.studyroom.domain.reservation.service;
 
-import hufs.computer.studyroom.common.error.code.PolicyErrorCode;
-import hufs.computer.studyroom.common.error.code.ReservationErrorCode;
+import hufs.computer.studyroom.common.error.code.*;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.service.CommonHelperService;
 import hufs.computer.studyroom.common.util.DateTimeUtil;
+import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
 import hufs.computer.studyroom.domain.room.entity.Room;
@@ -25,6 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReservationValidationService {
+
     @Value("${spring.service.noShowBlockMonth}")
     private Long noShowBlockMonth;
     @Value("${spring.service.noShowLimit}")
@@ -36,7 +36,7 @@ public class ReservationValidationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
-    private final CommonHelperService commonHelperService;
+    private final PartitionQueryService partitionQueryService;
 
 
     public void validateRoomAvailability(Long userId, Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
@@ -95,7 +95,7 @@ public class ReservationValidationService {
     private void validateRoomOperationTime(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
 //        todo : 로직 작성
 
-        Room room = commonHelperService.getPartitionById(roomPartitionId).getRoom();
+        Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
         LocalDate reservationDate = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
 
         RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, reservationDate)
@@ -117,7 +117,7 @@ public class ReservationValidationService {
     private void validateMaxReservationTime(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
 //        todo : 로직 작성
 //        예약시 시간이 정책의 정해진 한도를 초과하는지?
-        Room room = commonHelperService.getPartitionById(roomPartitionId).getRoom();
+        Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
         LocalDate reservationDate = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
 
         RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, reservationDate)
