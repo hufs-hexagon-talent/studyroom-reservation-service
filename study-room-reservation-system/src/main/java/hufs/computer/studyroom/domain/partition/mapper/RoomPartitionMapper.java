@@ -20,11 +20,12 @@ import java.util.List;
 public interface RoomPartitionMapper {
     // request 변환 (RequestDTO -> Entity)
     @Mapping(target = "room", source = "room")
+    @Mapping(target = "roomPartitionId", ignore = true)
     RoomPartition toRoomPartition(CreatePartitionRequest request , Room room);
 
-    // request 변환 (RequestDTO -> Entity)
+    @Mapping(target = "roomPartitionId", ignore = true)
     @Mapping(target = "room", source = "room")
-    RoomPartition toRoomPartition(ModifyPartitionRequest request, Room room , @MappingTarget RoomPartition partition);
+    void updateFromRequest(ModifyPartitionRequest request, Room room , @MappingTarget RoomPartition partition);
 
     // RoomPartition -> PartitionInfoResponse 변환
     @Mapping(source = "room.roomId", target = "roomId")
@@ -45,8 +46,6 @@ public interface RoomPartitionMapper {
                 .partitions(responses)
                 .build();
     }
-    // 리스트 변환 (Entity List -> ResponseDTO List)
-    List<PartitionPolicyResponse> toPolicyResponseList(List<RoomPartition> partitions);
 
     // 리스트를 PartitionPolicyResponses로 감싸는 변환
     default PartitionPolicyResponses toPolicyResponses(List<PartitionPolicyResponse> partitionPolicies) {
