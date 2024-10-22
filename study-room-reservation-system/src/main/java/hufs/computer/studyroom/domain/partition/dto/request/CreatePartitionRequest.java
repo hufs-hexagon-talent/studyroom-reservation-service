@@ -1,5 +1,6 @@
 package hufs.computer.studyroom.domain.partition.dto.request;
 
+import hufs.computer.studyroom.common.validation.annotation.ExistRoom;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.Builder;
 public record CreatePartitionRequest(
 
         @Schema(description = "룸 ID", example = "1")
+        @ExistRoom
         @NotNull(message = "Room ID를 입력해주세요.")
         Long roomId,
 

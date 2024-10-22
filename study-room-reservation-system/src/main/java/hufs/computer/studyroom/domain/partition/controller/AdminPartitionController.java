@@ -3,6 +3,7 @@ package hufs.computer.studyroom.domain.partition.controller;
 
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.common.validation.annotation.ExistPartition;
 import hufs.computer.studyroom.domain.partition.dto.request.CreatePartitionRequest;
 import hufs.computer.studyroom.domain.partition.dto.request.ModifyPartitionRequest;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponse;
@@ -12,14 +13,17 @@ import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "RoomPartition", description = "방 정보 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/partitions")
+@Validated
 public class AdminPartitionController {
     private final PartitionCommandService partitionCommandService;
     private final PartitionQueryService partitionQueryService;
@@ -30,7 +34,8 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PostMapping("/partition")
-    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> createPartition(@RequestBody CreatePartitionRequest request) {
+    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> createPartition(
+            @Valid @RequestBody CreatePartitionRequest request) {
         var result = partitionCommandService.createRoomPartition(request);
         return ResponseFactory.created(result);
     }
@@ -41,7 +46,8 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @GetMapping("/{partitionId}")
-    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> getPartitionById(@PathVariable Long partitionId) {
+    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> getPartitionById(
+            @ExistPartition @PathVariable Long partitionId) {
         var result = partitionQueryService.findRoomPartitionById(partitionId);
         return ResponseFactory.success(result);
     }
@@ -49,8 +55,7 @@ public class AdminPartitionController {
 
     @Operation(summary = "✅[관리자] 모든 partition 조회",
             description = "모든 partition 조회 API",
-            security = {@SecurityRequirement(name = "JWT")}
-    )
+            security = {@SecurityRequirement(name = "JWT")})
     @GetMapping
     public ResponseEntity<SuccessResponse<PartitionInfoResponses>> getAllPartitions() {
         var result = partitionQueryService.findAll();
@@ -64,8 +69,9 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @PatchMapping("/{partitionId}")
-    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> updatePartition(@PathVariable Long partitionId,
-                                                @RequestBody ModifyPartitionRequest requestDto) {
+    public ResponseEntity<SuccessResponse<PartitionInfoResponse>> updatePartition(
+                                                @ExistPartition @PathVariable Long partitionId,
+                                                @Valid @RequestBody ModifyPartitionRequest requestDto) {
         var result = partitionCommandService.modifyPartition(partitionId, requestDto);
         return ResponseFactory.modified(result);
     }
@@ -76,7 +82,8 @@ public class AdminPartitionController {
             security = {@SecurityRequirement(name = "JWT")}
     )
     @DeleteMapping("/{partitionId}")
-    public ResponseEntity<SuccessResponse<Void>> deletePartition(@PathVariable Long partitionId) {
+    public ResponseEntity<SuccessResponse<Void>> deletePartition(
+            @ExistPartition @PathVariable Long partitionId) {
         partitionCommandService.deletePartitionById(partitionId);
         return ResponseFactory.deleted();
     }
