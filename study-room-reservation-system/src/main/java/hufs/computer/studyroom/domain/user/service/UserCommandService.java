@@ -6,7 +6,7 @@ import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
-import hufs.computer.studyroom.domain.department.service.DepartmentService;
+import hufs.computer.studyroom.domain.department.service.DepartmentQueryService;
 import hufs.computer.studyroom.domain.user.dto.request.*;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
@@ -36,7 +36,7 @@ public class UserCommandService {
     private final UserMapper userMapper;
     private final JWTUtil jwtUtil;
     private final UserQueryService userQueryService;
-    private final DepartmentService departmentService;
+    private final DepartmentQueryService departmentQueryService;
 
     public UserInfoResponse signUpProcess(@Valid SignUpRequest request) {
 
@@ -70,7 +70,7 @@ public class UserCommandService {
 
     public UserInfoResponse updateUserInfo(Long userId, ModifyUserInfoRequest request) {
         User user = userQueryService.getUserById(userId);
-        Department department = departmentService.getDepartmentById(request.departmentId());
+        Department department = departmentQueryService.getDepartmentById(request.departmentId());
         userMapper.updateUserFromRequest(request, user, department);
         User updatedUser = userRepository.save(user);
         return userMapper.toInfoResponse(updatedUser);

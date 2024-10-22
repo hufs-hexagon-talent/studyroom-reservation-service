@@ -1,7 +1,5 @@
 package hufs.computer.studyroom.domain.department.service;
 
-import hufs.computer.studyroom.common.error.code.DepartmentErrorCode;
-import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.domain.department.dto.request.CreateDepartmentRequest;
 import hufs.computer.studyroom.domain.department.dto.request.ModifyDepartmentRequest;
 import hufs.computer.studyroom.domain.department.dto.response.DepartmentInfoResponse;
@@ -15,9 +13,10 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DepartmentService {
+public class DepartmentCommandService {
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
+    private final DepartmentQueryService departmentQueryService;
 
     /* Command */
     public DepartmentInfoResponse createDepartment(CreateDepartmentRequest request) {
@@ -27,21 +26,13 @@ public class DepartmentService {
     }
     /* Command */
     public DepartmentInfoResponse updateDepartment(Long departmentId, ModifyDepartmentRequest request) {
-        Department department = departmentRepository.findById(departmentId).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
+        Department department = departmentQueryService.getDepartmentById(departmentId);
         departmentMapper.updateDepartmentFromRequest(request, department);
         departmentRepository.save(department);
         return departmentMapper.toInfoResponse(department);
     }
     /* Command */
     public void deleteDepartment(Long departmentId) {
-        findDepartmentById(departmentId);
         departmentRepository.deleteById(departmentId);
     }
-
-    /* Query */
-    public DepartmentInfoResponse findDepartmentById(Long departmentId) {
-        Department department = departmentRepository.findById(departmentId).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
-        return departmentMapper.toInfoResponse(department);
-    }
-
 }
