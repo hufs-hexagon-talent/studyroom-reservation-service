@@ -1,12 +1,12 @@
 package hufs.computer.studyroom.domain.schedule.service;
 
-import hufs.computer.studyroom.common.error.code.RoomErrorCode;
 import hufs.computer.studyroom.common.error.code.ScheduleErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.service.CommonHelperService;
+import hufs.computer.studyroom.common.validation.annotation.ExistSchedule;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.policy.service.PolicyQueryService;
 import hufs.computer.studyroom.domain.room.entity.Room;
-import hufs.computer.studyroom.domain.room.repository.RoomRepository;
+import hufs.computer.studyroom.domain.room.service.RoomQueryService;
 import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkRequest;
 import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
@@ -28,12 +28,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleCommandService {
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
-    private final RoomRepository roomRepository;
     private final RoomOperationPolicyScheduleMapper scheduleMapper;
-    private final CommonHelperService commonHelperService;
+    private final PolicyQueryService policyQueryService;
+    private final RoomQueryService roomQueryService;
+    private final ScheduleQueryService scheduleQueryService;
 
     public ScheduleInfoResponses createSchedules(CreateScheduleBulkRequest request) {
-        RoomOperationPolicy policy = commonHelperService.getPolicyById(request.roomOperationPolicyId());
+        RoomOperationPolicy policy = policyQueryService.getPolicyById(request.roomOperationPolicyId());
 
         List<LocalDate> dates = request.policyApplicationDates();
         if (dates == null || dates.isEmpty()) {throw new CustomException(ScheduleErrorCode.INVALID_DATES);
@@ -47,8 +48,9 @@ public class ScheduleCommandService {
         for (LocalDate date :dates) {
             for (Long roomId : roomIds) {
                 // 어떤 날에 대한 스케쥴(운영시간)을 만들때, 그 날에 부여된 스케쥴이 없어야만 함
-                Room room = roomRepository.findById(roomId).orElseThrow(() -> new CustomException(RoomErrorCode.ROOM_NOT_FOUND));
-                if (isScheduleAlreadyExists(roomId, date, null)) { // 예외 처리
+                Room room = roomQueryService.getRoomById(roomId);
+
+                if (isScheduleAlreadyExists(roomId, date)) { // 예외 처리
                     throw new CustomException(ScheduleErrorCode.SCHEDULE_ALREADY_EXISTS);
                 }
                 RoomOperationPolicySchedule schedule = scheduleMapper.toRoomOperationPolicySchedule(policy, room, date);
@@ -60,42 +62,16 @@ public class ScheduleCommandService {
     }
 
     public void deleteScheduleById(Long scheduleId) {
-        // todo : 추후 validator 리팩토링
-        commonHelperService.getScheduleById(scheduleId); // 찾아보고 없으면 예외처리
         scheduleRepository.deleteById(scheduleId);
     }
 
     @Transactional
-    public ScheduleInfoResponse updateSchedule(Long scheduleId, ModifyScheduleRequest request) {
-        //todo mapper쪽으로 위임 할 지?
+    public ScheduleInfoResponse updateSchedule(@ExistSchedule Long scheduleId, ModifyScheduleRequest request) {
+        RoomOperationPolicySchedule schedule = scheduleQueryService.getScheduleById(scheduleId);
+        Room room = schedule.getRoom();
+        RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
 
-        // todo : 추후 validator 리팩토링
-        RoomOperationPolicySchedule schedule = commonHelperService.getScheduleById(scheduleId);
-
-        // 운영 정책 업데이트
-        if (request.roomOperationPolicyId() != null) {
-            // todo : 추후 validator 리팩토링?
-            RoomOperationPolicy policy = commonHelperService.getPolicyById(request.roomOperationPolicyId());
-            schedule.setRoomOperationPolicy(policy);
-        }
-
-        // 룸 업데이트
-        if (request.roomId() != null) {
-            // todo : 추후 validator 리팩토링?
-            Room room = commonHelperService.getRoomById(request.roomId());
-            schedule.setRoom(room);
-        }
-
-        // 날짜 업데이트
-        if (request.policyApplicationDate() != null) {
-            LocalDate date = request.policyApplicationDate();
-
-            // 다른 스케줄과 날짜 겹침 확인 (자기 자신을 제외하고)
-            if (isScheduleAlreadyExists(request.roomId(), date, scheduleId)) {
-                throw new CustomException(ScheduleErrorCode.SCHEDULE_ALREADY_EXISTS);
-            }
-            schedule.setPolicyApplicationDate(date);
-        }
+        scheduleMapper.updateFromRequest(request, room, policy, schedule);
 
         RoomOperationPolicySchedule updatedSchedule = scheduleRepository.save(schedule);
         return scheduleMapper.toScheduleInfoResponse(updatedSchedule);
@@ -104,9 +80,7 @@ public class ScheduleCommandService {
     /*
      * util
      * */
-    private boolean isScheduleAlreadyExists(Long roomId, LocalDate date, Long excludeScheduleId) {
-        return scheduleRepository.existsByRoomRoomIdAndPolicyApplicationDateAndRoomOperationPolicyScheduleIdNot(
-                roomId, date, excludeScheduleId
-        );
+    private boolean isScheduleAlreadyExists(Long roomId, LocalDate date) {
+        return scheduleRepository.existsByRoomRoomIdAndPolicyApplicationDate(roomId, date);
     }
 }

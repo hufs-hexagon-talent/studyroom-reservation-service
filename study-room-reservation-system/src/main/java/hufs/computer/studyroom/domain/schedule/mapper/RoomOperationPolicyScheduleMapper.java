@@ -2,12 +2,14 @@ package hufs.computer.studyroom.domain.schedule.mapper;
 
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
 import hufs.computer.studyroom.domain.room.entity.Room;
+import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
 import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +26,9 @@ public interface RoomOperationPolicyScheduleMapper {
     @Mapping(source = "room.roomId", target = "roomId")
     @Mapping(source = "roomOperationPolicy.roomOperationPolicyId", target = "roomOperationPolicyId")
     ScheduleInfoResponse toScheduleInfoResponse(RoomOperationPolicySchedule schedule);
+    // ModifyScheduleRequest -> 기존 Schedule 엔티티 수정
+    @Mapping(target = "roomOperationPolicyScheduleId", ignore = true)
+    void updateFromRequest(ModifyScheduleRequest request,Room room,RoomOperationPolicy roomOperationPolicy, @MappingTarget RoomOperationPolicySchedule schedule);
 
     // 리스트 변환 (RoomOperationPolicySchedule 리스트 -> ScheduleInfoResponse 리스트)
     List<ScheduleInfoResponse> toScheduleInfoResponseList(List<RoomOperationPolicySchedule> schedules);

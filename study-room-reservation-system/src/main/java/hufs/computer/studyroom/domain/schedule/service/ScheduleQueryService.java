@@ -1,6 +1,8 @@
 package hufs.computer.studyroom.domain.schedule.service;
 
-import hufs.computer.studyroom.common.service.CommonHelperService;
+import hufs.computer.studyroom.common.error.code.ScheduleErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -20,11 +23,9 @@ import java.util.List;
 public class ScheduleQueryService {
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final RoomOperationPolicyScheduleMapper scheduleMapper;
-    private final CommonHelperService commonHelperService;
 
     public ScheduleInfoResponse findScheduleById(Long scheduleId) {
-        // todo : 추후 validator 리팩토링
-        RoomOperationPolicySchedule schedule = commonHelperService.getScheduleById(scheduleId);
+        RoomOperationPolicySchedule schedule = getScheduleById(scheduleId);
 
         return scheduleMapper.toScheduleInfoResponse(schedule);
     }
@@ -38,5 +39,17 @@ public class ScheduleQueryService {
         LocalDate today = LocalDate.now();
         List<LocalDate> dates = scheduleRepository.findAvailableRoomsGroupedByDate(today);
         return scheduleMapper.toAvailableDateResponses(dates);
+    }
+
+    public RoomOperationPolicySchedule getScheduleById(Long id) {
+        return scheduleRepository.findById(id).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+    }
+
+    public Optional<RoomOperationPolicySchedule> getScheduleByRoomAndDate(Room room, LocalDate date) {
+        return scheduleRepository.findByRoomAndPolicyApplicationDate(room, date);
+        //.orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+    }
+    public boolean existByScheduleId(Long scheduleId) {
+        return scheduleRepository.existsById(scheduleId);
     }
 }
