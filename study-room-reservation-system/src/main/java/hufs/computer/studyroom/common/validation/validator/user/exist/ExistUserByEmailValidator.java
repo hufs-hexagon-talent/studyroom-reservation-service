@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common.validation.validator.user;
+package hufs.computer.studyroom.common.validation.validator.user.exist;
 
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ExistUserValidator implements ConstraintValidator<ExistUser, Long> {
+public class ExistUserByEmailValidator implements ConstraintValidator<ExistUser, String> {
     private final UserQueryService userQueryService;
 
     @Override
-    public boolean isValid(Long userId, ConstraintValidatorContext context) {
-        boolean isValid = userQueryService.existByUserId(userId);
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        boolean isValid = userQueryService.existByEmail(email);
         if (!isValid) {
             context.disableDefaultConstraintViolation(); // 기본 메시지 비활성화
             context.buildConstraintViolationWithTemplate(UserErrorCode.USER_NOT_FOUND.toString()) // 커스텀 메시지 설정
