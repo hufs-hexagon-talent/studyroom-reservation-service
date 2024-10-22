@@ -2,6 +2,7 @@ package hufs.computer.studyroom.domain.reservation.controller;
 
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
+import hufs.computer.studyroom.common.validation.annotation.ExistReservation;
 import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationStateRequest;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponse;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
@@ -11,10 +12,12 @@ import hufs.computer.studyroom.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservations")
 @RequiredArgsConstructor
+@Validated
 public class AdminReservationController {
     private final ReservationCommandService reservationCommandService;
     private final ReservationQueryService reservationQueryService;
@@ -34,7 +38,7 @@ public class AdminReservationController {
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/admin/{reservationId}")
     public ResponseEntity<SuccessResponse<Void>> deleteReservation(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                                                      @PathVariable Long reservationId) {
+                                                                      @ExistReservation @PathVariable Long reservationId) {
 
         reservationCommandService.deleteReservationByAdmin(reservationId,currentUser);
 
@@ -45,8 +49,8 @@ public class AdminReservationController {
             description = "관리용 예약 수정",
             security = {@SecurityRequirement(name = "JWT")})
     @PatchMapping("/admin/{reservationId}")
-    public ResponseEntity<SuccessResponse<ReservationInfoResponse>> updateReservationInfoByAdmin(@PathVariable Long reservationId,
-                                                                                                 @RequestBody ModifyReservationStateRequest request) {
+    public ResponseEntity<SuccessResponse<ReservationInfoResponse>> updateReservationInfoByAdmin(@ExistReservation @PathVariable Long reservationId,
+                                                                                                 @Valid @RequestBody ModifyReservationStateRequest request) {
         var result = reservationCommandService.updateReservationState(reservationId, request);
 
         return ResponseFactory.modified(result);
