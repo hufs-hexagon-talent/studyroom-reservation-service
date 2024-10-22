@@ -2,23 +2,16 @@ package hufs.computer.studyroom.domain.schedule.controller;
 
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
-import hufs.computer.studyroom.common.util.todo.ApiResponseDto;
-import hufs.computer.studyroom.common.util.todo.ApiResponseListDto;
 import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
-import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleService;
-import hufs.computer.studyroom.domain.schedule.service.RoomOperationPolicyScheduleServiceImpl;
 import hufs.computer.studyroom.domain.schedule.service.ScheduleQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.util.List;
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
 @RequestMapping("/schedules")
