@@ -1,116 +1,99 @@
 package hufs.computer.studyroom.config;
 
-import hufs.computer.studyroom.security.CustomUserDetailsService;
-import hufs.computer.studyroom.security.JwtAccessDeniedHandler;
-import hufs.computer.studyroom.security.jwt.JWTFilter;
-import hufs.computer.studyroom.security.jwt.JWTUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetailsService;
+import hufs.computer.studyroom.domain.auth.security.handler.CustomAccessDeniedHandler;
+import hufs.computer.studyroom.domain.auth.security.filter.JWTFilter;
+import hufs.computer.studyroom.domain.auth.security.handler.CustomAuthenticationEntryPoint;
+import hufs.computer.studyroom.domain.auth.service.JWTService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
-@EnableWebSecurity(debug = false)
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-    private final AuthenticationConfiguration authenticationConfiguration;
-    private final JWTUtil jwtUtil;
-    private final String jwtAccessCategory;
-    private final String jwtRefreshCategory;
-    private final String jwtHeader;
-    private final Long accessTokenExpiration;
-    private final Long refreshTokenExpiration;
-    private final CustomUserDetailsService userDetailsService;
-    @Qualifier("jwtAuthenticationEntryPoint")
-    private final AuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
+    private final CustomUserDetailsService customUserDetailsService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final JWTService jwtService;
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ROLE_RESIDENT = "ROLE_RESIDENT";
 
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
-                          JWTUtil jwtUtil,
-                          @Value("${spring.jwt.access.category}") String jwtAccessCategory,
-                          @Value("${spring.jwt.refresh.category}") String jwtRefreshCategory,
-                          @Value("${spring.jwt.header}") String jwtHeader,
-                          @Value("${spring.jwt.access.expiration}") Long accessTokenExpiration,
-                          @Value("${spring.jwt.refresh.expiration}") Long refreshTokenExpiration,
-                          CustomUserDetailsService userDetailsService,
-                          AuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDeniedHandler
-
-    ) {
-
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtUtil = jwtUtil;
-        this.jwtAccessCategory = jwtAccessCategory;
-        this.jwtRefreshCategory = jwtRefreshCategory;
-        this.jwtHeader = jwtHeader;
-        this.accessTokenExpiration = accessTokenExpiration;
-        this.refreshTokenExpiration = refreshTokenExpiration;
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-    }
-
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
-    }
     //AuthenticationManager Bean 등록
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {return configuration.getAuthenticationManager();}
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();}
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers(
+                        new AntPathRequestMatcher("/public/**"),
+                        new AntPathRequestMatcher("/favicon.ico"),
+                        new AntPathRequestMatcher("/swagger-ui/**"),
+                        new AntPathRequestMatcher("/v3/api-docs/**")
+                );
+    }
+
+    // cors 구성
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(
+                Arrays.asList(
+                        "http://localhost:3000", "http://localhost:8081",
+                        "https://studyroom.computer.hufs.ac.kr", "https://api.studyroom.computer.hufs.ac.kr"
+                )
+        );
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.addAllowedHeader("*");
+//        config.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
+    public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
 
 
         http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        return configuration;
-                    }
-                }));
-
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()));
         http
                 .csrf(AbstractHttpConfigurer::disable); // REST API 이므로 CSRF 보호는 비활성화
         http
                 .formLogin(AbstractHttpConfigurer::disable); // Form Login 비활성화
         http
                 .httpBasic(AbstractHttpConfigurer::disable); // HTTP Basic 비활성화
+        http
+                .addFilterBefore(new JWTFilter(jwtService, customUserDetailsService), UsernamePasswordAuthenticationFilter.class); // JWT 필터 검증 추가
         http
                 .authorizeHttpRequests((auth) -> auth
                                 // Swagger
@@ -174,18 +157,20 @@ public class SecurityConfig {
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
 
-        // JWT 필터 검증 추가
-        http
-                .addFilterBefore(new JWTFilter(
-                            jwtUtil,
-                            jwtHeader,
-                            userDetailsService), UsernamePasswordAuthenticationFilter.class);
-
         // 예외 처리
         http
-                .exceptionHandling((exception) ->
-                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint) // customEntryPoint
-                                .accessDeniedHandler(jwtAccessDeniedHandler));          // customAccessDeniedHandler
+                .exceptionHandling((exceptionHandling) ->
+                        exceptionHandling
+                                /**
+                                 *  인증되지 않은 요청일 경우
+                                 *  SecurityContext 에 등록되지 않았을 때 호출된다.
+                                 */
+                                .authenticationEntryPoint(customAuthenticationEntryPoint) // customEntryPoint
+                                /**
+                                 * 인증은 되었으나, 해당 요청에 대한 권한이 없는 사용자인 경우
+                                 * .hasRole 로 권한을 검사할 때 권한이 부족하여 요청이 거부되었을 때 호출된다.
+                                 */
+                                .accessDeniedHandler(customAccessDeniedHandler));          // customAccessDeniedHandler
 
 
         http

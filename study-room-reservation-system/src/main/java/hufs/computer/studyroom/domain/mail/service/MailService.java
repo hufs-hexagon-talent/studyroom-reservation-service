@@ -2,15 +2,13 @@ package hufs.computer.studyroom.domain.mail.service;
 
 import hufs.computer.studyroom.common.error.code.AuthErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.error.exception.todo.AuthCodeMismatchException;
-import hufs.computer.studyroom.common.error.exception.todo.EmailCreationException;
 import hufs.computer.studyroom.common.service.RedisService;
+import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.mail.dto.request.EmailVerifyRequest;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailResponse;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailVerifyResponse;
 import hufs.computer.studyroom.domain.mail.mapper.MailMapper;
 import hufs.computer.studyroom.domain.user.service.UserQueryService;
-import hufs.computer.studyroom.security.TokenService;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -34,8 +32,8 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final RedisService redisService;
     private final MailMapper mailMapper;
-    private final TokenService tokenService;
     private final SpringTemplateEngine templateEngine;
+    private final JWTService jwtService;
 
     // 인증번호 만료 시간 5분
     @Value("${spring.service.authCodeExpiryTime}") private Duration authCodeExpiryTime;
@@ -64,7 +62,7 @@ public class MailService {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
         redisService.deleteValue(email);
-        String passwordResetToken = tokenService.createPasswordResetToken(email);
+        String passwordResetToken = jwtService.createPasswordResetToken(email);
 
         return mailMapper.toEmailVerifyResponse(email, passwordResetToken);
     }

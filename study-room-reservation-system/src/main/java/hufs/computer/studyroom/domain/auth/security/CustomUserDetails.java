@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.security;
+package hufs.computer.studyroom.domain.auth.security;
 
 import hufs.computer.studyroom.domain.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
