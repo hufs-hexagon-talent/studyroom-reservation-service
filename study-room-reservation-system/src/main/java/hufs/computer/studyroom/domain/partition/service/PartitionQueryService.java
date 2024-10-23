@@ -2,7 +2,6 @@ package hufs.computer.studyroom.domain.partition.service;
 
 import hufs.computer.studyroom.common.error.code.RoomErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.error.exception.todo.reservation.RoomPolicyNotFoundException;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponse;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionInfoResponses;
 import hufs.computer.studyroom.domain.partition.dto.response.PartitionPolicyResponse;
@@ -13,14 +12,12 @@ import hufs.computer.studyroom.domain.partition.repository.RoomPartitionReposito
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
-import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
 import hufs.computer.studyroom.domain.schedule.service.ScheduleQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
