@@ -3,7 +3,6 @@ package hufs.computer.studyroom.domain.reservation.service;
 import hufs.computer.studyroom.common.error.code.AuthErrorCode;
 import hufs.computer.studyroom.common.error.code.ReservationErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.validation.annotation.ExistReservation;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
 import hufs.computer.studyroom.domain.reservation.dto.request.CreateReservationRequest;
@@ -12,9 +11,8 @@ import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoRe
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.mapper.ReservationMapper;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
-import hufs.computer.studyroom.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import hufs.computer.studyroom.domain.user.entity.User;
-import hufs.computer.studyroom.domain.user.entity.User.ServiceRole;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

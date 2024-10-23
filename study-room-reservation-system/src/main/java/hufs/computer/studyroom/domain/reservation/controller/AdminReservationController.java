@@ -8,7 +8,7 @@ import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoRe
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
 import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
-import hufs.computer.studyroom.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
