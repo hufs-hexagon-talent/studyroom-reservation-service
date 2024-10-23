@@ -4,7 +4,7 @@ import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.domain.checkin.service.OTPService;
 import hufs.computer.studyroom.domain.checkin.dto.response.QRCodeResponse;
-import hufs.computer.studyroom.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

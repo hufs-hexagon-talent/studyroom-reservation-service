@@ -2,7 +2,7 @@ package hufs.computer.studyroom.domain.checkin.service;
 
 import hufs.computer.studyroom.domain.checkin.dto.response.QRCodeResponse;
 import hufs.computer.studyroom.common.service.RedisService;
-import hufs.computer.studyroom.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

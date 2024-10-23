@@ -1,5 +1,7 @@
-package hufs.computer.studyroom.security;
+package hufs.computer.studyroom.domain.auth.security;
 
+import hufs.computer.studyroom.common.error.code.UserErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,14 +14,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     public CustomUserDetailsService(UserRepository userRepository) {
-
         this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
         return new CustomUserDetails(user);
     }

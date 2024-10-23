@@ -16,7 +16,7 @@ import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicySch
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.entity.User.ServiceRole;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
-import hufs.computer.studyroom.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

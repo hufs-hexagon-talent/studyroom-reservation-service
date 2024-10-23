@@ -4,6 +4,7 @@ import hufs.computer.studyroom.common.error.code.DepartmentErrorCode;
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
+import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
 import hufs.computer.studyroom.domain.department.service.DepartmentQueryService;
@@ -13,7 +14,6 @@ import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
-import hufs.computer.studyroom.security.jwt.JWTUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +34,9 @@ public class UserCommandService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final UserMapper userMapper;
-    private final JWTUtil jwtUtil;
     private final UserQueryService userQueryService;
     private final DepartmentQueryService departmentQueryService;
+    private final JWTService jwtService;
 
     public UserInfoResponse signUpProcess(@Valid SignUpRequest request) {
 
@@ -77,7 +77,7 @@ public class UserCommandService {
     }
 
     public UserInfoResponse resetUserPasswordWithToken(ResetPasswordRequest request) {
-        String email = jwtUtil.getEmail(request.token());
+        String email = jwtService.getEmailFromPasswordResetToken(request.token());
         Long userId = userQueryService.findByEmail(email).getUserId();
         return resetUserPassword(userId, request.newPassword());
     }

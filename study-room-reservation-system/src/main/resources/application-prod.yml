@@ -28,18 +28,19 @@ spring:
             hibernate:
 #                dialect: org.hibernate.dialect.MySQLDialect
     jwt: # openssl rand -hex 32 ( HS256 )
-        secret: ${SPRING_JWT_SECRET}
         header: Authorization
         access:
+            secret: ${SPRING_JWT_ACCESS_SECRET} #todo : docker-compose 수정
             expiration: 604800000  # 7일 -> ms
-            #            expiration: 1  # test 용
             category: access # jwt 의 헤더
 
         refresh:
+            secret: ${SPRING_JWT_REFRESH_SECRET} #todo : docker-compose 수정
             expiration: 7776000000 # 90일 -> ms
             category: refresh # jwt 의 헤더
 
         password-reset:
+            secret: ${SPRING_JWT_PASSWORD_RESET_SECRET} #todo : docker-compose 수정
             expiration: 600000 # 10분 (ms)
             category: password-reset
 

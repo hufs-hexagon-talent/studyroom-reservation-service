@@ -9,7 +9,7 @@ import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.service.UserCommandService;
 import hufs.computer.studyroom.domain.user.service.UserQueryService;
-import hufs.computer.studyroom.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
