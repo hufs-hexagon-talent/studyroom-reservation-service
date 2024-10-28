@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AnyScheduleController {
     private final ScheduleQueryService scheduleQueryService;
-    @Operation(summary = "✅ 현재로 부터 미래까지 운영 정책이 설정된 방이 있는 날짜를 조회",
+    @Operation(summary = "❌ 현재로 부터 미래까지 운영 정책이 설정된 방이 있는 날짜를 조회",
             description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회"
     )
     @GetMapping("/available-dates")

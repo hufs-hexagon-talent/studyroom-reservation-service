@@ -23,7 +23,7 @@ public class AnyPartitionController {
 
     private final PartitionQueryService partitionQueryService;
 
-    @Operation(summary = "✅ 해당 날짜 모든 파티션 운영시간 확인 ",
+    @Operation(summary = "❌ 해당 날짜 모든 파티션 운영시간 확인 ",
             description = "날짜를 받으면 모든 룸의 정책에 따른 파티션 운영시간을 확인",
             security = {})
     @GetMapping("/policy/by-date")
