@@ -30,7 +30,7 @@ public class AdminRoomController {
     private final RoomCommandService roomCommandService;
 
 
-    @Operation(summary = "✅[관리자] room 생성", description = "room 생성하는 API",
+    @Operation(summary = "❌[관리자] room 생성", description = "room 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/room")
     public ResponseEntity<SuccessResponse<RoomInfoResponse>> createRoom(@Valid @RequestBody CreateRoomRequest request) {
@@ -38,7 +38,7 @@ public class AdminRoomController {
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "✅[관리자] room 정보 수정",
+    @Operation(summary = "❌[관리자] room 정보 수정",
             description = "해당 room id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PatchMapping("/{roomId}")
@@ -48,7 +48,7 @@ public class AdminRoomController {
         return ResponseFactory.modified(result);
     }
 
-    @Operation(summary = "✅[관리자] room 삭제",
+    @Operation(summary = "❌[관리자] room 삭제",
             description = "해당 room id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/{roomId}")
@@ -59,7 +59,7 @@ public class AdminRoomController {
     }
 
 
-    @Operation(summary = "✅[관리자] room 조회", description = "room id로 조회 API",
+    @Operation(summary = "❌[관리자] room 조회", description = "room id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/{roomId}")
     public ResponseEntity<SuccessResponse<RoomInfoResponse>> getRoomById(@ExistRoom @PathVariable Long roomId) {
@@ -67,7 +67,7 @@ public class AdminRoomController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅[관리자] 모든 room 조회", description = "모든 room 조회 API",
+    @Operation(summary = "❌[관리자] 모든 room 조회", description = "모든 room 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping
     public ResponseEntity<SuccessResponse<RoomInfoResponses>> getAllRooms() {
@@ -75,7 +75,7 @@ public class AdminRoomController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅[관리자] roomID로 partition들 조회",
+    @Operation(summary = "❌[관리자] roomID로 partition들 조회",
             description = "room id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/rooms/{roomId}")

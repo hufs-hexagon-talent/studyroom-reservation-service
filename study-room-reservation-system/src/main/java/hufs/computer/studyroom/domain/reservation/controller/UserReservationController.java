@@ -32,7 +32,7 @@ public class UserReservationController {
     private final ReservationCommandService reservationCommandService;
     private final ReservationQueryService reservationQueryService;
 
-    @Operation(summary = "✅ 자신의 예약 생성",
+    @Operation(summary = "❌ 자신의 예약 생성",
             description = "인증 받은 유저 사용자 예약 생성",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping
@@ -42,7 +42,7 @@ public class UserReservationController {
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "✅ 자신의 예약 삭제",
+    @Operation(summary = "❌ 자신의 예약 삭제",
             description = "인증 받은 유저의 자신의 예약 삭제",
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/me/{reservationId}")
@@ -55,7 +55,7 @@ public class UserReservationController {
 //    -------------------------------------------------------------------------------------------------------------
 //   todo : createAt (예약생성 시간)기준으로 가져올지 vs reservationStartTime ( 예약 시작 시간 ) 기준으로 가져올지
 //    -> reservationStartTime ( 예약 시작 시간 ) 기준
-    @Operation(summary = "✅ 자신의 가장 최근 예약 조회 ( 예약 시작 시간 ) 기준",
+    @Operation(summary = "❌ 자신의 가장 최근 예약 조회 ( 예약 시작 시간 ) 기준",
             description = " 인증 받은 유저의 자신의 최근(현재) 예약 조회 ( 예약 시작 시간 ) 기준",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me/latest")
@@ -65,7 +65,7 @@ public class UserReservationController {
     }
 
 
-    @Operation(summary = "✅ 자신의 모든 예약 기록 조회 ",
+    @Operation(summary = "❌ 자신의 모든 예약 기록 조회 ",
             description = " 인증 받은 유저 자신의 모든 예약 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me")
@@ -77,7 +77,7 @@ public class UserReservationController {
     }
 
 
-    @Operation(summary = "✅ 자신의 NoShow 정보 조회",
+    @Operation(summary = "❌ 자신의 NoShow 정보 조회",
             description = " 인증 받은 유저의 자신의 노쇼 횟수 조회 ",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me/no-show")

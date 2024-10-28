@@ -29,7 +29,7 @@ public class AdminPartitionController {
     private final PartitionQueryService partitionQueryService;
 
 
-    @Operation(summary = "✅[관리자] Room의 Partition 생성",
+    @Operation(summary = "❌[관리자] Room의 Partition 생성",
             description = "partition 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -41,7 +41,7 @@ public class AdminPartitionController {
     }
 
 
-    @Operation(summary = "✅[관리자] partition 조회",
+    @Operation(summary = "❌[관리자] partition 조회",
             description = "partition id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -53,7 +53,7 @@ public class AdminPartitionController {
     }
 
 
-    @Operation(summary = "✅[관리자] 모든 partition 조회",
+    @Operation(summary = "❌[관리자] 모든 partition 조회",
             description = "모든 partition 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping
@@ -64,7 +64,7 @@ public class AdminPartitionController {
     }
 
 
-    @Operation(summary = "✅[관리자] partition 정보 수정",
+    @Operation(summary = "❌[관리자] partition 정보 수정",
             description = "해당 partition id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -77,7 +77,7 @@ public class AdminPartitionController {
     }
 
 
-    @Operation(summary = "✅[관리자] partition 삭제",
+    @Operation(summary = "❌[관리자] partition 삭제",
             description = "해당 partition id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )

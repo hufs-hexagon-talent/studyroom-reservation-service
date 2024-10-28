@@ -82,6 +82,37 @@ public class ReservationQueryService {
         return reservationMapper.toUserNoShowCntResponse(noShowReservations.size(), noShowReservations);
     }
 
+    /**
+     * @Param null
+     * @return todo : DTO (네이밍 생각하기)
+     */
+
+//    public BlockedUserNoShowResponses getBlockedUserReservation() {
+////        1. 밴된 유저들 찾기
+//        List<User> blockedUsers = userRepository.getBlockedUsers();
+//
+////        2. 해당 유저에 대해서
+////
+////       one blocked user
+////       -> user's reservations == List<Reservation>
+////       -> UserNoShowCntResponse
+////
+////       many blocked user -> List<UserNoShowCntResponse> == UserNoShowCntResponses
+//        blockedUsers.stream()
+//                .map(blockedUser -> {
+//
+//                }
+//                ).toList();
+
+//        2-1. 한 유저에 대해서
+//        List<Reservation> blockedUserNoShowReservations =
+//                reservationRepository.findNoShowReservationsByUserId();
+//        UserNoShowCntResponse userNoShowCntResponse = reservationMapper.toUserNoShowCntResponse(blockedUserNoShowReservations.size(), blockedUserNoShowReservations);
+//
+////       2-2. 여러 유저에 대해서
+//        return reservationMapper.toUserNoShowCntResponses(userNoShowCntResponse);
+//    }
+
 //todo : createAt (예약생성 시간)기준으로 가져올지 vs reservationStartTime ( 예약 시작 시간 ) 기준으로 가져올지
 //    reservationStartTime ( 예약 시작 시간 ) 기준
 //    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?

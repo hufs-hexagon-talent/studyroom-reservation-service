@@ -80,6 +80,10 @@ public interface ReservationMapper {
         ReservationInfoResponses reservationInfoResponses = toInfoResponses(reservations);
         return new UserNoShowCntResponse(noShowCount, reservationInfoResponses);
     }
+    // todo : 테스트 하기 ~
+    default BlockedUserNoShowResponses toUserNoShowCntResponses(List<UserNoShowCntResponse> userNoShowCntResponses) {
+        return new BlockedUserNoShowResponses(userNoShowCntResponses);
+    }
 
     // List<Reservation> -> ReservationInfoResponses 변환
     default ReservationInfoResponses toInfoResponses(List<Reservation> reservations) {
