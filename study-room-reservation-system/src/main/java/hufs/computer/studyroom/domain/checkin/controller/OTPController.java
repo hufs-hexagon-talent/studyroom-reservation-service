@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OTPController {
     private final OTPService otpService;
 
-    @Operation(summary = "✅ QR code 생성, OTP 제공",
+    @Operation(summary = "❌ QR code 생성, OTP 제공",
             description = "로그인된 유저에 대해서 OTP 제공",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/otp")

@@ -47,7 +47,8 @@ dependencies {
 
 // migration
 	implementation 'org.flywaydb:flyway-core' //-> MySql 8.3 지원안함
-	implementation 'org.flywaydb:flyway-mysql:8.3.0'
+	implementation 'org.flywaydb:flyway-mysql'
+
 
 // Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'

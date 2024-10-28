@@ -25,7 +25,7 @@ public class AdminPolicyController {
     private final PolicyCommandService policyCommandService;
     private final PolicyQueryService policyQueryService;
 
-    @Operation(summary = "✅[관리자] RoomOperationPolicy 생성",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 생성",
             description = "RoomOperationPolicy를 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/policy")
@@ -35,7 +35,7 @@ public class AdminPolicyController {
     }
 
 
-    @Operation(summary = "✅[관리자] RoomOperationPolicy 조회",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 조회",
             description = "RoomOperationPolicy id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/{roomOperationPolicyId}")
@@ -44,7 +44,7 @@ public class AdminPolicyController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅[관리자] 모든 RoomOperationPolicy 조회",
+    @Operation(summary = "❌[관리자] 모든 RoomOperationPolicy 조회",
             description = "모든 RoomOperationPolicy 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping
@@ -53,7 +53,7 @@ public class AdminPolicyController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅[관리자] RoomOperationPolicy 정보 업데이트",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 정보 업데이트",
             description = "해당 RoomOperationPolicy id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PatchMapping("/policy/{roomOperationPolicyId}")
@@ -66,7 +66,7 @@ public class AdminPolicyController {
         return ResponseFactory.modified(result);
     }
 
-    @Operation(summary = "✅[관리자] RoomOperationPolicy 삭제",
+    @Operation(summary = "❌[관리자] RoomOperationPolicy 삭제",
             description = "해당 RoomOperationPolicy id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/{roomOperationPolicyId}")

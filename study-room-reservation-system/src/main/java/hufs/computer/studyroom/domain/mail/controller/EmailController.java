@@ -25,7 +25,7 @@ public class EmailController {
 
     private final MailService mailService;
 
-    @Operation(summary = "✅ 이메일 인증 코드 전송",
+    @Operation(summary = "❌ 이메일 인증 코드 전송",
             description = "로그인X, 비밀번호 수정을 위한 이메일 인증 코드 전송 API")
     @PostMapping("/mail/send")
     public ResponseEntity<SuccessResponse<EmailResponse>> sendAuthCode(
@@ -35,7 +35,7 @@ public class EmailController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅ 인증 코드 검증",
+    @Operation(summary = "❌ 인증 코드 검증",
             description = "이메일로 전송된 인증 코드를 검증하는 API")
     @PostMapping("/mail/verify")
     public ResponseEntity<SuccessResponse<EmailVerifyResponse>> verifyMail(@Valid @RequestBody EmailVerifyRequest request) {
