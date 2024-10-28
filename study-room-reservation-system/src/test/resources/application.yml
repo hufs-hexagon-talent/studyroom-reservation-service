@@ -1,0 +1,68 @@
+server:
+  port: 8081 # ??? ????? ?? ??? ??? ? ????.
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1  # H2 ???? ?????? ??
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # ??? ????? ?? ???? ?? ???? ??
+    show-sql: true  # ??? ? SQL ??? ??
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost  # ??? ????? ?? Redis ??
+      port: 6379
+
+  service:
+    allowedStartMinute: 15
+    randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
+    otpLength: 8
+    otpTTL: 300
+    noShowBlockMonth : 3
+    noShowLimit : 3
+    reservationLimit : 1
+    reservationLimitToday : 2
+
+  jwt:
+    secret: test-secret-key
+    header: Authorization
+    access:
+      expiration: 1000  # ??? ????? ?? ?? ??
+      category: access
+    refresh:
+      expiration: 10000 # ??? ????? ?? ?? ??
+      category: refresh
+    password-reset:
+      expiration: 5000 # ??? ????? ?? ?? ??
+      category: password-reset
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: hwangbbang9@gmail.com
+    password: crta nqkq kkcy msow
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+  flyway:
+    enabled: false  # ??? ????? Flyway ?????? ???? ??
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+
