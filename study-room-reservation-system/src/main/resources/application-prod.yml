@@ -13,7 +13,7 @@ spring:
             port: ${SPRING_REDIS_PORT}
     service:
         allowedStartMinute: 15
-        randomChars : "abcdefghjkmnopqrstuvwxyz23456789"
+        randomChars : ${SPRING_RANDOM_CHARS}
         otpLength: 8
         otpTTL: 300
         noShowBlockMonth : 1
@@ -30,17 +30,17 @@ spring:
     jwt: # openssl rand -hex 32 ( HS256 )
         header: Authorization
         access:
-            secret: ${SPRING_JWT_ACCESS_SECRET} #todo : docker-compose 수정
+            secret: ${SPRING_JWT_ACCESS_SECRET}
             expiration: 604800000  # 7일 -> ms
             category: access # jwt 의 헤더
 
         refresh:
-            secret: ${SPRING_JWT_REFRESH_SECRET} #todo : docker-compose 수정
+            secret: ${SPRING_JWT_REFRESH_SECRET}
             expiration: 7776000000 # 90일 -> ms
             category: refresh # jwt 의 헤더
 
         password-reset:
-            secret: ${SPRING_JWT_PASSWORD_RESET_SECRET} #todo : docker-compose 수정
+            secret: ${SPRING_JWT_PASSWORD_RESET_SECRET}
             expiration: 600000 # 10분 (ms)
             category: password-reset
 

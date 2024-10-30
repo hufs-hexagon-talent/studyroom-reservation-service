@@ -1,5 +1,6 @@
 package hufs.computer.studyroom.domain.user.dto.response;
 
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,7 +13,7 @@ public record UserInfoResponse(
         Long userId,
 
         @Schema(description = "회원 Role", example = "USER")
-        User.ServiceRole serviceRole,
+        ServiceRole serviceRole,
 
         @Schema(description = "로그인 ID", example = "202512345")
         String username,

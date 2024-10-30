@@ -33,14 +33,11 @@ public class User {
     private String name; // 진짜 이름
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('USER', 'ADMIN', 'RESIDENT') NOT NULL DEFAULT 'USER'")
+    @Column(columnDefinition = "ENUM('USER', 'ADMIN', 'RESIDENT', 'BLOCKED') NOT NULL DEFAULT 'USER'")
     private ServiceRole serviceRole; // 기본값 USER
 
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
 
-    public enum ServiceRole {
-        USER, ADMIN, RESIDENT
-    }
 }
