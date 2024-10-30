@@ -4,7 +4,7 @@ import hufs.computer.studyroom.common.validation.annotation.ExistDepartment;
 import hufs.computer.studyroom.common.validation.annotation.user.UniqueEmail;
 import hufs.computer.studyroom.common.validation.annotation.user.UniqueSerial;
 import hufs.computer.studyroom.common.validation.annotation.user.UniqueUsername;
-import hufs.computer.studyroom.domain.user.entity.User.ServiceRole;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import lombok.Builder;

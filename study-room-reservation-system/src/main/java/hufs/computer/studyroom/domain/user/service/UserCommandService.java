@@ -11,6 +11,7 @@ import hufs.computer.studyroom.domain.department.service.DepartmentQueryService;
 import hufs.computer.studyroom.domain.user.dto.request.*;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
@@ -44,7 +45,7 @@ public class UserCommandService {
         String encodedPassword = bCryptPasswordEncoder.encode(request.password());
         Department department = departmentRepository.findById(request.departmentId()).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
 
-        User user = userMapper.toUser(request, encodedPassword, User.ServiceRole.USER, department);
+        User user = userMapper.toUser(request, encodedPassword, ServiceRole.USER, department);
 
         User savedUser = userRepository.save(user);
 
