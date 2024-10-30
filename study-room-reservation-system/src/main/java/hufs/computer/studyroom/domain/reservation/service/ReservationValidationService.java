@@ -9,10 +9,15 @@ import hufs.computer.studyroom.domain.reservation.repository.ReservationReposito
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
+import hufs.computer.studyroom.domain.user.entity.User;
+import hufs.computer.studyroom.domain.user.repository.UserRepository;
+import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationValidationService {
 
+    private final UserRepository userRepository;
     @Value("${spring.service.noShowBlockMonth}")
     private Long noShowBlockMonth;
     @Value("${spring.service.noShowLimit}")
@@ -37,7 +43,7 @@ public class ReservationValidationService {
     private final ReservationRepository reservationRepository;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final PartitionQueryService partitionQueryService;
-
+    private final UserQueryService userQueryService;
 
     public void validateRoomAvailability(Long userId, Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
 
@@ -67,8 +73,12 @@ public class ReservationValidationService {
  *  예약 시작 →  현재     →   예약 종료  | 시작 전 으로 찾기
  *  예약 시작 →  예약 종료 →  현재       | 현재     로 찾기
  */
-    private void validateNoShowStatus(Long userId) {
+// todo : state 부분 수정
+
+@Transactional
+    protected void validateNoShowStatus(Long userId) {
 //  가장 마지막으로 생성된 예약의 날짜부터 noShowCntMonth 달 후 까지 블락기간이므로, noShowCntMonth 달 후, 다음날 부터는 이용가능
+        User user = userQueryService.getUserById(userId);
 
         List<Reservation> noShowReservations = reservationRepository.findNoShowReservationsByUserId(userId);
         if (noShowReservations.size() >= noShowLimit) {
@@ -79,6 +89,7 @@ public class ReservationValidationService {
 
             Instant blockEndTime = DateTimeUtil.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
 
+            user.setServiceRole(ServiceRole.BLOCKED);
             if (Instant.now().isBefore(blockEndTime)) {
                 throw new CustomException(ReservationErrorCode.NO_SHOW_LIMIT_EXCEEDED);
             }
@@ -86,6 +97,8 @@ public class ReservationValidationService {
             // No Show 기간이 지났다면 상태 업데이트
             noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
             reservationRepository.saveAll(noShowReservations);
+            user.setServiceRole(ServiceRole.USER);
+            userRepository.save(user);
         }
     }
 
