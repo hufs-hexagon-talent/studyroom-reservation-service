@@ -14,7 +14,7 @@ import hufs.computer.studyroom.domain.reservation.repository.ReservationReposito
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
 import hufs.computer.studyroom.domain.user.entity.User;
-import hufs.computer.studyroom.domain.user.entity.User.ServiceRole;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -87,31 +87,37 @@ public class ReservationQueryService {
      * @return todo : DTO (네이밍 생각하기)
      */
 
-//    public BlockedUserNoShowResponses getBlockedUserReservation() {
-////        1. 밴된 유저들 찾기
-//        List<User> blockedUsers = userRepository.getBlockedUsers();
+    public BlockedUserNoShowResponses getBlockedUserReservation() {
+//        1. 밴된 유저들 찾기
+        List<User> blockedUsers = userRepository.getBlockedUsers();
+
+//        2. 해당 유저에 대해서
 //
-////        2. 해당 유저에 대해서
-////
-////       one blocked user
-////       -> user's reservations == List<Reservation>
-////       -> UserNoShowCntResponse
-////
-////       many blocked user -> List<UserNoShowCntResponse> == UserNoShowCntResponses
-//        blockedUsers.stream()
-//                .map(blockedUser -> {
+//       one blocked user
+//       -> user's reservations == List<Reservation>
+//       -> UserNoShowCntResponse
 //
-//                }
-//                ).toList();
+//       many blocked user -> List<UserNoShowCntResponse> == UserNoShowCntResponses
+
+        List<UserNoShowCntResponse> usersNoShowCntResponse = blockedUsers.stream()
+                .map(blockedUser ->
+                        {
+                            Long blockedUserId = blockedUser.getUserId();
+                            List<Reservation> noShowReservations = reservationRepository.findNoShowReservationsByUserId(blockedUserId);
+                            return reservationMapper.toUserNoShowCntResponse(noShowReservations.size(), noShowReservations);
+                        }
+                ).collect(Collectors.toList());
+        return reservationMapper.toUserNoShowCntResponses(usersNoShowCntResponse);
+
 
 //        2-1. 한 유저에 대해서
 //        List<Reservation> blockedUserNoShowReservations =
 //                reservationRepository.findNoShowReservationsByUserId();
 //        UserNoShowCntResponse userNoShowCntResponse = reservationMapper.toUserNoShowCntResponse(blockedUserNoShowReservations.size(), blockedUserNoShowReservations);
-//
-////       2-2. 여러 유저에 대해서
+
+//       2-2. 여러 유저에 대해서
 //        return reservationMapper.toUserNoShowCntResponses(userNoShowCntResponse);
-//    }
+    }
 
 //todo : createAt (예약생성 시간)기준으로 가져올지 vs reservationStartTime ( 예약 시작 시간 ) 기준으로 가져올지
 //    reservationStartTime ( 예약 시작 시간 ) 기준
