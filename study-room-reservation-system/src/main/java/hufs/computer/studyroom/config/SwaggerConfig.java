@@ -5,27 +5,42 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 public class SwaggerConfig {
+    private static final String JWT = "JWT";
+    @Value("${env.base-url}") private String backendBaseURL;
+
+
     @Bean
-    public OpenAPI openAPI() {
-        String jwt = "JWT";
-        Components components = new Components()
-                .addSecuritySchemes(jwt,
-                        new SecurityScheme()
-                                .name(jwt)
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
-        );
+    public OpenAPI OpenApiConfig(OpenApiCustomizer openApiCustomizer) {
+        // Servers 에 표시되는 정보 설정
+        Server server = new Server();
+        server.setUrl(backendBaseURL);
+        server.setDescription("HUFS Reservation Service API");
 
+        OpenAPI openAPI = new OpenAPI()
+                .components(
+        // Servers 에 표시되는 정보 설정
+        new Components().addSecuritySchemes("Bearer Token",
+                new SecurityScheme()
+                        .name(JWT)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat(JWT))
+                ).info(apiInfo())
+                // 서버 정보 추가
+                .servers(List.of(server));
+        openApiCustomizer.customise(openAPI);
 
-        return new OpenAPI()
-                .info(apiInfo())
-                .components(components);
+        return openAPI;
     }
     private Info apiInfo() {
         return new Info()
