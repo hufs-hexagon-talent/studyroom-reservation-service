@@ -28,7 +28,7 @@ public class DepartmentController {
     @Operation(summary = "✅[관리자] Department 생성",
             description = "Department 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @PostMapping("/partition")
+    @PostMapping()
     public ResponseEntity<SuccessResponse<DepartmentInfoResponse>> createDepartment(@RequestBody CreateDepartmentRequest request) {
         var result = departmentCommandService.createDepartment(request);
         return ResponseFactory.created(result);
