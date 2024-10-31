@@ -24,15 +24,15 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    @Operation(summary = "❌ 로그인 / 엑세스 토큰 발급", description = "로그인 (JWT Access-Token) ")
+    @Operation(summary = "✅ 로그인 / 엑세스 토큰 발급", description = "로그인 (JWT Access-Token) ")
     public ResponseEntity<SuccessResponse<LoginResponse>> accessToken(@RequestBody LoginRequest request) {
         var result = authService.issueToken(request);
         return ResponseFactory.success(result);
     }
 
 
-    @PostMapping("/auth/refresh")
-    @Operation(summary = "❌ accessToken 토큰 재발급  ", description = "리프레시 토큰으로 엑세스 토큰 재발급")
+    @PostMapping("/refresh")
+    @Operation(summary = "✅ accessToken 토큰 재발급  ", description = "리프레시 토큰으로 엑세스 토큰 재발급")
     public ResponseEntity<SuccessResponse<RefreshResponse>> reissueToken(
             @RequestBody RefreshRequest request
 //            HttpServletRequest request
