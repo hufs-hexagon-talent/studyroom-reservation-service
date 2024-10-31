@@ -16,7 +16,7 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
-    private static final String JWT = "JWT";
+    private static final String JWT = "Bearer Token";
     @Value("${env.base-url}") private String backendBaseURL;
 
 
@@ -29,17 +29,18 @@ public class SwaggerConfig {
 
         OpenAPI openAPI = new OpenAPI()
                 // Servers 에 표시되는 정보 설정
-                .components(new Components().addSecuritySchemes("Bearer Token",
+                .components(new Components().addSecuritySchemes(JWT,
                         new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)
                         .scheme("bearer")
-                        .bearerFormat(JWT))
+                        .bearerFormat("JWT"))
                 )
                 // 기본적으로 모든 엔드포인트에 대한 JWT 인증이 필요한 것으로 설정
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Token"))
+                .addSecurityItem(new SecurityRequirement().addList(JWT))
                 .info(apiInfo())
                 // 서버 정보 추가
                 .servers(List.of(server));
+        
         openApiCustomizer.customise(openAPI);
 
         return openAPI;
