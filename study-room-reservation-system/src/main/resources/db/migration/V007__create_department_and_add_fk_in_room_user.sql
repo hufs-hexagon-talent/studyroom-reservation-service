@@ -1,5 +1,4 @@
-CREATE TABLE `service-db`.department
-(
+CREATE TABLE IF NOT EXISTS `service-db`.department (
     department_id   BIGINT AUTO_INCREMENT NOT NULL,
     department_name VARCHAR(255) NULL,
     CONSTRAINT pk_department PRIMARY KEY (department_id)
