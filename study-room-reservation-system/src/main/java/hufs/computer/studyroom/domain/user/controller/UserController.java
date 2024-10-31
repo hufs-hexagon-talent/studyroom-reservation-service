@@ -29,7 +29,7 @@ public class UserController {
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
 
-    @Operation(summary = "❌ 회원가입",
+    @Operation(summary = "✅ 회원가입",
             description = "아이디, 비밀번호, 학번, 이름")
     @PostMapping("/sign-up")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> signUpProcess(@Valid @RequestBody SignUpRequest request) {
@@ -37,7 +37,7 @@ public class UserController {
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "❌ 자신의 정보 조회",
+    @Operation(summary = "✅ 자신의 정보 조회",
             description = "본인 정보 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me")
@@ -47,7 +47,7 @@ public class UserController {
     }
 
 
-    @Operation(summary = "❌로그인 후, 자신의 비밀번호 수정",
+    @Operation(summary = "✅로그인 후, 자신의 비밀번호 수정",
             description = "로그인 후, 본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PutMapping("/me/password")
@@ -58,7 +58,7 @@ public class UserController {
         return ResponseFactory.modified(result);
     }
 
-    @Operation(summary = "❌로그인 X, 자신의 비밀번호 재설정",
+    @Operation(summary = "✅로그인 X, 자신의 비밀번호 재설정",
             description = "JWT 토큰과 새로운 비밀번호를 사용하여 비밀번호를 재설정하는 API")
     @PostMapping("/reset-password")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
