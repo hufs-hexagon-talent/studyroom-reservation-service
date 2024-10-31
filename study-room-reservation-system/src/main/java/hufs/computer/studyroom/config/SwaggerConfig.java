@@ -4,6 +4,7 @@ package hufs.computer.studyroom.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OpenApiCustomizer;
@@ -27,15 +28,16 @@ public class SwaggerConfig {
         server.setDescription("HUFS Reservation Service API");
 
         OpenAPI openAPI = new OpenAPI()
-                .components(
-        // Servers 에 표시되는 정보 설정
-        new Components().addSecuritySchemes("Bearer Token",
-                new SecurityScheme()
+                .components( // Servers 에 표시되는 정보 설정
+                        new Components().addSecuritySchemes("Bearer Token", new SecurityScheme()
                         .name(JWT)
                         .type(SecurityScheme.Type.HTTP)
                         .scheme("bearer")
                         .bearerFormat(JWT))
-                ).info(apiInfo())
+                )
+                // 기본적으로 모든 엔드포인트에 대한 JWT 인증이 필요한 것으로 설정
+                .addSecurityItem(new SecurityRequirement().addList("Bearer Token"))
+                .info(apiInfo())
                 // 서버 정보 추가
                 .servers(List.of(server));
         openApiCustomizer.customise(openAPI);

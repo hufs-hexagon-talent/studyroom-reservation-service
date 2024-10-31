@@ -67,7 +67,9 @@ public class SecurityConfig {
         config.setAllowedOrigins(
                 Arrays.asList(
                         "http://localhost:3000", "http://localhost:8081",
-                        "https://studyroom.computer.hufs.ac.kr", "https://api.studyroom.computer.hufs.ac.kr"
+                        "https://studyroom.computer.hufs.ac.kr", "https://api.studyroom.computer.hufs.ac.kr",
+                        "https://studyroom-qa.alpaon.net", "https://api.studyroom-qa.alpaon.net",
+                        "https://studyroom.alpaon.net", "https://api.studyroom.alpaon.net"
                 )
         );
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
