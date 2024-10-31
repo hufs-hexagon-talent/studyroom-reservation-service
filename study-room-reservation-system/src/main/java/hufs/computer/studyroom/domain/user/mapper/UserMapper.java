@@ -7,9 +7,7 @@ import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -28,6 +26,7 @@ public interface UserMapper {
     UserInfoResponse toInfoResponse(User user);
 
     // ModifyUserInfoRequest -> 기존 User 엔티티 수정
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "department", source = "department")

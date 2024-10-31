@@ -38,6 +38,14 @@ public class UserQueryService {
         return userMapper.toInfoResponse(user);
     }
 
+    public UserInfoResponses findBlockedUser() {
+        List<User> blockedUsers = getBlockedUsers();
+        return userMapper.toInfoResponses(userMapper.toInfoResponseList(blockedUsers));
+    }
+
+    public List<User> getBlockedUsers() {
+        return userRepository.getBlockedUsers();
+    }
     public User getUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
     }
