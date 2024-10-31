@@ -36,6 +36,7 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final JWTService jwtService;
     private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_BLOCKED = "ROLE_BLOCKED";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ROLE_RESIDENT = "ROLE_RESIDENT";
 
@@ -115,7 +116,7 @@ public class SecurityConfig {
                                         "/users/sign-up",
                                         "/users/reset-password").permitAll()
                                 .requestMatchers(
-                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN)
+                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN, ROLE_BLOCKED)
                                 .requestMatchers(
                                         "/users/**").hasAuthority(ROLE_ADMIN)
 
