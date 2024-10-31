@@ -28,9 +28,9 @@ public class SwaggerConfig {
         server.setDescription("HUFS Reservation Service API");
 
         OpenAPI openAPI = new OpenAPI()
-                .components( // Servers 에 표시되는 정보 설정
-                        new Components().addSecuritySchemes("Bearer Token", new SecurityScheme()
-                        .name(JWT)
+                // Servers 에 표시되는 정보 설정
+                .components(new Components().addSecuritySchemes("Bearer Token",
+                        new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)
                         .scheme("bearer")
                         .bearerFormat(JWT))
