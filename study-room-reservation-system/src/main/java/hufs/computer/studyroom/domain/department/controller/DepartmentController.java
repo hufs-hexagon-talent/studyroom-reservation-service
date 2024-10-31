@@ -28,7 +28,7 @@ public class DepartmentController {
     @Operation(summary = "✅[관리자] Department 생성",
             description = "Department 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @PostMapping()
+    @PostMapping("/department")
     public ResponseEntity<SuccessResponse<DepartmentInfoResponse>> createDepartment(@RequestBody CreateDepartmentRequest request) {
         var result = departmentCommandService.createDepartment(request);
         return ResponseFactory.created(result);
@@ -37,7 +37,7 @@ public class DepartmentController {
     @Operation(summary = "✅[관리자] Department 조회",
             description = "Department 조회하는 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @PostMapping("/{departmentId}")
+    @GetMapping("/{departmentId}")
     public ResponseEntity<SuccessResponse<DepartmentInfoResponse>> getDepartmentById(@ExistDepartment @PathVariable Long departmentId) {
         var result = departmentQueryService.findDepartmentById(departmentId);
         return ResponseFactory.success(result);
