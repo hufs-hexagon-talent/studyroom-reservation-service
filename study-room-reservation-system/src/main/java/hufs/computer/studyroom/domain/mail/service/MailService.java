@@ -36,14 +36,15 @@ public class MailService {
     private final JWTService jwtService;
 
     // 인증번호 만료 시간 5분
-    @Value("${spring.service.authCodeExpiryTime}") private Duration authCodeExpiryTime;
+    @Value("${spring.service.authCodeExpiryTime}") private int authCodeExpiryTime;
     @Value("${spring.mail.username}") private String senderEmail;
 
 
     public EmailResponse sendAuthCode(String username) {
         String email = userQueryService.findByUsername(username).getEmail();
         String authCode = generateAuthCode();
-        redisService.setValues(email, authCode, authCodeExpiryTime);
+
+        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
