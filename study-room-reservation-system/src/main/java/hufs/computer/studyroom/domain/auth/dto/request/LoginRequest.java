@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record LoginRequest(
         @Schema(description = "로그인 ID", example = "admin")
         String username,
-        @Schema(description = "로그인 PW", example = "admin")
+        @Schema(description = "로그인 PW", example = "4268")
         String password
 ) {
 }
