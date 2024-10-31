@@ -25,7 +25,7 @@ public class DepartmentController {
     private final DepartmentQueryService departmentQueryService;
     private final DepartmentCommandService departmentCommandService;
 
-    @Operation(summary = "❌[관리자] Department 생성",
+    @Operation(summary = "✅[관리자] Department 생성",
             description = "Department 생성하는 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/partition")
@@ -34,7 +34,7 @@ public class DepartmentController {
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "❌[관리자] Department 조회",
+    @Operation(summary = "✅[관리자] Department 조회",
             description = "Department 조회하는 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/{departmentId}")
@@ -43,7 +43,7 @@ public class DepartmentController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "❌[관리자] Department 정보 수정",
+    @Operation(summary = "✅[관리자] Department 정보 수정",
             description = "해당 department id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
@@ -53,7 +53,7 @@ public class DepartmentController {
         var result = departmentCommandService.updateDepartment(departmentId, request);
         return ResponseFactory.modified(result);
     }
-    @Operation(summary = "❌[관리자] Department 삭제",
+    @Operation(summary = "✅[관리자] Department 삭제",
             description = "해당 department id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
