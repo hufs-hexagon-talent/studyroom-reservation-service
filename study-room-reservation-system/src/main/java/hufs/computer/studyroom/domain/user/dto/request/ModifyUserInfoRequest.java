@@ -1,6 +1,5 @@
 package hufs.computer.studyroom.domain.user.dto.request;
 
-import hufs.computer.studyroom.common.validation.annotation.ExistDepartment;
 import hufs.computer.studyroom.common.validation.annotation.user.UniqueEmail;
 import hufs.computer.studyroom.common.validation.annotation.user.UniqueSerial;
 import hufs.computer.studyroom.common.validation.annotation.user.UniqueUsername;
@@ -31,7 +30,6 @@ public record ModifyUserInfoRequest(
         @UniqueEmail
         String email,
 
-        @ExistDepartment
         @Schema(description = "소속 학과 ID", example = "1")
         Long departmentId
 ) {

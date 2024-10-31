@@ -3,7 +3,6 @@ package hufs.computer.studyroom.domain.user.service;
 import hufs.computer.studyroom.common.error.code.DepartmentErrorCode;
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
 import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
@@ -70,15 +69,25 @@ public class UserCommandService {
     }
 
     public UserInfoResponse updateUserInfo(Long userId, ModifyUserInfoRequest request) {
+
+        //1. 유저 조회
         User user = userQueryService.getUserById(userId);
-        Department department = departmentQueryService.getDepartmentById(request.departmentId());
+
+        // 2. 소속 학과 조회 (departmentId가 null이 아닐 때만 변경 적용)
+        Department department = null;
+        if (request.departmentId() != null) {
+            department = departmentQueryService.getDepartmentById(request.departmentId());
+        }
+
         userMapper.updateUserFromRequest(request, user, department);
         User updatedUser = userRepository.save(user);
         return userMapper.toInfoResponse(updatedUser);
     }
 
+    @Transactional
     public UserInfoResponse resetUserPasswordWithToken(ResetPasswordRequest request) {
         String email = jwtService.getEmailFromPasswordResetToken(request.token());
+//    todo : passwordToken 탈취 당하면 어떻게 하지???
         Long userId = userQueryService.findByEmail(email).getUserId();
         return resetUserPassword(userId, request.newPassword());
     }
@@ -89,6 +98,9 @@ public class UserCommandService {
         if (!bCryptPasswordEncoder.matches(request.prePassword(), user.getPassword())) {
             throw new CustomException(UserErrorCode.INVALID_CURRENT_PASSWORD);
         }
+        if (bCryptPasswordEncoder.matches(request.newPassword(), user.getPassword())) {
+            throw new CustomException(UserErrorCode.INVALID_NEW_PASSWORD);
+        }
         return resetUserPassword(userId, request.newPassword());
     }
 
@@ -97,7 +109,7 @@ public class UserCommandService {
     }
 
 
-    private UserInfoResponse resetUserPassword(@ExistUser Long userId, String newPassword) {
+    private UserInfoResponse resetUserPassword(Long userId, String newPassword) {
         User user = userQueryService.getUserById(userId);
         // 새 비밀번호 암호화 및 업데이트
         if (bCryptPasswordEncoder.matches(newPassword, user.getPassword())) {
