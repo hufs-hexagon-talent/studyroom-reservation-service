@@ -50,7 +50,7 @@ public class AdminUserController {
     @Operation(summary = "✅ [관리자] 여러 회원 등록",
             description = "user 등록 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @PostMapping
+    @PostMapping("/sign-up/bulk")
     public ResponseEntity<SuccessResponse<UserInfoResponses>> signUpUsers(
             @Valid @RequestBody SignUpBulkRequest bulkRequest) {
         var result = userCommandService.signUpUsers(bulkRequest);
