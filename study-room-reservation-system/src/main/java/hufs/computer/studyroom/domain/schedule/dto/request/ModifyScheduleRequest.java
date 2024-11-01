@@ -1,6 +1,6 @@
 package hufs.computer.studyroom.domain.schedule.dto.request;
 
-import hufs.computer.studyroom.common.validation.annotation.ExistPolicy;
+import hufs.computer.studyroom.common.validation.annotation.policy.ExistPolicy;
 import hufs.computer.studyroom.common.validation.annotation.ExistRoom;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
