@@ -141,7 +141,7 @@ public class JWTService {
      * @return JWT 토큰에서 추출된 로그인 ID
      */
     private String parseClaim(String token, String claimKey, SecretKey secretKey) {
-        return extractAll(token, secretKey).get(claimKey, String.class);
+        return validateClaim(token, secretKey).get(claimKey, String.class);
     }
 
 //    ----------------------------------------------------------------------------------------------
@@ -199,43 +199,81 @@ public class JWTService {
     }
 
     /**
-     * JWT 토큰이 만료되었는지 확인한다.
+     * JWT 토큰의 유효성을 검증하고 클레임을 추출한다.
      * @param token     JWT 토큰
      * @param secretKey JWT 비밀키
+     * @return 유효한 경우 JWT의 클레임, 그렇지 않은 경우 예외 발생
+     */
+    private Claims validateToken(String token, SecretKey secretKey) {
+        try {
+            return extractAll(token, secretKey);
+        } catch (JwtException e) {
+            handleJwtException(e);
+            log.error("[AUTH_ERROR] JWT 토큰 검사 중 알 수 없는 오류 발생: {}", e.getMessage());
+            throw new CustomException(CommonErrorCode.INTERNAL_SERVER_ERROR); // 예외가 처리되지 않을 경우 발생
+        }
+    }
+    /**
+     * JWT 토큰의 만료 여부를 확인한다.
+     * @param token     JWT 토큰
+     * @param secretKey JWT 비밀키
+     * @param tokenType 토큰 유형
      * @return 토큰이 만료되었는지 여부
      */
     private boolean isTokenExpired(String token, SecretKey secretKey, TokenType tokenType) {
         try {
-            return extractAll(token, secretKey)
+            return validateToken(token, secretKey)
                     .getExpiration()
                     .before(new Date());
-        } catch (JwtException e) {
-            if (e instanceof ExpiredJwtException) {
-                log.info("[AUTH_INFO] JWT 토큰이 만료: {}", e.getMessage());
-                switch (tokenType) {
-                    case ACCESS -> throw new CustomException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
-                    case REFRESH -> throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
-                    case PASSWORD_RESET -> throw new CustomException(AuthErrorCode.PASSWORD_RESET_TOKEN_EXPIRED);
-                }
-            }
-            if (e instanceof MalformedJwtException) {
-
-                log.warn("[AUTH_WARNING] JWT 토큰 형식이 올바르지 않음: {}", e.getMessage());
-                throw new CustomException(AuthErrorCode.INVALID_TOKEN_FORMAT);
-            } else if (e instanceof SignatureException) {
-
-                log.warn("[AUTH_WARNING] JWT 토큰의 서명이 일치하지 않음: {}", e.getMessage());
-                throw new CustomException(AuthErrorCode.INVALID_TOKEN_SIGNATURE);
-            } else if (e instanceof UnsupportedJwtException) {
-
-                log.warn("[AUTH_WARNING] JWT 토큰의 특정 헤더나 클레임이 지원되지 않음: {}", e.getMessage());
-                throw new CustomException(AuthErrorCode.UNSUPPORTED_TOKEN);
-            } else {
-
-                log.error("[AUTH_ERROR] JWT 토큰 만료 검사중 알 수 없는 오류 발생: {}", e.getMessage());
-                throw new CustomException(CommonErrorCode.INTERNAL_SERVER_ERROR);
-            }
+        } catch (ExpiredJwtException e) {
+            handleExpiredToken(e, tokenType);
+            return true;
         }
+    }
+
+    /**
+     * JWT 예외를 처리하고 적절한 CustomException을 발생시킨다.
+     * @param e JWT 예외
+     */
+    private void handleJwtException(JwtException e) {
+        if (e instanceof MalformedJwtException) {
+            log.warn("[AUTH_WARNING] JWT 토큰 형식이 올바르지 않음: {}", e.getMessage());
+            throw new CustomException(AuthErrorCode.INVALID_TOKEN_FORMAT);
+        } else if (e instanceof SignatureException) {
+            log.warn("[AUTH_WARNING] JWT 토큰의 서명이 일치하지 않음: {}", e.getMessage());
+            throw new CustomException(AuthErrorCode.INVALID_TOKEN_SIGNATURE);
+        } else if (e instanceof UnsupportedJwtException) {
+            log.warn("[AUTH_WARNING] JWT 토큰의 특정 헤더나 클레임이 지원되지 않음: {}", e.getMessage());
+            throw new CustomException(AuthErrorCode.UNSUPPORTED_TOKEN);
+        } else {
+            log.error("[AUTH_ERROR] JWT 토큰 검사 중 알 수 없는 오류 발생: {}", e.getMessage());
+            throw new CustomException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 만료된 JWT 토큰에 대한 예외를 처리한다.
+     * @param e         만료된 JWT 예외
+     * @param tokenType 토큰 유형
+     */
+    private void handleExpiredToken(ExpiredJwtException e, TokenType tokenType) {
+        log.info("[AUTH_INFO] JWT 토큰이 만료: {}", e.getMessage());
+        switch (tokenType) {
+            case ACCESS -> throw new CustomException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
+            case REFRESH -> throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
+            case PASSWORD_RESET -> throw new CustomException(AuthErrorCode.PASSWORD_RESET_TOKEN_EXPIRED);
+            default -> throw new CustomException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 클레임 검증을 수행한다.
+     * @param token     JWT 토큰
+     * @param secretKey JWT 비밀키
+     * @return 유효한 경우 JWT의 클레임
+     */
+    private Claims validateClaim(String token, SecretKey secretKey) {
+        return validateToken(token, secretKey);
     }
 //    ----------------------------------------------------------------------------------------------
 }

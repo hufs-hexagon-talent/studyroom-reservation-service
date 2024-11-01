@@ -83,11 +83,12 @@ public class UserCommandService {
         User updatedUser = userRepository.save(user);
         return userMapper.toInfoResponse(updatedUser);
     }
+    //  passwordToken 탈취 당하면 어떻게 하지???
 
     @Transactional
     public UserInfoResponse resetUserPasswordWithToken(ResetPasswordRequest request) {
         String email = jwtService.getEmailFromPasswordResetToken(request.token());
-//    todo : passwordToken 탈취 당하면 어떻게 하지???
+
         Long userId = userQueryService.findByEmail(email).getUserId();
         return resetUserPassword(userId, request.newPassword());
     }
