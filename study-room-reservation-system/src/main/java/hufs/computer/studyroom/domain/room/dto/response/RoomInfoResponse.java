@@ -13,7 +13,7 @@ public record RoomInfoResponse(
         String roomName,
         @Schema(description = "관리 부서 ID", example = "1")
         Long departmentId,
-        @Schema(description = "관리 부서 명", example = "컴퓨터 공학과")
+        @Schema(description = "관리 부서 명", example = "컴퓨터공학")
         String departmentName
 )
 {}

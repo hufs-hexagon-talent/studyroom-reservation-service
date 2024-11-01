@@ -21,7 +21,7 @@ public record ReservationInfoResponse(
         String partitionNumber,
         @Schema(description = "관리 부서 ID", example = "1")
         Long departmentId,
-        @Schema(description = "관리 부서 명", example = "컴퓨터 공학과")
+        @Schema(description = "관리 부서 명", example = "컴퓨터공학")
         String departmentName,
         @Schema(description = "예약 시간 시간",example = "")
         Instant reservationStartTime,

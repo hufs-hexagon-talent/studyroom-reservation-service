@@ -6,6 +6,6 @@ import lombok.Builder;
 @Schema(description = "관리 부서 수정 요청 DTO")
 @Builder
 public record ModifyDepartmentRequest(
-        @Schema(description = "관리부서명", example = "컴퓨터 공학과")
+        @Schema(description = "관리부서명", example = "컴퓨터공학")
         String departmentName
 ) {}

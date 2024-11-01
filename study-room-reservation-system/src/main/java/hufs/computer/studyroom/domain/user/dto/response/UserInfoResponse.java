@@ -30,7 +30,7 @@ public record UserInfoResponse(
         @Schema(description = "소속 학과 ID", example = "1")
         Long departmentId,
 
-        @Schema(description = "소속 학과 이름", example = "컴퓨터공학과")
+        @Schema(description = "소속 학과 이름", example = "컴퓨터공학")
         String departmentName
 ) {
 }
