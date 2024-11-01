@@ -82,8 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         ErrorCode errorCode = CommonErrorCode.BAD_REQUEST;
 
-        List<FieldError> fieldErrors = ex.getBindingResult()
-                .getFieldErrors();
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         List<ValidationError> errors = fieldErrors.stream()
                 .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()))
                 .collect(Collectors.toList());

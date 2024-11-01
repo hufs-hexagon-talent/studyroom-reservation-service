@@ -1,6 +1,6 @@
 package hufs.computer.studyroom.domain.policy.service;
 
-import hufs.computer.studyroom.common.validation.annotation.ExistPolicy;
+import hufs.computer.studyroom.common.validation.annotation.policy.ExistPolicy;
 import hufs.computer.studyroom.domain.policy.dto.request.CreateOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.dto.request.ModifyOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponse;

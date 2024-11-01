@@ -1,7 +1,7 @@
-package hufs.computer.studyroom.common.validation.validator;
+package hufs.computer.studyroom.common.validation.validator.policy;
 
 import hufs.computer.studyroom.common.error.code.PolicyErrorCode;
-import hufs.computer.studyroom.common.validation.annotation.ExistPolicy;
+import hufs.computer.studyroom.common.validation.annotation.policy.ExistPolicy;
 import hufs.computer.studyroom.domain.policy.service.PolicyQueryService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -18,7 +18,7 @@ public class ExistPolicyValidator implements ConstraintValidator<ExistPolicy, Lo
         boolean isValid = policyQueryService.existPolicyById(policyId);
         if (!isValid) {
             context.disableDefaultConstraintViolation(); // 기본 메시지 비활성화
-            context.buildConstraintViolationWithTemplate(PolicyErrorCode.POLICY_NOT_FOUND.toString()) // 커스텀 메시지 설정
+            context.buildConstraintViolationWithTemplate(PolicyErrorCode.POLICY_NOT_FOUND.getMessage()) // 커스텀 메시지 설정
                     .addConstraintViolation(); // 커스텀 메시지 추가
         }
         return isValid;
