@@ -1,6 +1,6 @@
-package hufs.computer.studyroom.common.validation.annotation;
+package hufs.computer.studyroom.common.validation.annotation.policy;
 
-import hufs.computer.studyroom.common.validation.validator.ExistPolicyValidator;
+import hufs.computer.studyroom.common.validation.validator.policy.ExistPolicyValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

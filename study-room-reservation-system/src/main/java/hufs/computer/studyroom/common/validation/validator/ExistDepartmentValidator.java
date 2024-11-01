@@ -18,7 +18,7 @@ public class ExistDepartmentValidator implements ConstraintValidator<ExistDepart
         boolean isValid = departmentQueryService.existByDepartmentId(departmentId);
         if (!isValid) {
             constraintValidatorContext.disableDefaultConstraintViolation(); // 기본 메시지 비활성화
-            constraintValidatorContext.buildConstraintViolationWithTemplate(DepartmentErrorCode.DEPARTMENT_NOT_FOUND.toString()) // 커스텀 메시지 설정
+            constraintValidatorContext.buildConstraintViolationWithTemplate(DepartmentErrorCode.DEPARTMENT_NOT_FOUND.getMessage()) // 커스텀 메시지 설정
                     .addConstraintViolation(); // 커스텀 메시지 추가
         }
         return isValid;

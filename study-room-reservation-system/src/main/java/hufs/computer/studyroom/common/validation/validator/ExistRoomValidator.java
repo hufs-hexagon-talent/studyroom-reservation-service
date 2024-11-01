@@ -18,7 +18,7 @@ public class ExistRoomValidator implements ConstraintValidator<ExistRoom, Long> 
         boolean isValid = roomQueryService.existByRoomId(roomId);
         if (!isValid) {
             context.disableDefaultConstraintViolation(); // 기본 메시지 비활성화
-            context.buildConstraintViolationWithTemplate(RoomErrorCode.ROOM_NOT_FOUND.toString()) // 커스텀 메시지 설정
+            context.buildConstraintViolationWithTemplate(RoomErrorCode.ROOM_NOT_FOUND.getMessage()) // 커스텀 메시지 설정
                     .addConstraintViolation(); // 커스텀 메시지 추가
         }
         return isValid;
