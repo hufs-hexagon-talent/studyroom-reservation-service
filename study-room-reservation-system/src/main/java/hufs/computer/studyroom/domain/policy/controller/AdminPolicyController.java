@@ -54,7 +54,7 @@ public class AdminPolicyController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "❌[관리자] RoomOperationPolicy 정보 업데이트",
+    @Operation(summary = "✅[관리자] RoomOperationPolicy 정보 업데이트",
             description = "해당 RoomOperationPolicy id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PatchMapping("/policy/{roomOperationPolicyId}")
