@@ -5,9 +5,7 @@ import hufs.computer.studyroom.domain.policy.dto.request.ModifyOperationPolicyRe
 import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponse;
 import hufs.computer.studyroom.domain.policy.dto.response.OperationPolicyInfoResponses;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -19,6 +17,7 @@ public interface RoomOperationPolicyMapper {
     RoomOperationPolicy toRoomOperationPolicy(CreateOperationPolicyRequest request);
 
     // ModifyOperationPolicyRequest -> RoomOperationPolicy 업데이트 (기존 엔티티 수정)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "roomOperationPolicyId", ignore = true)
     void updatePolicy(ModifyOperationPolicyRequest request, @MappingTarget RoomOperationPolicy policy);
 
