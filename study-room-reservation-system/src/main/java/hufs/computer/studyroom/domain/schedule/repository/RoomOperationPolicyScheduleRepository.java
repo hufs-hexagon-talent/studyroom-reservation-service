@@ -15,6 +15,7 @@ public interface RoomOperationPolicyScheduleRepository extends JpaRepository<Roo
     // {특정 날짜에 해당, 특정 방} 의 운영 정책 스케쥴 을 찾는 메소드
     Optional<RoomOperationPolicySchedule> findByRoomAndPolicyApplicationDate(Room room, LocalDate date);
     boolean existsByRoomRoomIdAndPolicyApplicationDate(Long roomId, LocalDate date);
+    boolean existsByRoomAndPolicyApplicationDate(Room room, LocalDate date);
 
 
     // {특정 날짜에 해당 하는 방들} 의 운영 정책 스케쥴 을 찾는 메소드
