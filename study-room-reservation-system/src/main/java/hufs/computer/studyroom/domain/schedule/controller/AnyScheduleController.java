@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,12 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AnyScheduleController {
     private final ScheduleQueryService scheduleQueryService;
-    @Operation(summary = "✅ 현재로 부터 미래까지 운영 정책이 설정된 방이 있는 날짜를 조회",
+    @Operation(summary = "🚧 현재로 부터 미래까지 운영 정책이 설정된 방이 있는 날짜를 조회",
             description = "현재로 부터 예약가능한 방들을 날짜를 기준으로 묶어 조회"
     )
-    @GetMapping("/available-dates")
-    public ResponseEntity<SuccessResponse<AvailableDateResponses>> getAvailableDatesFromToday() {
-        var result = scheduleQueryService.getAvailableDatesFromToday();
+    @GetMapping("/available-dates/{departmentId}")
+    public ResponseEntity<SuccessResponse<AvailableDateResponses>> getAvailableDatesFromToday(@PathVariable Long departmentId) {
+        var result = scheduleQueryService.getAvailableDatesFromToday(departmentId);
         return ResponseFactory.success(result);
     }
 }
