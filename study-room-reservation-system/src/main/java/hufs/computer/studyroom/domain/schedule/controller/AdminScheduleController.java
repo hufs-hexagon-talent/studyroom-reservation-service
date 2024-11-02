@@ -49,7 +49,7 @@ public class AdminScheduleController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "❌[관리자] 해당날짜의 schedule 들 조회",
+    @Operation(summary = "✅[관리자] 해당날짜의 schedule 들 조회",
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("date/{policyApplicationDate}")
@@ -72,7 +72,7 @@ public class AdminScheduleController {
 
     }
 
-    @Operation(summary = "❌[관리자] schedule 삭제",
+    @Operation(summary = "✅[관리자] schedule 삭제",
             description = "해당 schedule id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
