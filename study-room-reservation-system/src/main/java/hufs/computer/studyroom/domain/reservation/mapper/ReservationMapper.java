@@ -31,6 +31,7 @@ public interface ReservationMapper {
     Reservation toReservation(CreateReservationRequest request, User user, RoomPartition partition, ReservationState state);
 
     // Reservation -> ReservationInfoResponse DTO 변환
+    @Mapping(source = "user.name", target = "name")
     @Mapping(source = "user.userId", target = "userId")
     @Mapping(source = "roomPartition.room.roomId", target = "roomId")
     @Mapping(source = "roomPartition.room.roomName", target = "roomName")
