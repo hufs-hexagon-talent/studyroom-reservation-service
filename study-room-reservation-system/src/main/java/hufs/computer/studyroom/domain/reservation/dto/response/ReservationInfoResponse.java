@@ -11,6 +11,8 @@ public record ReservationInfoResponse(
         Long reservationId,
         @Schema(description = "예약 소유자 ID", example = "231")
         Long userId,
+        @Schema(description = "예약 소유자 명", example = "황빵")
+        String name,
         @Schema(description = "룸 ID", example = "1")
         Long roomId,
         @Schema(description = "룸 번호(이름)", example = "306")
