@@ -31,7 +31,7 @@ public class AdminScheduleController {
 
 
     // todo : 트랜잭션
-    @Operation(summary = "❌[관리자] 여러 schedule 생성",
+    @Operation(summary = "✅[관리자] 여러 schedule 생성",
             description = "여러 스케쥴 생성/ 여러개의 방에 여러 날짜에 스케쥴 생성 ",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping()
@@ -40,7 +40,7 @@ public class AdminScheduleController {
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "❌[관리자] schedule 조회",
+    @Operation(summary = "✅[관리자] schedule 조회",
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/{roomOperationPolicyScheduleId}")
@@ -59,7 +59,7 @@ public class AdminScheduleController {
     }
 
 
-    @Operation(summary = "❌[관리자] schedule 업데이트",
+    @Operation(summary = "✅[관리자] schedule 업데이트",
             description = "해당 스케쥴 업데이트",
             security = {@SecurityRequirement(name = "JWT")})
     @PutMapping("/schedule/{roomOperationPolicyScheduleId}")
