@@ -131,7 +131,7 @@ public class SecurityConfig {
                                         "/policies/**").hasAnyAuthority(ROLE_ADMIN)
                                 // PolicySchedule
                                 .requestMatchers(
-                                        "/schedules/available-dates").permitAll()
+                                        "/schedules/available-dates/**").permitAll()
                                 .requestMatchers(
                                         "/schedules/**").hasAnyAuthority(ROLE_ADMIN)
 

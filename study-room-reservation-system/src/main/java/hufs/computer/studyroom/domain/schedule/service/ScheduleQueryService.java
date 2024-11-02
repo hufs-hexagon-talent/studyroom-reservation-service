@@ -35,9 +35,9 @@ public class ScheduleQueryService {
         return scheduleMapper.toScheduleInfoResponses(schedules);
     }
 
-    public AvailableDateResponses getAvailableDatesFromToday() {
+    public AvailableDateResponses getAvailableDatesFromToday(Long departmentId) {
         LocalDate today = LocalDate.now();
-        List<LocalDate> dates = scheduleRepository.findAvailableRoomsGroupedByDate(today);
+        List<LocalDate> dates = scheduleRepository.findAvailableRoomsGroupedByDate(today, departmentId);
         return scheduleMapper.toAvailableDateResponses(dates);
     }
 
@@ -49,6 +49,7 @@ public class ScheduleQueryService {
         return scheduleRepository.findByRoomAndPolicyApplicationDate(room, date);
         //.orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
     }
+    public boolean existsScheduleByRoomAndDate(Room room, LocalDate date) {return scheduleRepository.existsByRoomAndPolicyApplicationDate(room, date);}
     public boolean existByScheduleId(Long scheduleId) {
         return scheduleRepository.existsById(scheduleId);
     }

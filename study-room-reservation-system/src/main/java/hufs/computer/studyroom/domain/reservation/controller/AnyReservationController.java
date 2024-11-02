@@ -21,12 +21,12 @@ import java.time.LocalDate;
 public class AnyReservationController {
         private final ReservationQueryService reservationQueryService;
 
-        @Operation(summary = "❌ 특정 날짜 ,특정 부서가 관리하는 모든 파티션의 예약 상태 조회",
+        @Operation(summary = "✅[예약 현황 테이블] 특정 날짜 ,특정 부서가 관리하는 모든 파티션의 예약 상태 조회",
                 description = "날짜를 받으면 룸(파티션 집합)들의 예약을 확인, 예약 현황 테이블을 그릴때 사용",
                 security = {})
         @GetMapping("/by-date/{departmentId}")
         ResponseEntity<SuccessResponse<AllPartitionsReservationStatusResponse>> getPartitionReservationsByDepartmentAndDate(
-                @ExistDepartment @PathVariable("departmentId") Long departmentId,
+                @ExistDepartment @PathVariable("departmentId") Long departmentId, // todo :  헤더 필터링으로 (추출)
                 @RequestParam("date") LocalDate date) {
             var result = reservationQueryService.getPartitionReservationsByDepartmentAndDate(departmentId, date);
 

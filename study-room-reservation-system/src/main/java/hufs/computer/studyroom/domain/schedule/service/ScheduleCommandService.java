@@ -66,10 +66,10 @@ public class ScheduleCommandService {
     }
 
     @Transactional
-    public ScheduleInfoResponse updateSchedule(@ExistSchedule Long scheduleId, ModifyScheduleRequest request) {
+    public ScheduleInfoResponse updateSchedule(Long scheduleId, ModifyScheduleRequest request) {
         RoomOperationPolicySchedule schedule = scheduleQueryService.getScheduleById(scheduleId);
-        Room room = schedule.getRoom();
-        RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
+        Room room = roomQueryService.getRoomById(request.roomId());
+        RoomOperationPolicy policy = policyQueryService.getPolicyById(request.roomOperationPolicyId());
 
         scheduleMapper.updateFromRequest(request, room, policy, schedule);
 

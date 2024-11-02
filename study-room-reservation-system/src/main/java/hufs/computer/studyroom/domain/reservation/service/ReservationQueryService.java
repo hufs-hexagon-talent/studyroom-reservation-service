@@ -11,6 +11,8 @@ import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import hufs.computer.studyroom.domain.reservation.mapper.ReservationMapper;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
+import hufs.computer.studyroom.domain.room.entity.Room;
+import hufs.computer.studyroom.domain.room.repository.RoomRepository;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
 import hufs.computer.studyroom.domain.user.entity.User;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static hufs.computer.studyroom.common.util.DateTimeUtil.convertKstToUtc;
@@ -40,6 +43,7 @@ public class ReservationQueryService {
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final RoomPartitionRepository partitionRepository;
     private final ReservationMapper reservationMapper;
+    private final RoomRepository roomRepository;
 
 
     // 해당 유저의 모든 reservation 로그 찾기
@@ -138,7 +142,8 @@ public class ReservationQueryService {
     public AllPartitionsReservationStatusResponse getPartitionReservationsByDepartmentAndDate(Long departmentId, LocalDate date) {
 
 //       departmentId 에 속하는 룸들의 Partitions 들을 찾음
-        List<RoomPartition> partitions = partitionRepository.findAllByRoomDepartmentDepartmentId(departmentId);
+        List<Room> roomsOfDepartment = roomRepository.findAllByDepartmentDepartmentId(departmentId);
+        List<RoomPartition> partitions = partitionRepository.findByRoomIn(roomsOfDepartment);
 
         List<PartitionReservationStatus> partitionReservationStatuses = partitions.stream()
                 .map(partition -> getEachPartitionReservationState(partition, date))
@@ -149,8 +154,14 @@ public class ReservationQueryService {
     }
 
     private PartitionReservationStatus getEachPartitionReservationState(RoomPartition partition , LocalDate date) {
-        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+//        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+        // 운영 정책 일정이 없는 경우 null 반환
+        Optional<RoomOperationPolicySchedule> optionalSchedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date);
+        if (optionalSchedule.isEmpty()) {
+            return null; // 운영 정책이 없으면 null 반환
+        }
 
+        RoomOperationPolicySchedule schedule = optionalSchedule.get();
         RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
         // 운영 시작 및 종료 시간을 계산
         Instant operationStartTime = convertKstToUtc(date.atTime(policy.getOperationStartTime())).atZone(ZoneOffset.UTC).toInstant();
