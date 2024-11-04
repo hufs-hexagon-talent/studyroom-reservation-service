@@ -8,18 +8,23 @@ import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
 import hufs.computer.studyroom.domain.reservation.dto.request.CreateReservationRequest;
 import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationStateRequest;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponse;
+import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.mapper.ReservationMapper;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 
+import hufs.computer.studyroom.domain.user.service.UserCommandService;
+import hufs.computer.studyroom.domain.user.service.UserValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.util.List;
 
 import static hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState.NOT_VISITED;
 import static hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState.VISITED;
@@ -32,8 +37,10 @@ public class ReservationCommandService {
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
     private final PartitionQueryService partitionQueryService;
-    private final ReservationValidationService validateService;
+    private final ReservationValidationService validationService;
     private final ReservationQueryService reservationQueryService;
+    private final UserCommandService userCommandService;
+    private final UserValidationService userValidationService;
 
 
     @Transactional
@@ -41,8 +48,17 @@ public class ReservationCommandService {
         User user = currentUser.getUser();
         Long roomPartitionId = request.roomPartitionId();
 
-        // 검증
-        validateService.validateRoomAvailability(user.getUserId(), roomPartitionId, request.startDateTime(), request.endDateTime());
+
+        Long userId = user.getUserId();
+
+        // [검증] 1. No Show 횟수에 따른 차단 여부 확인
+        boolean isValid = userValidationService.validateNoShowStatus(userId);
+
+        if (isValid) {
+            // No Show 기간이 지났다면 상태 업데이트
+            updateNoShowReservationsToProcessed(userId);
+        }
+        validationService.validateRoomAvailability(userId, roomPartitionId, request.startDateTime(), request.endDateTime());
 
         RoomPartition partition = partitionQueryService.getPartitionById(roomPartitionId);
 
@@ -91,5 +107,18 @@ public class ReservationCommandService {
         return reservationMapper.toInfoResponse(saved);
     }
 
+    /**
+     * No-Show 상태의 예약들을 PROCESSED 상태로 업데이트
+     */
+    public ReservationInfoResponses updateNoShowReservationsToProcessed(Long userId) {
+
+        userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
+
+        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
+        noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
+
+
+        return reservationMapper.toInfoResponses(reservationRepository.saveAll(noShowReservations));
+    }
 
 }

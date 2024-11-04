@@ -2,6 +2,7 @@ package hufs.computer.studyroom.domain.user.service;
 
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
@@ -12,6 +13,7 @@ import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserQueryService {
+
+    @Value("${spring.service.noShowLimit}") private int noShowLimit;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ReservationQueryService reservationQueryService;
@@ -55,6 +59,14 @@ public class UserQueryService {
                 .collect(Collectors.toList());
 
         return userMapper.toBlockedInfoResponses(blockedInfoResponses);
+    }
+
+    /**
+     * 사용자가 No-Show 제한에 걸렸는지 확인하는 메서드
+     */
+    public boolean isUserBlockedDueToNoShow(Long userId) {
+        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
+        return noShowReservations.size() >= noShowLimit;
     }
 
     public List<User> getBlockedUsers() {

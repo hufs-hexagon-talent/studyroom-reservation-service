@@ -3,8 +3,11 @@ package hufs.computer.studyroom.domain.user.controller;
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
+import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
+import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpBulkRequest;
+import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminUserController {
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
+    private final ReservationCommandService reservationCommandService;
 
     // request param -> json request
     @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
@@ -78,6 +82,18 @@ public class AdminUserController {
 
         return ResponseFactory.success(result);
     }
+
+    @Operation(summary = "✅[관리자] 블락 당한 사용자 블락 해제",
+            description = "관리용 예약 조회",
+            security = {@SecurityRequirement(name = "JWT")})
+    @PostMapping("/unblocked/{userId}")
+    public ResponseEntity<SuccessResponse<ReservationInfoResponses>> unBlockUserById(
+            @ExistUser @PathVariable Long userId) {
+        var result = reservationCommandService.updateNoShowReservationsToProcessed(userId);
+
+        return ResponseFactory.success(result);
+    }
+
     @Operation(summary = "✅ [관리자] 특정 회원 정보 수정",
             description = "해당 user id의 정보를 수정 API",
             security = {@SecurityRequirement(name = "JWT")})

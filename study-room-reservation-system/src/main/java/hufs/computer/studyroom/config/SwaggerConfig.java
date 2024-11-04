@@ -4,7 +4,6 @@ package hufs.computer.studyroom.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OpenApiCustomizer;
@@ -49,6 +48,6 @@ public class SwaggerConfig {
         return new Info()
                 .title("HUFS Reservation Service") // API의 제목
                 .description("User Side, Admin Side API") // API에 대한 설명
-                .version("2.4.7"); // API의 버전
+                .version("2.4.8"); // API의 버전
     }
 }
