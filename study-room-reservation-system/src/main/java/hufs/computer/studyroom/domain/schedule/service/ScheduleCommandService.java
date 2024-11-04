@@ -33,6 +33,7 @@ public class ScheduleCommandService {
     private final RoomQueryService roomQueryService;
     private final ScheduleQueryService scheduleQueryService;
 
+    @Transactional
     public ScheduleInfoResponses createSchedules(CreateScheduleBulkRequest request) {
         RoomOperationPolicy policy = policyQueryService.getPolicyById(request.roomOperationPolicyId());
 
