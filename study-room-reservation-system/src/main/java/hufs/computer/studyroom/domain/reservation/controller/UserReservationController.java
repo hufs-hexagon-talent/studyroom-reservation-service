@@ -65,7 +65,7 @@ public class UserReservationController {
     }
 
 
-    @Operation(summary = "❌ 자신의 모든 예약 기록 조회 ",
+    @Operation(summary = "✅ 자신의 모든 예약 기록 조회 ",
             description = " 인증 받은 유저 자신의 모든 예약 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me")
@@ -77,7 +77,7 @@ public class UserReservationController {
     }
 
 
-    @Operation(summary = "❌ 자신의 NoShow 정보 조회",
+    @Operation(summary = "✅ 자신의 NoShow 정보 조회",
             description = " 인증 받은 유저의 자신의 노쇼 횟수 조회 ",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me/no-show")

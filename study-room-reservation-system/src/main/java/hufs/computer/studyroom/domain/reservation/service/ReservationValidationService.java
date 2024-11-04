@@ -4,15 +4,10 @@ import hufs.computer.studyroom.common.error.code.*;
 import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.common.util.DateTimeUtil;
 import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
-import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
-import hufs.computer.studyroom.domain.user.entity.ServiceRole;
-import hufs.computer.studyroom.domain.user.entity.User;
-import hufs.computer.studyroom.domain.user.repository.UserRepository;
-import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,32 +18,21 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReservationValidationService {
-
-    private final UserRepository userRepository;
-
-    @Value("${spring.service.noShowLimit}")
-    private int noShowLimit;
-    @Value("${spring.service.reservationLimit}")
-    private int reservationLimit;
-    @Value("${spring.service.reservationLimitToday}")
-    private int reservationLimitToday;
+    @Value("${spring.service.reservationLimit}") private int reservationLimit;
+    @Value("${spring.service.reservationLimitToday}") private int reservationLimitToday;
 
     private final ReservationRepository reservationRepository;
-    private final ReservationQueryService reservationQueryService;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final PartitionQueryService partitionQueryService;
-    private final UserQueryService userQueryService;
+
 
     public void validateRoomAvailability(Long userId, Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
-
-        // 1. No Show 횟수에 따른 차단 여부 확인
-        validateNoShowStatus(userId);
 
         // 2. 운영 시간 및 예약 가능한 시간 검증
         validateRoomOperationTime(roomPartitionId, startDateTime, endDateTime);
@@ -66,62 +50,11 @@ public class ReservationValidationService {
         validateReservationOverlap(roomPartitionId, startDateTime, endDateTime);
     }
 
-/**
- * 사용자가 No Show 제한에 걸렸는지 검증
- *  노쇼 찾기
- *  현재     →  예약 시작, 예약 종료     | 시작 전 으로 찾기
- *  예약 시작 →  현재     →   예약 종료  | 시작 전 으로 찾기
- *  예약 시작 →  예약 종료 →  현재       | 현재     로 찾기
- */
-// todo : state 부분 수정
-
-@Transactional
-    public void validateNoShowStatus(Long userId) {
-//  가장 마지막으로 생성된 예약의 날짜부터 noShowCntMonth 달 후 까지 블락기간이므로, noShowCntMonth 달 후, 다음날 부터는 이용가능
-        User user = userQueryService.getUserById(userId);
-
-        if (isUserBlockedDueToNoShow(userId)){
-            Instant blockEndTime = reservationQueryService.calculateNoShowBlockEndTime(userId);
-
-            user.setServiceRole(ServiceRole.BLOCKED);
-
-            if (Instant.now().isBefore(blockEndTime)) {
-                throw new CustomException(ReservationErrorCode.NO_SHOW_LIMIT_EXCEEDED);
-            }
-
-            // No Show 기간이 지났다면 상태 업데이트
-            updateNoShowReservationsToProcessed(userId);
-
-            user.setServiceRole(ServiceRole.USER);
-            userRepository.save(user);
-        }
-    }
-
-
-    /**
-     * 사용자가 No-Show 제한에 걸렸는지 확인하는 메서드
-     */
-    private boolean isUserBlockedDueToNoShow(Long userId) {
-        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
-        return noShowReservations.size() >= noShowLimit;
-    }
-
-
-    /**
-     * No-Show 상태의 예약들을 PROCESSED 상태로 업데이트
-     */
-    private void updateNoShowReservationsToProcessed(Long userId) {
-        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
-        noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
-        reservationRepository.saveAll(noShowReservations);
-    }
-
-
     /**
      * Room의 운영 시간 검증
      */
     private void validateRoomOperationTime(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
-//        todo : 로직 작성
+
 
         Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
         LocalDate reservationDate = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
@@ -143,7 +76,7 @@ public class ReservationValidationService {
      * Room의 예약 시간 초과 검증
      */
     private void validateMaxReservationTime(Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
-//        todo : 로직 작성
+
 //        예약시 시간이 정책의 정해진 한도를 초과하는지?
         Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
         LocalDate reservationDate = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
