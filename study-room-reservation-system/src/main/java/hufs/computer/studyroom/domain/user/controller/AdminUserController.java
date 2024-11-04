@@ -5,6 +5,7 @@ import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpBulkRequest;
+import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
 import hufs.computer.studyroom.domain.user.service.UserCommandService;
@@ -72,7 +73,7 @@ public class AdminUserController {
             description = "관리용 예약 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/blocked")
-    public ResponseEntity<SuccessResponse<UserInfoResponses>> getBlockedUserReservationInfo() {
+    public ResponseEntity<SuccessResponse<UserBlockedInfoResponses>> getBlockedUserReservationInfo() {
         var result = userQueryService.findBlockedUser();
 
         return ResponseFactory.success(result);

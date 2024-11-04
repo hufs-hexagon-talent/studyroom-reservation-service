@@ -3,12 +3,15 @@ package hufs.computer.studyroom.domain.user.mapper;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpRequest;
+import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
+import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import org.mapstruct.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -32,6 +35,13 @@ public interface UserMapper {
     @Mapping(target = "department", source = "department")
     void updateUserFromRequest(ModifyUserInfoRequest request, @MappingTarget User user, Department department);
 
+
+    // User -> UserBlockedInfoResponse 변환
+    @Mapping(source = "user", target = "userInfoResponse")
+    UserBlockedInfoResponse toBlockedInfoResponse(User user, LocalDate startBlockedDate, LocalDate endBlockedDate);
+
+
+
     // 여러 User -> 여러 UserInfoResponse DTO 변환
     List<UserInfoResponse> toInfoResponseList(List<User> users);
 
@@ -39,6 +49,13 @@ public interface UserMapper {
     default UserInfoResponses toInfoResponses(List<UserInfoResponse> userInfoResponses) {
         return UserInfoResponses.builder()
                 .users(userInfoResponses)
+                .build();
+    }
+
+    // 여러 UserBlockedInfoResponse DTO -> UserBlockedInfoResponses 변환
+    default UserBlockedInfoResponses toBlockedInfoResponses(List<UserBlockedInfoResponse> userBlockedInfoResponses) {
+        return UserBlockedInfoResponses.builder()
+                .UserBlockedInfoResponses(userBlockedInfoResponses)
                 .build();
     }
 }

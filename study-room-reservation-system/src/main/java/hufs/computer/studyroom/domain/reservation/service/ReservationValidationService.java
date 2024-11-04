@@ -31,8 +31,7 @@ import java.util.List;
 public class ReservationValidationService {
 
     private final UserRepository userRepository;
-    @Value("${spring.service.noShowBlockMonth}")
-    private Long noShowBlockMonth;
+
     @Value("${spring.service.noShowLimit}")
     private int noShowLimit;
     @Value("${spring.service.reservationLimit}")
@@ -41,6 +40,7 @@ public class ReservationValidationService {
     private int reservationLimitToday;
 
     private final ReservationRepository reservationRepository;
+    private final ReservationQueryService reservationQueryService;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
     private final PartitionQueryService partitionQueryService;
     private final UserQueryService userQueryService;
@@ -76,31 +76,46 @@ public class ReservationValidationService {
 // todo : state 부분 수정
 
 @Transactional
-    protected void validateNoShowStatus(Long userId) {
+    public void validateNoShowStatus(Long userId) {
 //  가장 마지막으로 생성된 예약의 날짜부터 noShowCntMonth 달 후 까지 블락기간이므로, noShowCntMonth 달 후, 다음날 부터는 이용가능
         User user = userQueryService.getUserById(userId);
 
-        List<Reservation> noShowReservations = reservationRepository.findNoShowReservationsByUserId(userId);
-        if (noShowReservations.size() >= noShowLimit) {
-            Instant latestNoShowTime = noShowReservations.stream()
-                    .map(Reservation::getCreateAt)
-                    .max(Instant::compareTo)
-                    .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
-
-            Instant blockEndTime = DateTimeUtil.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
+        if (isUserBlockedDueToNoShow(userId)){
+            Instant blockEndTime = reservationQueryService.calculateNoShowBlockEndTime(userId);
 
             user.setServiceRole(ServiceRole.BLOCKED);
+
             if (Instant.now().isBefore(blockEndTime)) {
                 throw new CustomException(ReservationErrorCode.NO_SHOW_LIMIT_EXCEEDED);
             }
 
             // No Show 기간이 지났다면 상태 업데이트
-            noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
-            reservationRepository.saveAll(noShowReservations);
+            updateNoShowReservationsToProcessed(userId);
+
             user.setServiceRole(ServiceRole.USER);
             userRepository.save(user);
         }
     }
+
+
+    /**
+     * 사용자가 No-Show 제한에 걸렸는지 확인하는 메서드
+     */
+    private boolean isUserBlockedDueToNoShow(Long userId) {
+        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
+        return noShowReservations.size() >= noShowLimit;
+    }
+
+
+    /**
+     * No-Show 상태의 예약들을 PROCESSED 상태로 업데이트
+     */
+    private void updateNoShowReservationsToProcessed(Long userId) {
+        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
+        noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
+        reservationRepository.saveAll(noShowReservations);
+    }
+
 
     /**
      * Room의 운영 시간 검증

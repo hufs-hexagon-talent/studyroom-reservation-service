@@ -21,6 +21,7 @@ import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -31,13 +32,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static hufs.computer.studyroom.common.util.DateTimeUtil.convertKstToUtc;
+import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ReservationQueryService {
-
+    @Value("${spring.service.noShowBlockMonth}") private Long noShowBlockMonth;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
@@ -198,6 +199,38 @@ public class ReservationQueryService {
     }
 
     /* Helper Method
+    * */
+
+    public List<Reservation> getNoShowReservationsByUserId(Long userId) {
+        return reservationRepository.findNoShowReservationsByUserId(userId);
+    }
+
+    /**
+     * 사용자에 대한 No-Show 블락 시작 시간을 반환
+     */
+    public Instant getLatestNoShowStartTime(Long userId) {
+        List<Reservation> noShowReservations = reservationRepository.findNoShowReservationsByUserId(userId);
+        return noShowReservations.stream()
+                .map(Reservation::getCreateAt)
+                .max(Instant::compareTo)
+                .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+    }
+
+    public LocalDate getBlockedStartTime(Long userId) {
+        return getDateOfInstant(getLatestNoShowStartTime(userId));
+    }
+    /**
+     * 사용자에 대한 No-Show 블락 종료 시간을 계산
+     */
+    public Instant calculateNoShowBlockEndTime(Long userId) {
+        Instant latestNoShowTime = getLatestNoShowStartTime(userId);
+        return DateTimeUtil.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
+    }
+    public LocalDate getBlockedEndTime(Long userId) {
+        return getDateOfInstant(calculateNoShowBlockEndTime(userId));
+    }
+
+    /*
     * */
     public List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute) {
         String notVisitedState = ReservationState.NOT_VISITED.toString();
