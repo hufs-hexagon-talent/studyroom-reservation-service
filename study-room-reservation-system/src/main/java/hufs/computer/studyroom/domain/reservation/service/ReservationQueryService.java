@@ -238,6 +238,9 @@ public class ReservationQueryService {
                 .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }
 
+
+
+
     public Reservation getReservationById(Long id) {
         return reservationRepository.findById(id).orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }

@@ -7,6 +7,7 @@ import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
 import hufs.computer.studyroom.domain.department.service.DepartmentQueryService;
+import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.user.dto.request.*;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
@@ -30,10 +31,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserCommandService {
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
-    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserQueryService userQueryService;
     private final DepartmentQueryService departmentQueryService;
     private final JWTService jwtService;
@@ -109,7 +110,6 @@ public class UserCommandService {
         userRepository.deleteById(userId);
     }
 
-
     private UserInfoResponse resetUserPassword(Long userId, String newPassword) {
         User user = userQueryService.getUserById(userId);
         // 새 비밀번호 암호화 및 업데이트
@@ -121,5 +121,10 @@ public class UserCommandService {
 
         User savedUser = userRepository.save(user);
         return userMapper.toInfoResponse(savedUser);
+    }
+    public void modifyServiceRoleById(Long userId, ServiceRole serviceRole){
+        User user = userQueryService.getUserById(userId);
+        user.setServiceRole(serviceRole);
+        userRepository.save(user);
     }
 }
