@@ -8,6 +8,7 @@ import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
@@ -76,6 +77,7 @@ public class UserQueryService {
         return userRepository.findById(id).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
     }
 
+    public ServiceRole getServiceRoleById(Long id) {return userRepository.findUserServiceRoleByUserId(id);}
     public boolean existByUserId(Long userId) {return userRepository.existsById(userId);}
     public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
