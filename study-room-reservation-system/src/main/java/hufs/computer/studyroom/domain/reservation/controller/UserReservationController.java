@@ -71,7 +71,7 @@ public class UserReservationController {
     @GetMapping("/me")
     ResponseEntity<SuccessResponse<ReservationInfoResponses>> lookUpAllHistory(@AuthenticationPrincipal CustomUserDetails currentUser) {
 
-        var result = reservationQueryService.findAllReservationByUser(currentUser);
+        var result = reservationQueryService.findAllReservationByUser(currentUser.getUser().getUserId());
 
         return ResponseFactory.success(result);
     }

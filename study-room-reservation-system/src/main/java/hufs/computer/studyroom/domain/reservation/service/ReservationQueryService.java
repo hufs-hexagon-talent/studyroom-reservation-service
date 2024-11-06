@@ -49,8 +49,9 @@ public class ReservationQueryService {
 
     // 해당 유저의 모든 reservation 로그 찾기
 //    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
-    public ReservationInfoResponses findAllReservationByUser(CustomUserDetails currentUser) {
-        Long userId = currentUser.getUser().getUserId();
+
+    public ReservationInfoResponses findAllReservationByUser(Long userId) {
+//        Long userId = currentUser.getUser().getUserId();
 
         List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId)
                 .orElse(Collections.emptyList());
@@ -60,20 +61,20 @@ public class ReservationQueryService {
     }
 
 //    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
-    public ReservationInfoResponses findAllReservationBySerial(String serial, CustomUserDetails currentUser) {
-        User admin = currentUser.getUser();
-        if (admin.getServiceRole() != null && admin.getServiceRole() != ServiceRole.ADMIN) {
-            throw new CustomException(AuthErrorCode.ACCESS_DENIED);
-        }
-
-        User foundUser = userRepository.findBySerial(serial).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
-        Long userId = foundUser.getUserId();
-        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId)
-                .orElse(Collections.emptyList());
-//              .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
-
-        return reservationMapper.toInfoResponses(reservations);
-    }
+//    public ReservationInfoResponses findAllReservationBySerial(String serial, CustomUserDetails currentUser) {
+//        User admin = currentUser.getUser();
+//        if (admin.getServiceRole() != null && admin.getServiceRole() != ServiceRole.ADMIN) {
+//            throw new CustomException(AuthErrorCode.ACCESS_DENIED);
+//        }
+//
+//        User foundUser = userRepository.findBySerial(serial).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+//        Long userId = foundUser.getUserId();
+//        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId)
+//                .orElse(Collections.emptyList());
+////              .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
+//
+//        return reservationMapper.toInfoResponses(reservations);
+//    }
 
     /**
      * 사용자 NoShow 예약 목록 조회
