@@ -34,19 +34,37 @@ public class AdminUserController {
 
     // request param -> json request
     @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
-            description = "username, password, isAdmin, name, serial 반환",
+            description = "특정 회원을 ID로 조회",
             security = {@SecurityRequirement(name = "JWT")})
-    @GetMapping("/{userId}")
+    @GetMapping("/search/by-id/{userId}")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> getUserById(
             @ExistUser @PathVariable Long userId) {
         var result = userQueryService.findUserById(userId);
         return ResponseFactory.success(result);
     }
 
+    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
+            description = "특정 회원을 학번으로 조회",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/search/by-serial")
+    public ResponseEntity<SuccessResponse<UserInfoResponse>> getUserBySerial(@RequestParam String serial) {
+        var result = userQueryService.findUserBySerial(serial);
+        return ResponseFactory.success(result);
+    }
+
+    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
+            description = "특정 회원을 이름으로 조회",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/search/by-name")
+    public ResponseEntity<SuccessResponse<UserInfoResponses>> getUserByName(@RequestParam String name){
+        var result = userQueryService.findUserByName(name);
+        return ResponseFactory.success(result);
+    }
+
     @Operation(summary = "✅ [관리자] 모든 회원 정보 조회",
             description = "모든 user 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<SuccessResponse<UserInfoResponses>> getAllUsers() {
         var result = userQueryService.findAllUsers();
         return ResponseFactory.success(result);

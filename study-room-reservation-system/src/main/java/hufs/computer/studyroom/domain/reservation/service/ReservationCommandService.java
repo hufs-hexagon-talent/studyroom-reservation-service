@@ -57,6 +57,7 @@ public class ReservationCommandService {
         if (isValid) {
             // No Show 기간이 지났다면 상태 업데이트
             updateNoShowReservationsToProcessed(userId);
+            log.info("[USER INFO] : (Block 기간 만료) 유저 상태 변경 , BLOCKED -> USER");
         }
         validationService.validateRoomAvailability(userId, roomPartitionId, request.startDateTime(), request.endDateTime());
 

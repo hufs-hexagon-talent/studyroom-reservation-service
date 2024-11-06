@@ -8,6 +8,7 @@ import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,6 +47,16 @@ public class UserQueryService {
     public UserInfoResponse findUserById(Long userId) {
         User user = getUserById(userId);
         return userMapper.toInfoResponse(user);
+    }
+
+    public UserInfoResponse findUserBySerial(String serial) {
+        User user = userRepository.findBySerial(serial).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        return userMapper.toInfoResponse(user);
+    }
+
+    public UserInfoResponses findUserByName(String name) {
+        List<User> users = userRepository.findByName(name);
+        return userMapper.toInfoResponses(userMapper.toInfoResponseList(users));
     }
 
     public UserBlockedInfoResponses findBlockedUser() {
@@ -76,6 +88,7 @@ public class UserQueryService {
         return userRepository.findById(id).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
     }
 
+    public ServiceRole getServiceRoleById(Long id) {return userRepository.findUserServiceRoleByUserId(id);}
     public boolean existByUserId(Long userId) {return userRepository.existsById(userId);}
     public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
