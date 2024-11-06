@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,6 +47,16 @@ public class UserQueryService {
     public UserInfoResponse findUserById(Long userId) {
         User user = getUserById(userId);
         return userMapper.toInfoResponse(user);
+    }
+
+    public UserInfoResponse findUserBySerial(String serial) {
+        User user = userRepository.findBySerial(serial).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        return userMapper.toInfoResponse(user);
+    }
+
+    public UserInfoResponses findUserByName(String name) {
+        List<User> users = userRepository.findByName(name);
+        return userMapper.toInfoResponses(userMapper.toInfoResponseList(users));
     }
 
     public UserBlockedInfoResponses findBlockedUser() {
