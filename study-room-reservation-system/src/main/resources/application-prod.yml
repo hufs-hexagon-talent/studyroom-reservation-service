@@ -66,3 +66,4 @@ spring:
         password: ${SPRING_DATASOURCE_PASSWORD}
 env:
     base-url: ${SPRING_BASE_URL}
+    api-version: 2.4.9
