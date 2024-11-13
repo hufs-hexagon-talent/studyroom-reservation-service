@@ -17,6 +17,7 @@ import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 
 import hufs.computer.studyroom.domain.user.service.UserCommandService;
+import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import hufs.computer.studyroom.domain.user.service.UserValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class ReservationCommandService {
     private final ReservationQueryService reservationQueryService;
     private final UserCommandService userCommandService;
     private final UserValidationService userValidationService;
+    private final UserQueryService userQueryService;
 
 
     @Transactional
@@ -48,18 +50,8 @@ public class ReservationCommandService {
         User user = currentUser.getUser();
         Long roomPartitionId = request.roomPartitionId();
 
-
-        Long userId = user.getUserId();
-
-        // [검증] 1. No Show 횟수에 따른 차단 여부 확인
-        boolean isValid = userValidationService.validateNoShowStatus(userId);
-
-        if (isValid) {
-            // No Show 기간이 지났다면 상태 업데이트
-            updateNoShowReservationsToProcessed(userId);
-            log.info("[USER INFO] : (Block 기간 만료) 유저 상태 변경 , BLOCKED -> USER");
-        }
-        validationService.validateRoomAvailability(userId, roomPartitionId, request.startDateTime(), request.endDateTime());
+// No Show 및 예약 가능 여부 검증
+        validateReservationRequest(user, roomPartitionId, request.startDateTime(), request.endDateTime());
 
         RoomPartition partition = partitionQueryService.getPartitionById(roomPartitionId);
 
@@ -69,6 +61,16 @@ public class ReservationCommandService {
         return reservationMapper.toInfoResponse(savedReservation);
     }
 
+    private void validateReservationRequest(User user, Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
+        Long userId = user.getUserId();
+        // [검증] 1. No Show 횟수에 따른 차단 여부 확인
+        if (userValidationService.validateNoShowStatus(userId)) {
+            updateNoShowReservationsToProcessed(userId);
+            log.info("[USER INFO] : (Block 기간 만료) 유저 상태 변경, BLOCKED -> USER");
+        }
+        // [검증] 2.
+        validationService.validateRoomAvailability(userId, roomPartitionId, startDateTime, endDateTime);
+    }
 
     public void deleteReservationBySelf(Long reservationId, CustomUserDetails currentUser) {
 
@@ -112,8 +114,9 @@ public class ReservationCommandService {
      * No-Show 상태의 예약들을 PROCESSED 상태로 업데이트
      */
     public ReservationInfoResponses updateNoShowReservationsToProcessed(Long userId) {
-
-        userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
+        if (userQueryService.isServiceRoleBLOCKED(userId)) {
+            userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
+        }
 
         List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
         noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));

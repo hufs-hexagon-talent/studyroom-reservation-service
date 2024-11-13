@@ -93,4 +93,7 @@ public class UserQueryService {
     public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
     public boolean existByEmail(String email) {return userRepository.existsByEmail(email);}
+
+    public boolean isServiceRoleUSER(Long userId) {return getServiceRoleById(userId) == ServiceRole.USER;}
+    public boolean isServiceRoleBLOCKED(Long userId) {return getServiceRoleById(userId) == ServiceRole.BLOCKED;}
 }
