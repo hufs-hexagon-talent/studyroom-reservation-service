@@ -33,14 +33,10 @@ public class UserValidationService {
 //  가장 마지막으로 생성된 예약의 날짜부터 noShowCntMonth 달 후 까지 블락기간이므로, noShowCntMonth 달 후, 다음날 부터는 이용가능
 
         if (userQueryService.isUserBlockedDueToNoShow(userId)){
+            updateBlockedUserStatus(userId);
+            
             Instant blockEndTime = reservationQueryService.calculateNoShowBlockEndTime(userId);
-            if (isUser(userId)) {
-                // User 블락 상태로 변경
-                log.info("[USER INFO] : 유저 상태 변경 , USER -> BLOCKED");
-                userCommandService.modifyServiceRoleById(userId, ServiceRole.BLOCKED);
-            }
-
-            if (Instant.now().isBefore(blockEndTime)) {
+            if (userQueryService.isServiceRoleBLOCKED(userId) && Instant.now().isBefore(blockEndTime)) {
                 log.info("[USER INFO] : 유저 No Show 횟수 초과");
                 throw new CustomException(ReservationErrorCode.NO_SHOW_LIMIT_EXCEEDED);
             }
@@ -50,9 +46,11 @@ public class UserValidationService {
         return false;
     }
 
-    private boolean isUser(Long userId) {
-        return userQueryService.getServiceRoleById(userId) == ServiceRole.USER;
+
+    private void updateBlockedUserStatus(Long userId) {
+        if (userQueryService.isServiceRoleUSER(userId)) {
+            log.info("[USER INFO] : 유저 상태 변경, USER -> BLOCKED");
+            userCommandService.modifyServiceRoleById(userId, ServiceRole.BLOCKED);
+        }
     }
-
-
 }
