@@ -2,7 +2,9 @@ package hufs.computer.studyroom.common.validation.validator.policy;
 
 import hufs.computer.studyroom.common.error.code.PolicyErrorCode;
 import hufs.computer.studyroom.common.validation.annotation.policy.ChronologicalTime;
+import hufs.computer.studyroom.domain.policy.dto.request.CreateOperationPolicyRequest;
 import hufs.computer.studyroom.domain.policy.dto.request.ModifyOperationPolicyRequest;
+import hufs.computer.studyroom.domain.policy.dto.request.OperationPolicyRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +12,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ChronologicalTimeValidator implements ConstraintValidator<ChronologicalTime, ModifyOperationPolicyRequest> {
+public class ChronologicalTimeValidator implements ConstraintValidator<ChronologicalTime, OperationPolicyRequest> {
 
     @Override
-    public boolean isValid(ModifyOperationPolicyRequest request, ConstraintValidatorContext context) {
+    public boolean isValid(OperationPolicyRequest request, ConstraintValidatorContext context) {
         if (request.operationStartTime() == null || request.operationEndTime() == null) {
             return true;
         }
@@ -28,4 +30,5 @@ public class ChronologicalTimeValidator implements ConstraintValidator<Chronolog
         }
         return isValid;
     }
+
 }
