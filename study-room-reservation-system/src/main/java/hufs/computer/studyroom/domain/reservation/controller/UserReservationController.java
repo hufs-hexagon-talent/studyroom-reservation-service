@@ -32,7 +32,7 @@ public class UserReservationController {
     private final ReservationCommandService reservationCommandService;
     private final ReservationQueryService reservationQueryService;
 
-    @Operation(summary = "❌ 자신의 예약 생성",
+    @Operation(summary = "✅ 자신의 예약 생성",
             description = "인증 받은 유저 사용자 예약 생성",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping

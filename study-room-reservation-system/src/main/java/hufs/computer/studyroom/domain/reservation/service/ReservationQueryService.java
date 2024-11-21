@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -155,10 +156,10 @@ public class ReservationQueryService {
         return reservationMapper.toAllPartitionsReservationStatusResponse(partitionReservationStatuses);
     }
 
-    private PartitionReservationStatus getEachPartitionReservationState(RoomPartition partition , LocalDate date) {
+    private PartitionReservationStatus getEachPartitionReservationState(RoomPartition partition , LocalDate dateKst) {
 //        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
         // 운영 정책 일정이 없는 경우 null 반환
-        Optional<RoomOperationPolicySchedule> optionalSchedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date);
+        Optional<RoomOperationPolicySchedule> optionalSchedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), dateKst);
         if (optionalSchedule.isEmpty()) {
             return null; // 운영 정책이 없으면 null 반환
         }
@@ -166,8 +167,12 @@ public class ReservationQueryService {
         RoomOperationPolicySchedule schedule = optionalSchedule.get();
         RoomOperationPolicy policy = schedule.getRoomOperationPolicy();
         // 운영 시작 및 종료 시간을 계산
-        Instant operationStartTime = convertKstToUtc(date.atTime(policy.getOperationStartTime())).atZone(ZoneOffset.UTC).toInstant();
-        Instant operationEndTime = convertKstToUtc(date.atTime(policy.getOperationEndTime())).atZone(ZoneOffset.UTC).toInstant();
+
+        LocalTime operationStartKst = policy.getOperationStartTime();
+        LocalTime operationEndKst = policy.getOperationEndTime();
+
+        Instant operationStartTime = convertKstToUtc(dateKst.atTime(operationStartKst));
+        Instant operationEndTime = convertKstToUtc(dateKst.atTime(operationEndKst));
 
         // 운영 시간 동안의 예약들 조회
         List<Reservation> reservations = reservationRepository.findOverlappingReservations(partition.getRoomPartitionId(), operationStartTime, operationEndTime);

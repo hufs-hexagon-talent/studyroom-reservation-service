@@ -14,10 +14,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.*;
+
+import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
 
 @Slf4j
 @Service
@@ -57,15 +56,16 @@ public class ReservationValidationService {
 
 
         Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
-        LocalDate reservationDate = startDateTime.atZone(ZoneOffset.UTC).toLocalDate();
+        LocalDate currentKstDate = getKstCurrentDate();
 
-        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, reservationDate)
+        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, currentKstDate)
                 .orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
 
-        Instant operationStartTime = DateTimeUtil.convertKstToUtc(reservationDate.atTime(schedule.getRoomOperationPolicy().getOperationStartTime()))
-                .atZone(ZoneOffset.UTC).toInstant();
-        Instant operationEndTime = DateTimeUtil.convertKstToUtc(reservationDate.atTime(schedule.getRoomOperationPolicy().getOperationEndTime()))
-                .atZone(ZoneOffset.UTC).toInstant();
+        LocalTime operationStartKst = schedule.getRoomOperationPolicy().getOperationStartTime();
+        LocalTime operationEndKst = schedule.getRoomOperationPolicy().getOperationEndTime();
+
+        Instant operationStartTime = convertKstToUtc(currentKstDate.atTime(operationStartKst));
+        Instant operationEndTime = convertKstToUtc(currentKstDate.atTime(operationEndKst));
 
         if (startDateTime.isBefore(operationStartTime) || endDateTime.isAfter(operationEndTime)) {
             throw new CustomException(PolicyErrorCode.OPERATION_CLOSED);
@@ -104,8 +104,8 @@ public class ReservationValidationService {
      * 당일 예약 가능한 수 확인
      */
     private void validateTodayReservations(Long userId) {
-        Instant todayStart = DateTimeUtil.getInstantStartOfToday();
-        Instant todayEnd = DateTimeUtil.getInstantEndOfToday();
+        Instant todayStart = getInstantStartOfToday();
+        Instant todayEnd = getInstantEndOfToday();
 
         long todayReservationCount = reservationRepository.countTodayReservationsByUserId(userId, todayStart, todayEnd);
         if (todayReservationCount >= reservationLimitToday) {

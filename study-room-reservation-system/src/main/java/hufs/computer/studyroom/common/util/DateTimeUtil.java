@@ -23,8 +23,10 @@ public class DateTimeUtil {
     public static Instant getInstantEndOfToday() {
         return getZonedEndOfToday().toInstant();
     }
-    public static Instant getInstantCurrent() {
-        return Instant.now();
+    public static LocalDate getKstCurrentDate() {
+        ZonedDateTime kstNow = ZonedDateTime.now(KST_ZONE_ID);
+        // KST 기준의 현재 날짜 반환
+        return kstNow.toLocalDate();
     }
     public static Instant getInstantStartOfDate(LocalDate date) {
         return date.atStartOfDay(KST_ZONE_ID).toInstant();
@@ -76,10 +78,10 @@ public class DateTimeUtil {
     }
 
     // Convert KST to UTC
-    public static LocalDateTime convertKstToUtc(LocalDateTime kstDateTime) {
+    public static Instant convertKstToUtc(LocalDateTime kstDateTime) {
         ZonedDateTime kstZonedDateTime = kstDateTime.atZone(KST_ZONE_ID);
         ZonedDateTime utcZonedDateTime = kstZonedDateTime.withZoneSameInstant(UTC_ZONE_ID);
-        return utcZonedDateTime.toLocalDateTime();
+        return utcZonedDateTime.toLocalDateTime().atZone(ZoneOffset.UTC).toInstant();
     }
 
     public static LocalDateTime convertKstToUtc(ZonedDateTime kstDateTime) {
