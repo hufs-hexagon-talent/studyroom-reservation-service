@@ -7,7 +7,6 @@ import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
 import hufs.computer.studyroom.domain.department.service.DepartmentQueryService;
-import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.user.dto.request.*;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
@@ -20,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-
 @RequiredArgsConstructor
 public class UserCommandService {
 
@@ -122,6 +121,8 @@ public class UserCommandService {
         User savedUser = userRepository.save(user);
         return userMapper.toInfoResponse(savedUser);
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void modifyServiceRoleById(Long userId, ServiceRole serviceRole){
         User user = userQueryService.getUserById(userId);
         user.setServiceRole(serviceRole);
