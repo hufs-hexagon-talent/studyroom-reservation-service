@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ReservationErrorCode implements ErrorCode{
 
-    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION-001", "해당 예약은 존재하지 않습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION-001", "예약된 정보를 찾을 수 없습니다."),
     RESERVATION_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND,"RESERVATION-002", "예약 기록이 존재하지 않습니다."),
     RESERVATION_ALREADY_EXISTS(HttpStatus.CONFLICT, "RESERVATION-003", "이미 존재하는 예약 입니다."),
 
