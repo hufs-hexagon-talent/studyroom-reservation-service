@@ -2,6 +2,7 @@ package hufs.computer.studyroom.domain.user.service;
 
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
@@ -71,6 +72,15 @@ public class UserQueryService {
                 .collect(Collectors.toList());
 
         return userMapper.toBlockedInfoResponses(blockedInfoResponses);
+    }
+    public UserBlockedInfoResponse getUserBlockedPeriod(CustomUserDetails currentUser){
+        User user = currentUser.getUser(); // todo : 검증 계층으로 빼기
+        if (!user.getServiceRole().equals(ServiceRole.BLOCKED)) {
+            throw new CustomException(UserErrorCode.INVALID_SERVICE_ROLE);
+        }
+        return userMapper.toBlockedInfoResponse(user,
+                reservationQueryService.getBlockedStartTime(user.getUserId()),
+                reservationQueryService.getBlockedEndTime(user.getUserId()));
     }
 
     /**

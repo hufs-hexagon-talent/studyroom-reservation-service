@@ -5,6 +5,7 @@ import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyPasswordRequest;
 import hufs.computer.studyroom.domain.user.dto.request.ResetPasswordRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpRequest;
+import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.service.UserCommandService;
@@ -43,6 +44,14 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> getUserInfo(@AuthenticationPrincipal CustomUserDetails currentUser) {
         var result = userQueryService.findUserById(currentUser.getUser().getUserId());
+        return ResponseFactory.success(result);
+    }
+    @Operation(summary = "✅ 자신의 블락 기간 조회",
+            description = "본인 정보 조회 API",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/me/blocked-period")
+    public ResponseEntity<SuccessResponse<UserBlockedInfoResponse>> getBlockedPeriod(@AuthenticationPrincipal CustomUserDetails currentUser){
+        var result = userQueryService.getUserBlockedPeriod(currentUser);
         return ResponseFactory.success(result);
     }
 
