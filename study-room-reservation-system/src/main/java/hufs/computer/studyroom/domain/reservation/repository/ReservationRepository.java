@@ -56,6 +56,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED' AND r.reservationEndTime < CURRENT_TIMESTAMP")
     List<Reservation> findNoShowReservationsByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED' AND r.reservationEndTime >= CURRENT_TIMESTAMP")
+    List<Reservation> findCurrentReservationsByUserId(@Param("userId") Long userId);
+
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.userId = :userId AND r.reservationStartTime BETWEEN :todayStart AND :todayEnd")
     long countTodayReservationsByUserId(@Param("userId") Long userId, @Param("todayStart") Instant todayStart, @Param("todayEnd") Instant todayEnd);
 
