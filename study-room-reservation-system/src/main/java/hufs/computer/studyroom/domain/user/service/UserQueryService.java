@@ -2,6 +2,7 @@ package hufs.computer.studyroom.domain.user.service;
 
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,19 +61,43 @@ public class UserQueryService {
         return userMapper.toInfoResponses(userMapper.toInfoResponseList(users));
     }
 
+    /**
+     * 블락된 유저들 찾아서 블락 기간 및 유저 정보 찾기
+     */
     public UserBlockedInfoResponses findBlockedUser() {
         List<User> blockedUsers = getBlockedUsers();
 
         List<UserBlockedInfoResponse> blockedInfoResponses = blockedUsers.stream()
-                .map(user -> userMapper.toBlockedInfoResponse(
-                        user,
-                        reservationQueryService.getBlockedStartTime(user.getUserId()),
-                        reservationQueryService.getBlockedEndTime(user.getUserId())
-                ))
+                .map(this::createUserBlockedInfoResponse)
                 .collect(Collectors.toList());
 
         return userMapper.toBlockedInfoResponses(blockedInfoResponses);
     }
+
+
+    public UserBlockedInfoResponse getUserBlockedPeriod(CustomUserDetails currentUser){
+        User user = currentUser.getUser();
+        validateUserIsBlocked(user);
+        return createUserBlockedInfoResponse(user);
+    }
+
+    /*
+    * 검증 로직: 유저가 BLOCKED 상태인지 확인
+    * */
+    private void validateUserIsBlocked(User user) {
+        if (!user.getServiceRole().equals(ServiceRole.BLOCKED)) {
+            throw new CustomException(UserErrorCode.INVALID_SERVICE_ROLE);
+        }
+    }
+    /**
+     * User 객체로부터 UserBlockedInfoResponse 생성
+     */
+    private UserBlockedInfoResponse createUserBlockedInfoResponse(User user) {
+        LocalDate blockedStartTime = reservationQueryService.getBlockedStartTime(user.getUserId());
+        LocalDate blockedEndTime = reservationQueryService.getBlockedEndTime(user.getUserId());
+        return userMapper.toBlockedInfoResponse(user, blockedStartTime, blockedEndTime);
+    }
+
 
     /**
      * 사용자가 No-Show 제한에 걸렸는지 확인하는 메서드
