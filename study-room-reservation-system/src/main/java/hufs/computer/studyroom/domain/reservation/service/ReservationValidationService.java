@@ -95,7 +95,7 @@ public class ReservationValidationService {
      * 현재 예약 가능한 수 확인
      */
     private void validateCurrentReservations(Long userId) {
-        long currentReservationCount = reservationRepository.countCurrentReservationsByUserId(userId);
+        int currentReservationCount = reservationRepository.findNoShowReservationsByUserId(userId).size();
         if (currentReservationCount >= reservationLimit) {
             throw new CustomException(ReservationErrorCode.TOO_MANY_CURRENT_RESERVATIONS);
         }
