@@ -53,11 +53,8 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
 
     // 사용자의 No Show 상태인 예약을 조회하는 메서드
-    @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED'")
+    @Query("SELECT r FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED' AND r.reservationEndTime > CURRENT_TIMESTAMP")
     List<Reservation> findNoShowReservationsByUserId(@Param("userId") Long userId);
-
-    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.userId = :userId AND r.state = 'NOT_VISITED' AND r.reservationEndTime > CURRENT_TIMESTAMP")
-    long countCurrentReservationsByUserId(@Param("userId") Long userId);
 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.userId = :userId AND r.reservationStartTime BETWEEN :todayStart AND :todayEnd")
     long countTodayReservationsByUserId(@Param("userId") Long userId, @Param("todayStart") Instant todayStart, @Param("todayEnd") Instant todayEnd);
