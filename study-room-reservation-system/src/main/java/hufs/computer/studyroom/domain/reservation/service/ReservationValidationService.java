@@ -56,16 +56,17 @@ public class ReservationValidationService {
 
 
         Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
-        LocalDate currentKstDate = getKstCurrentDate();
+//       utc -> kst -> data
+        LocalDate KstDate = DateTimeUtil.convertUtcToKst(startDateTime).toLocalDate();
 
-        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, currentKstDate)
+        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, KstDate)
                 .orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
 
         LocalTime operationStartKst = schedule.getRoomOperationPolicy().getOperationStartTime();
         LocalTime operationEndKst = schedule.getRoomOperationPolicy().getOperationEndTime();
 
-        Instant operationStartTime = convertKstToUtc(currentKstDate.atTime(operationStartKst));
-        Instant operationEndTime = convertKstToUtc(currentKstDate.atTime(operationEndKst));
+        Instant operationStartTime = convertKstToUtc(KstDate.atTime(operationStartKst));
+        Instant operationEndTime = convertKstToUtc(KstDate.atTime(operationEndKst));
 
         if (startDateTime.isBefore(operationStartTime) || endDateTime.isAfter(operationEndTime)) {
             throw new CustomException(PolicyErrorCode.OPERATION_CLOSED);
