@@ -50,7 +50,7 @@ public class ReservationCommandService {
         User user = currentUser.getUser();
         Long roomPartitionId = request.roomPartitionId();
 
-// No Show 및 예약 가능 여부 검증
+        // No Show 및 예약 가능 여부 검증
         validateReservationRequest(user, roomPartitionId, request.startDateTime(), request.endDateTime());
 
         RoomPartition partition = partitionQueryService.getPartitionById(roomPartitionId);
@@ -68,7 +68,7 @@ public class ReservationCommandService {
             updateNoShowReservationsToProcessed(userId);
             log.info("[USER INFO] : (Block 기간 만료) 유저 상태 변경, BLOCKED -> USER");
         }
-        // [검증] 2.
+        // [검증] 2. 예약 가능 여부 검증
         validationService.validateRoomAvailability(userId, roomPartitionId, startDateTime, endDateTime);
     }
 
@@ -81,10 +81,12 @@ public class ReservationCommandService {
         if (!reservation.getUser().getUserId().equals(user.getUserId())) {
             throw new CustomException(AuthErrorCode.ACCESS_DENIED);
         }
+
         // 이미 방문 처리된 예약인지 확인
         if (reservation.getState() == VISITED) {
             throw new CustomException(ReservationErrorCode.RESERVATION_ALREADY_VISITED);
         }
+
         if (reservation.getReservationStartTime().isBefore(Instant.now())) {
             throw new CustomException(ReservationErrorCode.RESERVATION_ALREADY_STARTED);
         }

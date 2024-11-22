@@ -17,10 +17,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,6 +33,7 @@ public class UserQueryService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ReservationQueryService reservationQueryService;
+
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new CustomException(UserErrorCode.USERNAME_ALREADY_EXISTS));
@@ -120,6 +122,12 @@ public class UserQueryService {
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
     public boolean existByEmail(String email) {return userRepository.existsByEmail(email);}
 
-    public boolean isServiceRoleUSER(Long userId) {return getServiceRoleById(userId) == ServiceRole.USER;}
-    public boolean isServiceRoleBLOCKED(Long userId) {return getServiceRoleById(userId) == ServiceRole.BLOCKED;}
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public boolean isServiceRoleUSER(Long userId) {
+        return getServiceRoleById(userId) == ServiceRole.USER;
+    }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public boolean isServiceRoleBLOCKED(Long userId) {
+        return getServiceRoleById(userId) == ServiceRole.BLOCKED;}
 }
