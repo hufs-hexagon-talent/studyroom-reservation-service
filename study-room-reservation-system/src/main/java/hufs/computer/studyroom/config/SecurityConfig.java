@@ -125,7 +125,8 @@ public class SecurityConfig {
                                         "/reservations/by-date/**",
                                         "/reservations/partitions/by-date/**").permitAll()
                                 .requestMatchers(
-                                        "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                                        "/reservations/**").hasAnyAuthority(ROLE_USER, ROLE_ADMIN, ROLE_BLOCKED)
+
                                 // Policy
                                 .requestMatchers(
                                         "/policies/**").hasAnyAuthority(ROLE_ADMIN)
@@ -151,7 +152,7 @@ public class SecurityConfig {
                                 // otp
                                 .requestMatchers(
                                         "/check-in/otp"
-                                ).hasAnyAuthority(ROLE_USER, ROLE_ADMIN)
+                                ).hasAnyAuthority(ROLE_USER, ROLE_ADMIN, ROLE_BLOCKED)
 
                                 // check-in
                                 .requestMatchers(
