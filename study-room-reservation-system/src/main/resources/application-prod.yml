@@ -18,7 +18,7 @@ spring:
         otpTTL: 300
         noShowBlockMonth : 1
         noShowLimit : 3
-        reservationLimit : 1
+        reservationLimitCurrent : 1
         reservationLimitToday : 2
         authCodeExpiryTime : 5
 

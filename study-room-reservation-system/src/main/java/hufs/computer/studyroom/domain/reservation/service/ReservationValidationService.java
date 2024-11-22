@@ -23,7 +23,7 @@ import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
 @RequiredArgsConstructor
 @Transactional
 public class ReservationValidationService {
-    @Value("${spring.service.reservationLimit}") private int reservationLimit;
+    @Value("${spring.service.reservationLimitCurrent}") private int reservationLimitCurrent;
     @Value("${spring.service.reservationLimitToday}") private int reservationLimitToday;
 
     private final ReservationRepository reservationRepository;
@@ -95,8 +95,8 @@ public class ReservationValidationService {
      * 현재 예약 가능한 수 확인
      */
     private void validateCurrentReservations(Long userId) {
-        int currentReservationCount = reservationRepository.findNoShowReservationsByUserId(userId).size();
-        if (currentReservationCount >= reservationLimit) {
+        int currentReservationCount = reservationRepository.findCurrentReservationsByUserId(userId).size();
+        if (currentReservationCount >= reservationLimitCurrent) {
             throw new CustomException(ReservationErrorCode.TOO_MANY_CURRENT_RESERVATIONS);
         }
     }
