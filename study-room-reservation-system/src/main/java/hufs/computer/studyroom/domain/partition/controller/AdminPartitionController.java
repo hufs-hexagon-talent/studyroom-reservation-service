@@ -64,7 +64,7 @@ public class AdminPartitionController {
     }
 
 
-    @Operation(summary = "❌[관리자] partition 정보 수정",
+    @Operation(summary = "✅[관리자] partition 정보 수정",
             description = "해당 partition id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")}
     )
