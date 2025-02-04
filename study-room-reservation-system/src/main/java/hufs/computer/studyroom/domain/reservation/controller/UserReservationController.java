@@ -55,7 +55,7 @@ public class UserReservationController {
 //    -------------------------------------------------------------------------------------------------------------
 //   todo : createAt (예약생성 시간)기준으로 가져올지 vs reservationStartTime ( 예약 시작 시간 ) 기준으로 가져올지
 //    -> reservationStartTime ( 예약 시작 시간 ) 기준
-    @Operation(summary = "❌ 자신의 가장 최근 예약 조회 ( 예약 시작 시간 ) 기준",
+    @Operation(summary = "✅ 자신의 가장 최근 예약 조회 ( 예약 시작 시간 ) 기준",
             description = " 인증 받은 유저의 자신의 최근(현재) 예약 조회 ( 예약 시작 시간 ) 기준",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me/latest")

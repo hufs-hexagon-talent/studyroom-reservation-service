@@ -35,16 +35,18 @@ public class AdminRoomController {
     @PostMapping("/room")
     public ResponseEntity<SuccessResponse<RoomInfoResponse>> createRoom(@Valid @RequestBody CreateRoomRequest request) {
         var result = roomCommandService.createRoom(request);
+
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "❌[관리자] room 정보 수정",
+    @Operation(summary = "✅[관리자] room 정보 수정",
             description = "해당 room id의 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PatchMapping("/{roomId}")
     public ResponseEntity<SuccessResponse<RoomInfoResponse>> updateRoom(@ExistRoom @PathVariable Long roomId,
                                                                         @Valid @RequestBody ModifyRoomRequest request) {
         var result = roomCommandService.updateRoom(roomId, request);
+
         return ResponseFactory.modified(result);
     }
 
@@ -55,6 +57,7 @@ public class AdminRoomController {
     public ResponseEntity<SuccessResponse<Void>> deleteRoom(
             @ExistRoom @PathVariable Long roomId) {
         roomCommandService.deleteRoom(roomId);
+
         return ResponseFactory.deleted();
     }
 
@@ -64,6 +67,7 @@ public class AdminRoomController {
     @GetMapping("/{roomId}")
     public ResponseEntity<SuccessResponse<RoomInfoResponse>> getRoomById(@ExistRoom @PathVariable Long roomId) {
         var result = roomQueryService.findRoomById(roomId);
+
         return ResponseFactory.success(result);
     }
 
@@ -72,10 +76,11 @@ public class AdminRoomController {
     @GetMapping
     public ResponseEntity<SuccessResponse<RoomInfoResponses>> getAllRooms() {
         var result = roomQueryService.findAllRoom();
+
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "❌[관리자] roomID로 partition들 조회",
+    @Operation(summary = "✅[관리자] roomID로 partition들 조회",
             description = "room id로 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/rooms/{roomId}")
