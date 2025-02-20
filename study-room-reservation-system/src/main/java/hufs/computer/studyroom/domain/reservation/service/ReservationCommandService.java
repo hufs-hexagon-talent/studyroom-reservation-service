@@ -61,13 +61,19 @@ public class ReservationCommandService {
         return reservationMapper.toInfoResponse(savedReservation);
     }
 
+    // No Show 및 예약 가능 여부 검증
     private void validateReservationRequest(User user, Long roomPartitionId, Instant startDateTime, Instant endDateTime) {
         Long userId = user.getUserId();
-        // [검증] 1. No Show 횟수에 따른 차단 여부 확인
-        if (userValidationService.validateNoShowStatus(userId)) {
-            updateNoShowReservationsToProcessed(userId);
-            log.info("[USER INFO] : (Block 기간 만료) 유저 상태 변경, BLOCKED -> USER");
+        ServiceRole userRole = userQueryService.getServiceRoleById(userId);
+
+        // [검증] 0. ADMIN, RESIDENT 인 경우 [검증]1. 하지 않음
+        if (userRole == ServiceRole.USER || userRole == ServiceRole.BLOCKED) {
+            // [검증] 1. No Show 횟수에 따른 차단 여부 확인
+            if (userValidationService.isBlocked(userId)) {
+                throw new CustomException(ReservationErrorCode.NO_SHOW_LIMIT_EXCEEDED);
+            }
         }
+
         // [검증] 2. 예약 가능 여부 검증
         validationService.validateRoomAvailability(userId, roomPartitionId, startDateTime, endDateTime);
     }
@@ -113,16 +119,22 @@ public class ReservationCommandService {
     }
 
     /**
-     * No-Show 상태의 예약들을 PROCESSED 상태로 업데이트
+     *  No-Show 상태의 예약들을 PROCESSED 상태로 업데이트 & ServiceRole BLOCKED -> USER
      */
     public ReservationInfoResponses updateNoShowReservationsToProcessed(Long userId) {
-        if (userQueryService.isServiceRoleBLOCKED(userId)) {
-            userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
+        ServiceRole currentRole = userQueryService.getServiceRoleById(userId);
+        if (currentRole == ServiceRole.ADMIN || currentRole == ServiceRole.RESIDENT){
+            throw new CustomException(AuthErrorCode.ACCESS_DENIED);
         }
 
         List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
         noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
 
+        reservationRepository.saveAll(noShowReservations);
+
+        if (currentRole == ServiceRole.BLOCKED) {
+            userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
+        }
 
         return reservationMapper.toInfoResponses(reservationRepository.saveAll(noShowReservations));
     }

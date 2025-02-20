@@ -40,6 +40,7 @@ import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
 @RequiredArgsConstructor
 public class ReservationQueryService {
     @Value("${spring.service.noShowBlockMonth}") private Long noShowBlockMonth;
+    @Value("${spring.service.noShowLimit}") private int noShowLimit;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final RoomOperationPolicyScheduleRepository scheduleRepository;
@@ -207,14 +208,17 @@ public class ReservationQueryService {
     /* Helper Method
     * */
 
+    /**
+     * 사용자의 NO_SHOW (유효 기간 + NOT_VISITED)
+     */
     public List<Reservation> getNoShowReservationsByUserId(Long userId) {
         return reservationRepository.findNoShowReservationsByUserId(userId);
     }
 
     /**
-     * 사용자에 대한 No-Show 블락 시작 시간을 반환
+     * 사용자에 대한 No-Show 블락 시작 시간을 계산
      */
-    public Instant getLatestNoShowStartTime(Long userId) {
+    private Instant getLatestNoShowStartTime(Long userId) {
         List<Reservation> noShowReservations = reservationRepository.findNoShowReservationsByUserId(userId);
         return noShowReservations.stream()
                 .map(Reservation::getCreateAt)
@@ -222,16 +226,24 @@ public class ReservationQueryService {
                 .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }
 
+    /**
+     * 사용자에 대한 No-Show 블락 시작 시간을 반환
+     */
     public LocalDate getBlockedStartTime(Long userId) {
         return getDateOfInstant(getLatestNoShowStartTime(userId));
     }
+
     /**
      * 사용자에 대한 No-Show 블락 종료 시간을 계산
      */
-    public Instant calculateNoShowBlockEndTime(Long userId) {
+    private Instant calculateNoShowBlockEndTime(Long userId) {
         Instant latestNoShowTime = getLatestNoShowStartTime(userId);
         return DateTimeUtil.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
     }
+
+    /**
+     * 사용자에 대한 No-Show 블락 종료 시간을 반환
+     */
     public LocalDate getBlockedEndTime(Long userId) {
         return getDateOfInstant(calculateNoShowBlockEndTime(userId));
     }
@@ -244,7 +256,25 @@ public class ReservationQueryService {
                 .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }
 
+    /**
+     * 사용자의 예약이 No-Show 제한을 초과했는지?
+     */
+    public boolean isNoShowOverLimit(Long userId){
+        List<Reservation> noShowReservations = reservationRepository.findNoShowReservationsByUserId(userId);
 
+        boolean isOver = noShowReservations.size() > noShowLimit;
+        return isOver;
+    }
+
+    /**
+     * BLOCKED 의 유효기한이 만료되었는지?
+     */
+    public boolean isBlockExpired(Long userId){
+        Instant blockEndTime = calculateNoShowBlockEndTime(userId);
+
+        boolean isExpired = blockEndTime.isBefore(Instant.now());
+        return isExpired;
+    }
 
 
     public Reservation getReservationById(Long id) {
