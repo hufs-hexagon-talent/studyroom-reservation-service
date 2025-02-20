@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserQueryService {
 
-    @Value("${spring.service.noShowLimit}") private int noShowLimit;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ReservationQueryService reservationQueryService;
@@ -100,15 +99,6 @@ public class UserQueryService {
         return userMapper.toBlockedInfoResponse(user, blockedStartTime, blockedEndTime);
     }
 
-
-    /**
-     * 사용자가 No-Show 제한에 걸렸는지 확인하는 메서드
-     */
-    public boolean isUserBlockedDueToNoShow(Long userId) {
-        List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
-        return noShowReservations.size() >= noShowLimit;
-    }
-
     public List<User> getBlockedUsers() {
         return userRepository.getBlockedUsers();
     }
@@ -122,12 +112,4 @@ public class UserQueryService {
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
     public boolean existByEmail(String email) {return userRepository.existsByEmail(email);}
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public boolean isServiceRoleUSER(Long userId) {
-        return getServiceRoleById(userId) == ServiceRole.USER;
-    }
-
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public boolean isServiceRoleBLOCKED(Long userId) {
-        return getServiceRoleById(userId) == ServiceRole.BLOCKED;}
 }

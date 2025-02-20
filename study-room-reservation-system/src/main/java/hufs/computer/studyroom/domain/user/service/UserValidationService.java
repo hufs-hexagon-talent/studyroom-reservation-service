@@ -1,17 +1,15 @@
 package hufs.computer.studyroom.domain.user.service;
 
 
-import hufs.computer.studyroom.common.error.code.ReservationErrorCode;
-import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.reservation.entity.Reservation;
+import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -19,41 +17,43 @@ import java.time.Instant;
 public class UserValidationService {
 
     private final ReservationQueryService reservationQueryService;
+    private final ReservationRepository reservationRepository;
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
 
     /**
-     * 사용자가 No Show 제한에 걸렸는지 검증
-     *  노쇼 찾기
-     *  현재     →  예약 시작, 예약 종료     | 시작 전 으로 찾기
-     *  예약 시작 →  현재     →   예약 종료  | 시작 전 으로 찾기
-     *  예약 시작 →  예약 종료 →  현재       | 현재     로 찾기
+     * 노쇼 찾기
+     * 현재     →  예약 시작, 예약 종료     | 시작 전 으로 찾기
+     * 예약 시작 →  현재     →   예약 종료  | 시작 전 으로 찾기
+     * 예약 시작 →  예약 종료 →  현재       | 현재     로 찾기
      */
-//    @Transactional(noRollbackFor = CustomException.class)
-    public boolean validateNoShowStatus(Long userId) {
-//  가장 마지막으로 생성된 예약의 날짜부터 noShowCntMonth 달 후 까지 블락기간이므로, noShowCntMonth 달 후, 다음날 부터는 이용가능
-        if (userQueryService.isUserBlockedDueToNoShow(userId)){
-            updateBlockedUserStatus(userId);
-            
-            Instant blockEndTime = reservationQueryService.calculateNoShowBlockEndTime(userId);
-            boolean isBLOCKED = userQueryService.isServiceRoleBLOCKED(userId);
-            boolean isValid = Instant.now().isBefore(blockEndTime);
 
-            if (isBLOCKED && isValid) {
-                log.info("[USER INFO] : 유저 No Show 횟수 초과");
-                throw new CustomException(ReservationErrorCode.NO_SHOW_LIMIT_EXCEEDED);
+    public boolean isBlocked(Long userId) {
+        // 유효기간 검사 -> 유효기간이 유효하지않다면 -> (사용자의 ALL NOT_VISITED → PROCESSED)
+        inspectValidPeriod(userId);
+
+        // 현재 사용자 역할 조회
+        ServiceRole currentRole = userQueryService.getServiceRoleById(userId);
+
+        if (reservationQueryService.isNoShowOverLimit(userId)) {
+            if (currentRole != ServiceRole.BLOCKED) {
+                userCommandService.modifyServiceRoleById(userId, ServiceRole.BLOCKED);
             }
-            // No Show 기간이 지났다면 상태 업데이트
             return true;
+        } else {
+            if (currentRole != ServiceRole.USER) {
+                userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
+            }
+            return false;
         }
-        return false;
     }
 
+    private void inspectValidPeriod(Long userId) {
+        if (reservationQueryService.isBlockExpired(userId)) {
+            List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
+            noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
 
-    private void updateBlockedUserStatus(Long userId) {
-        if (userQueryService.isServiceRoleUSER(userId)) {
-            log.info("[USER INFO] : 유저 상태 변경, USER -> BLOCKED");
-            userCommandService.modifyServiceRoleById(userId, ServiceRole.BLOCKED);
+            reservationRepository.saveAll(noShowReservations);
         }
     }
 }
