@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Email Verification</title>
+    <style>
+        /* 이메일에 적용할 스타일을 여기에 작성 */
+        .container {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .header {
+            background-image: url("https://mail.hufs.ac.kr/ems/EMS_web01.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 220px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+        }
+        .content-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00056d;
+            position: absolute;
+            top: 95%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .content-section {
+            background-image: url("https://mail.hufs.ac.kr/ems/EMS_03.png");
+            background-repeat: repeat-y;
+            padding: 20px 60px;
+            text-align: left;
+        }
+        .content {
+            font-size: 16px;
+            font-weight: 550;
+            color: #333;
+            line-height: 1.5;
+        }
+        .code {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 36px;
+            color: rgb(29, 48, 80);
+            font-weight: bold;
+        }
+        .footer {
+            background-color: rgb(36, 38, 42);
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 70px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            padding: 20px;
+        }
+        .logo1 {
+            width: 150px;
+            height: 30px;
+        }
+        .logo2 {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header Section with Title Overlay -->
+    <div class="header">
+        <div class="content-title">이메일 인증</div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+        <p class="content">안녕하세요,</p>
+        <p class="content">요청하신 인증 번호를 보내드립니다.</p>
+        <div class="code">
+            <h2 th:text="${authCode}"></h2>
+            <!-- 인증 코드가 동적으로 표시됨 -->
+        </div>
+        <p class="content">감사합니다.</p>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <a href="https://studyroom.computer.hufs.ac.kr/">
+            <img class="logo1" src="https://computer.hufs.ac.kr/sites/computer/masterSkin/computer_JW_MS_K2WT001_M/images/logo_footer.svg" alt="한국외국어대학교"/>
+        </a>
+        <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <line x1="6" y1="6" x2="18" y2="18" stroke="rgb(206,206,206)" stroke-width="2"/> <line x1="18" y1="6" x2="6" y2="18" stroke="rgb(206,206,206)" stroke-width="2"/>
+        </svg>
+        <a href="https://hwangbbang.notion.site/Reservation-System-11a6628bcfd1812e9ecbc10fb462d002?pvs=4">
+            <img class="logo2" src="https://avatars.githubusercontent.com/u/163874412?s=96&v=4" alt="Team Hexagon"/>
+        </a>
+        <p>이 메일은 자동으로 생성된 메일입니다. 회신하지 마세요.</p>
+    </div>
+</div>
+</body>
+</html>
