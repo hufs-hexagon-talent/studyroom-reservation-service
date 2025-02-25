@@ -68,6 +68,6 @@ env:
     base-url: ${SPRING_BASE_URL}
     api-version: 2.4.11
 
-logging:
-    level:
-        org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl: TRACE  # 커넥션 반환 로그 확인
+#logging:
+#    level:
+#        org.hibernate.resource.jdbc.internal.LogicalConnectionManagedImpl: TRACE  # 커넥션 반환 로그 확인
