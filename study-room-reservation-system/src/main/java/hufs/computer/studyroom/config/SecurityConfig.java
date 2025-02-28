@@ -39,6 +39,7 @@ public class SecurityConfig {
     private static final String ROLE_BLOCKED = "ROLE_BLOCKED";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ROLE_RESIDENT = "ROLE_RESIDENT";
+    private static final String ROLE_EXPIRED = "ROLE_EXPIRED";
 
 
     //AuthenticationManager Bean 등록
@@ -116,7 +117,7 @@ public class SecurityConfig {
                                         "/users/sign-up",
                                         "/users/reset-password").permitAll()
                                 .requestMatchers(
-                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN, ROLE_BLOCKED)
+                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN, ROLE_BLOCKED, ROLE_EXPIRED)
                                 .requestMatchers(
                                         "/users/**").hasAuthority(ROLE_ADMIN)
 
