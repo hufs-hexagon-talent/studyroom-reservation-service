@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResidentCheckInController {
     private final CheckInService checkInService;
 
-    @Operation(summary = "❌[멀티지기] 예약한 유저 Check-In",
+    @Operation(summary = "✅[멀티지기] 예약한 유저 Check-In",
             description = "예약시간에 근접한 유저의 방문 처리",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping
