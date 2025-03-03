@@ -1,5 +1,8 @@
 package hufs.computer.studyroom.domain.auth.security;
 
+import hufs.computer.studyroom.common.error.code.UserErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,9 +22,13 @@ public class CustomUserDetails implements UserDetails {
     public User getUser() {
         return user;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
+        if (ServiceRole.EXPIRED == user.getServiceRole()){
+            throw new CustomException(UserErrorCode.SERVICE_ROLE_EXPIRED);
+        }
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add(new GrantedAuthority() {
             @Override
