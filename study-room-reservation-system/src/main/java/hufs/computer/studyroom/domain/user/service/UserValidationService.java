@@ -7,6 +7,7 @@ import hufs.computer.studyroom.domain.reservation.service.ReservationQueryServic
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserValidationService {
-
+    @Value("${spring.service.noShowLimit}") private int noShowLimit;
     private final ReservationQueryService reservationQueryService;
     private final ReservationRepository reservationRepository;
     private final UserQueryService userQueryService;
@@ -29,6 +30,11 @@ public class UserValidationService {
      */
 
     public boolean isBlocked(Long userId) {
+        // NoShow 횟수가 임계치 이하인 경우 검증 대상이 아님
+        if (!reservationQueryService.isNoShowOverLimit(userId)) {
+            return false;
+        }
+
         // 유효기간 검사 -> 유효기간이 유효하지않다면 -> (사용자의 ALL NOT_VISITED → PROCESSED)
         inspectValidPeriod(userId);
 
