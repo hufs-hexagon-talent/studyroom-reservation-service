@@ -281,9 +281,4 @@ public class ReservationQueryService {
     }
     public boolean existByReservationId(Long reservationId) {return reservationRepository.existsById(reservationId);}
 
-    public List<Reservation> getNoShowReservationListByUserId(Long userId){
-        List<Reservation> reservations = reservationRepository.findNoShowReservationsByUserId(userId);
-
-        return reservations;
-    }
 }

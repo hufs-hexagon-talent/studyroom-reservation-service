@@ -30,10 +30,11 @@ public class UserValidationService {
      */
 
     public boolean isBlocked(Long userId) {
-        // TODO
-        if(reservationQueryService.getNoShowReservationListByUserId(userId).size()<=noShowLimit){
+        // NoShow 횟수가 임계치 이하인 경우 검증 대상이 아님
+        if (!reservationQueryService.isNoShowOverLimit(userId)) {
             return false;
         }
+
         // 유효기간 검사 -> 유효기간이 유효하지않다면 -> (사용자의 ALL NOT_VISITED → PROCESSED)
         inspectValidPeriod(userId);
 
