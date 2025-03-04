@@ -15,8 +15,7 @@ public enum UserErrorCode implements ErrorCode{
     INVALID_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, "USER-006", "현재 비밀번호가 일치하지 않습니다."),
     INVALID_NEW_PASSWORD(HttpStatus.BAD_REQUEST ,"USER-007", "새 비밀번호는 현재 비밀번호와 같을 수 없습니다."),
     INVALID_SERVICE_ROLE(HttpStatus.BAD_REQUEST, "USER-009", "현재 유저는 블락 상태가 아닙니다."),
-    ;
-
+    SERVICE_ROLE_EXPIRED(HttpStatus.FORBIDDEN, "USER-010", "만료된 유저입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
