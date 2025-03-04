@@ -16,7 +16,6 @@ import hufs.computer.studyroom.domain.room.repository.RoomRepository;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
 import hufs.computer.studyroom.domain.user.entity.User;
-import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -270,6 +268,7 @@ public class ReservationQueryService {
      * BLOCKED 의 유효기한이 만료되었는지?
      */
     public boolean isBlockExpired(Long userId){
+
         Instant blockEndTime = calculateNoShowBlockEndTime(userId);
 
         boolean isExpired = blockEndTime.isBefore(Instant.now());
@@ -282,4 +281,9 @@ public class ReservationQueryService {
     }
     public boolean existByReservationId(Long reservationId) {return reservationRepository.existsById(reservationId);}
 
+    public List<Reservation> getNoShowReservationListByUserId(Long userId){
+        List<Reservation> reservations = reservationRepository.findNoShowReservationsByUserId(userId);
+
+        return reservations;
+    }
 }
