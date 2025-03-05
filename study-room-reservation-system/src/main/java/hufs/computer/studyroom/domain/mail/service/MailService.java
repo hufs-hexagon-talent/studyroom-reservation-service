@@ -8,6 +8,7 @@ import hufs.computer.studyroom.domain.mail.dto.request.EmailVerifyRequest;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailResponse;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailVerifyResponse;
 import hufs.computer.studyroom.domain.mail.mapper.MailMapper;
+import hufs.computer.studyroom.domain.user.dto.request.VerifyEmailRequest;
 import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -54,7 +55,20 @@ public class MailService {
         return mailMapper.toEmailResponse(email);
     }
 
-    public EmailVerifyResponse verifyMail(EmailVerifyRequest request) {
+    public EmailResponse sendAuthCodeToEmail(String email){
+        String authCode = generateAuthCode();
+
+        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
+
+//      메일 생성
+        MimeMessage message = createMailContext(email, authCode);
+//      메일 전송
+        javaMailSender.send(message);
+
+        return mailMapper.toEmailResponse(email);
+    }
+
+    public EmailVerifyResponse verifyMailForPassword(EmailVerifyRequest request) {
         String email = request.email();
         String storedAuthCode = redisService.getValue(email);
 
@@ -66,6 +80,17 @@ public class MailService {
         String passwordResetToken = jwtService.createPasswordResetToken(email);
 
         return mailMapper.toEmailVerifyResponse(email, passwordResetToken);
+    }
+
+    public void verifyMailForMail(VerifyEmailRequest request){
+        String email = request.email();
+        String storedAuthCode = redisService.getValue(email);
+        //      인증 코드 검증
+        if (!storedAuthCode.equals(request.verifyCode())) {
+            throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
+        }
+        redisService.deleteValue(email);
+
     }
 
     /**

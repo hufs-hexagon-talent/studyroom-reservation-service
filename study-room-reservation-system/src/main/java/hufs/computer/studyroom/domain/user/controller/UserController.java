@@ -2,9 +2,8 @@ package hufs.computer.studyroom.domain.user.controller;
 
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
-import hufs.computer.studyroom.domain.user.dto.request.ModifyPasswordRequest;
-import hufs.computer.studyroom.domain.user.dto.request.ResetPasswordRequest;
-import hufs.computer.studyroom.domain.user.dto.request.SignUpRequest;
+import hufs.computer.studyroom.domain.mail.dto.response.EmailResponse;
+import hufs.computer.studyroom.domain.user.dto.request.*;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.entity.User;
@@ -60,7 +59,7 @@ public class UserController {
             description = "로그인 후, 본인 정보 업데이트 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PutMapping("/me/password")
-    public ResponseEntity<SuccessResponse<UserInfoResponse>> updateUser(@AuthenticationPrincipal CustomUserDetails currentUser,
+    public ResponseEntity<SuccessResponse<UserInfoResponse>> updateUserPassword(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                           @RequestBody ModifyPasswordRequest request) {
         User user = currentUser.getUser();
         var result = userCommandService.resetUserPasswordWithOldPassword(user.getUserId(), request);
@@ -72,6 +71,28 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<SuccessResponse<UserInfoResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
         var result = userCommandService.resetUserPasswordWithToken(request);// 비밀번호 업데이트
+        return ResponseFactory.modified(result);
+    }
+
+    @Operation(summary = "✅로그인 후, 자신의 이메일 수정 요청",
+            description = "현재 비밀번호 검증 후, 새로운 이메일로 인증 코드 전송",
+            security = {@SecurityRequirement(name = "JWT")})
+    @PostMapping("/me/mail/send")
+    public ResponseEntity<SuccessResponse<EmailResponse>> authenticateForEmailModify(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                          @RequestBody ModifyEmailRequest request) {
+        User user = currentUser.getUser();
+        var result = userCommandService.authenticateForEmailModify(user.getUserId(), request);
+        return ResponseFactory.success(result);
+    }
+
+    @Operation(summary = "✅로그인 후, 인증 코드 검증 후, 이메일 수정 처리",
+            description = "인증 코드 검증 후, 이메일 수정",
+            security = {@SecurityRequirement(name = "JWT")})
+    @PostMapping("/me/mail/verify")
+    public ResponseEntity<SuccessResponse<UserInfoResponse>> verifyUserEmail(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                                        @RequestBody VerifyEmailRequest request) {
+        User user = currentUser.getUser();
+        var result = userCommandService.authorizeEmailChange(user.getUserId(), request);
         return ResponseFactory.modified(result);
     }
 }
