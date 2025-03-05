@@ -115,6 +115,10 @@ public class UserCommandService {
         if (!bCryptPasswordEncoder.matches(request.prePassword(), user.getPassword())) {
             throw new CustomException(UserErrorCode.INVALID_CURRENT_PASSWORD);
         }
+        // 신규 이메일 검증
+        if (request.newEmail().equals(user.getEmail())){
+            throw new CustomException(UserErrorCode.INVALID_NEW_EMAIL);
+        }
 
         return mailService.sendAuthCodeToEmail(request.newEmail());
     }
