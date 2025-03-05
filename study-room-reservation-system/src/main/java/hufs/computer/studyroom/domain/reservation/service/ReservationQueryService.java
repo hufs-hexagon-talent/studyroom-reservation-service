@@ -270,7 +270,6 @@ public class ReservationQueryService {
     public boolean isBlockExpired(Long userId){
 
         Instant blockEndTime = calculateNoShowBlockEndTime(userId);
-
         boolean isExpired = blockEndTime.isBefore(Instant.now());
         return isExpired;
     }

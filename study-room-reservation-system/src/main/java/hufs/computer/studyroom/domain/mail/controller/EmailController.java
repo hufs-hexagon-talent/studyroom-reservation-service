@@ -40,7 +40,7 @@ public class EmailController {
     @PostMapping("/mail/verify")
     public ResponseEntity<SuccessResponse<EmailVerifyResponse>> verifyMail(@Valid @RequestBody EmailVerifyRequest request) {
 
-        var result = mailService.verifyMail(request);
+        var result = mailService.verifyMailForPassword(request);
         return ResponseFactory.success(result);
     }
 }

@@ -7,6 +7,8 @@ import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
 import hufs.computer.studyroom.domain.department.service.DepartmentQueryService;
+import hufs.computer.studyroom.domain.mail.dto.response.EmailResponse;
+import hufs.computer.studyroom.domain.mail.service.MailService;
 import hufs.computer.studyroom.domain.user.dto.request.*;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
@@ -37,6 +39,7 @@ public class UserCommandService {
     private final UserQueryService userQueryService;
     private final DepartmentQueryService departmentQueryService;
     private final JWTService jwtService;
+    private final MailService mailService;
 
     public UserInfoResponse signUpProcess(@Valid SignUpRequest request) {
 
@@ -104,6 +107,33 @@ public class UserCommandService {
         }
         return resetUserPassword(userId, request.newPassword());
     }
+
+
+    public EmailResponse authenticateForEmailModify(Long userId, ModifyEmailRequest request){
+        User user = userQueryService.getUserById(userId);
+        // 기존 비밀번호 검증
+        if (!bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
+            throw new CustomException(UserErrorCode.INVALID_CURRENT_PASSWORD);
+        }
+        // 신규 이메일 검증
+        if (request.newEmail().equals(user.getEmail())){
+            throw new CustomException(UserErrorCode.INVALID_NEW_EMAIL);
+        }
+
+        return mailService.sendAuthCodeToEmail(request.newEmail());
+    }
+
+    public UserInfoResponse authorizeEmailChange(Long userId, VerifyEmailRequest request){
+        User user = userQueryService.getUserById(userId);
+
+        mailService.verifyMailForMail(request);
+        String newEmail = request.email();
+        user.setEmail(newEmail);
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toInfoResponse(savedUser);
+    }
+
 
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
