@@ -112,7 +112,7 @@ public class UserCommandService {
     public EmailResponse authenticateForEmailModify(Long userId, ModifyEmailRequest request){
         User user = userQueryService.getUserById(userId);
         // 기존 비밀번호 검증
-        if (!bCryptPasswordEncoder.matches(request.prePassword(), user.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
             throw new CustomException(UserErrorCode.INVALID_CURRENT_PASSWORD);
         }
         // 신규 이메일 검증
