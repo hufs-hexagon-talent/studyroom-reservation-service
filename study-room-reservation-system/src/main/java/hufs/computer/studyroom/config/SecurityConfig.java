@@ -117,7 +117,7 @@ public class SecurityConfig {
                                         "/users/sign-up",
                                         "/users/reset-password").permitAll()
                                 .requestMatchers(
-                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN, ROLE_BLOCKED, ROLE_EXPIRED)
+                                        "/users/me/**").hasAnyAuthority(ROLE_USER, ROLE_RESIDENT, ROLE_ADMIN, ROLE_BLOCKED)
                                 .requestMatchers(
                                         "/users/**").hasAuthority(ROLE_ADMIN)
 
