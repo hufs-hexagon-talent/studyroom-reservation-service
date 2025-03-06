@@ -21,6 +21,8 @@ import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -125,14 +127,17 @@ public class ReservationQueryService {
 //        return reservationMapper.toUserNoShowCntResponses(userNoShowCntResponse);
     }
 
-//todo : createAt (예약생성 시간)기준으로 가져올지 vs reservationStartTime ( 예약 시작 시간 ) 기준으로 가져올지
-//    reservationStartTime ( 예약 시작 시간 ) 기준
-//    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
-    public ReservationInfoResponse getRecentReservationByUser(CustomUserDetails currentUser) {
+    /**
+     * 사용자 NoShow 예약 목록 조회
+     * @param currentUser 현재 인증된 사용자
+     * @return ReservationInfoResponses - 가장 최신에 생성된 + 현재 예약 종료 전까지 + NOT_VISITED 인 예약
+     */
+    public ReservationInfoResponses getRecentReservationByUser(CustomUserDetails currentUser) {
         Long userId = currentUser.getUser().getUserId();
-        Reservation reservation = reservationRepository.findTopByUserUserIdOrderByReservationStartTimeDesc(userId)
-                .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
-        return reservationMapper.toInfoResponse(reservation);
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Reservation> foundReservations = reservationRepository.findRecentValidReservationByUserId(userId, pageable);
+
+        return reservationMapper.toInfoResponses(foundReservations);
     }
 
     /**

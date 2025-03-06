@@ -42,7 +42,7 @@ public class UserReservationController {
         return ResponseFactory.created(result);
     }
 
-    @Operation(summary = "❌ 자신의 예약 삭제",
+    @Operation(summary = "✅ 자신의 예약 삭제",
             description = "인증 받은 유저의 자신의 예약 삭제",
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/me/{reservationId}")
@@ -53,13 +53,11 @@ public class UserReservationController {
     }
 
 //    -------------------------------------------------------------------------------------------------------------
-//   todo : createAt (예약생성 시간)기준으로 가져올지 vs reservationStartTime ( 예약 시작 시간 ) 기준으로 가져올지
-//    -> reservationStartTime ( 예약 시작 시간 ) 기준
-    @Operation(summary = "✅ 자신의 가장 최근 예약 조회 ( 예약 시작 시간 ) 기준",
-            description = " 인증 받은 유저의 자신의 최근(현재) 예약 조회 ( 예약 시작 시간 ) 기준",
+    @Operation(summary = "✅ 자신이 현재 체크인 해야하는 예약 조회",
+            description = " 유저의 자신의 최근(현재) 예약 조회 ( 예약 생성이 가장 최신 + 현재 예약 종료 전까지 + NOT_VISITED ) 기준",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/me/latest")
-    ResponseEntity<SuccessResponse<ReservationInfoResponse>> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
+    ResponseEntity<SuccessResponse<ReservationInfoResponses>> lookUpRecent(@AuthenticationPrincipal CustomUserDetails currentUser) {
         var result = reservationQueryService.getRecentReservationByUser(currentUser);
         return ResponseFactory.success(result);
     }
