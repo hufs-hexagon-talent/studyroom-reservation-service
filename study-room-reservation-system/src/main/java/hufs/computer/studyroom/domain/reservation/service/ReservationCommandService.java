@@ -99,13 +99,10 @@ public class ReservationCommandService {
         reservationRepository.deleteById(reservationId);
     }
 
-// todo
     public void deleteReservationByAdmin(Long reservationId, CustomUserDetails currentUser) {
-        User user = currentUser.getUser();
-//        // 관리자 권한 확인
-//        if (user.getServiceRole() != ServiceRole.ADMIN) {
-//            throw new CustomException(AuthErrorCode.ACCESS_DENIED);
-//        }
+        if (currentUser.getUser().getServiceRole()!=ServiceRole.ADMIN){
+            throw new CustomException(AuthErrorCode.ACCESS_DENIED);
+        }
         reservationRepository.deleteById(reservationId);
     }
 
@@ -122,21 +119,18 @@ public class ReservationCommandService {
      *  No-Show 상태의 예약들을 PROCESSED 상태로 업데이트 & ServiceRole BLOCKED -> USER
      */
     public ReservationInfoResponses updateNoShowReservationsToProcessed(Long userId) {
-        ServiceRole currentRole = userQueryService.getServiceRoleById(userId);
-        if (currentRole == ServiceRole.ADMIN || currentRole == ServiceRole.RESIDENT){
+        ServiceRole targetUserRole = userQueryService.getServiceRoleById(userId);
+        if (targetUserRole != ServiceRole.USER && targetUserRole != ServiceRole.BLOCKED){
             throw new CustomException(AuthErrorCode.ACCESS_DENIED);
         }
 
         List<Reservation> noShowReservations = reservationQueryService.getNoShowReservationsByUserId(userId);
         noShowReservations.forEach(reservation -> reservation.setState(Reservation.ReservationState.PROCESSED));
+        List<Reservation> saved = reservationRepository.saveAll(noShowReservations);
 
-        reservationRepository.saveAll(noShowReservations);
+        userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
 
-        if (currentRole == ServiceRole.BLOCKED) {
-            userCommandService.modifyServiceRoleById(userId, ServiceRole.USER);
-        }
-
-        return reservationMapper.toInfoResponses(reservationRepository.saveAll(noShowReservations));
+        return reservationMapper.toInfoResponses(saved);
     }
 
 }
