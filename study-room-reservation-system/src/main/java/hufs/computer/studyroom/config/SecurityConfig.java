@@ -105,6 +105,7 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**").permitAll()
+
                                 // Auth
                                 .requestMatchers(
                                         "/auth/refresh",
@@ -112,6 +113,7 @@ public class SecurityConfig {
                                         "/auth/mail/send",
                                         "/auth/mail/verify"
                                 ).permitAll()
+
                                 // User
                                 .requestMatchers(
                                         "/users/sign-up",
@@ -159,6 +161,11 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/check-in"
                                 ).hasAnyAuthority(ROLE_RESIDENT,ROLE_ADMIN)
+
+                                // banner
+                                .requestMatchers(
+                                        "/banners").hasAnyAuthority(ROLE_ADMIN)
+                                .requestMatchers("/banners/active").permitAll()
 
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
