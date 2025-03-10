@@ -2,6 +2,7 @@ package hufs.computer.studyroom.domain.banner.dto.request;
 
 import hufs.computer.studyroom.domain.banner.entity.BannerType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 
 @Builder
@@ -15,6 +16,7 @@ public record ModifyBannerInfoRequest(
         String imageUrl,
 
         @Schema(description = "클릭 시 이동할 링크 URL", example = "www.hwangbbang.com")
+        @Nullable
         String linkUrl,
 
         @Schema(description = "배너 활성화 여부", example = "true")

@@ -36,7 +36,7 @@ public interface BannerMapper {
     @Mapping(target = "bannerId", ignore = true) // 엔티티 생성 시 자동으로 설정됨
     @Mapping(source = "bannerType", target = "bannerType")
     @Mapping(source = "imageUrl", target = "imageUrl")
-    @Mapping(source = "linkUrl", target = "linkUrl")
+    @Mapping(source = "linkUrl", target = "linkUrl", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     @Mapping(source = "active", target = "active")
     @Mapping(target = "createAt", ignore = true) // createAt은 엔티티 생성 시 자동으로 설정됨
     @Mapping(target = "updateAt", ignore = true) // updateAt은 수정 시 자동으로 설정됨
