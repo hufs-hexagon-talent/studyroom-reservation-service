@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "이메일 인증 코드 검증 요청 DTO")
 public record EmailVerifyRequest (
 
-    @Email(message = "이메일이 유효하지 않습니다.")
-    @ExistUser(checkType = ExistUser.CheckType.EMAIL)
     @Schema(description = "이메일 주소")
     String email,
 

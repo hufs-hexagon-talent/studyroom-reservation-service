@@ -23,6 +23,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.Duration;
 import java.util.Random;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -43,22 +44,25 @@ public class MailService {
 
     public EmailResponse sendAuthCode(String username) {
         String email = userQueryService.findByUsername(username).getEmail();
+        String uuid = UUID.nameUUIDFromBytes(email.getBytes()).toString();
+
         String authCode = generateAuthCode();
 
-        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
+        redisService.setValues(uuid, authCode, Duration.ofMinutes(authCodeExpiryTime));
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
 //      메일 전송
         javaMailSender.send(message);
 
-        return mailMapper.toEmailResponse(email);
+        return mailMapper.toEmailResponse(uuid);
     }
 
     public EmailResponse sendAuthCodeToEmail(String email){
         String authCode = generateAuthCode();
 
-        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
+        String uuid = UUID.nameUUIDFromBytes(email.getBytes()).toString();
+        redisService.setValues(uuid, authCode, Duration.ofMinutes(authCodeExpiryTime));
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
@@ -69,27 +73,27 @@ public class MailService {
     }
 
     public EmailVerifyResponse verifyMailForPassword(EmailVerifyRequest request) {
-        String email = request.email();
-        String storedAuthCode = redisService.getValue(email);
+        String emailUuid = request.email();
+        String storedAuthCode = redisService.getValue(emailUuid);
 
 //      인증 코드 검증
         if (!storedAuthCode.equals(request.verifyCode())) {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
-        redisService.deleteValue(email);
-        String passwordResetToken = jwtService.createPasswordResetToken(email);
+        redisService.deleteValue(emailUuid);
+        String passwordResetToken = jwtService.createPasswordResetToken(emailUuid);
 
-        return mailMapper.toEmailVerifyResponse(email, passwordResetToken);
+        return mailMapper.toEmailVerifyResponse(emailUuid, passwordResetToken);
     }
 
     public void verifyMailForMail(VerifyEmailRequest request){
-        String email = request.email();
-        String storedAuthCode = redisService.getValue(email);
+        String emailUuid = request.email();
+        String storedAuthCode = redisService.getValue(emailUuid);
         //      인증 코드 검증
         if (!storedAuthCode.equals(request.verifyCode())) {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
-        redisService.deleteValue(email);
+        redisService.deleteValue(emailUuid);
 
     }
 
