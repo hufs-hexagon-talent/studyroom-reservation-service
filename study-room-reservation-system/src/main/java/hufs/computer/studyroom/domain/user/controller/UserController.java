@@ -69,9 +69,9 @@ public class UserController {
     @Operation(summary = "✅로그인 X, 자신의 비밀번호 재설정",
             description = "JWT 토큰과 새로운 비밀번호를 사용하여 비밀번호를 재설정하는 API")
     @PostMapping("/reset-password")
-    public ResponseEntity<SuccessResponse<UserInfoResponse>> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<SuccessResponse<Void>> resetPassword(@RequestBody ResetPasswordRequest request) {
         var result = userCommandService.resetUserPasswordWithToken(request);// 비밀번호 업데이트
-        return ResponseFactory.modified(result);
+        return ResponseFactory.modified(null);
     }
 
     @Operation(summary = "✅로그인 후, 자신의 이메일 수정 요청",
