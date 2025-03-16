@@ -28,11 +28,11 @@ public class EmailController {
     @Operation(summary = "✅ 이메일 인증 코드 전송",
             description = "로그인X, 비밀번호 수정을 위한 이메일 인증 코드 전송 API")
     @PostMapping("/mail/send")
-    public ResponseEntity<SuccessResponse<Void>> sendAuthCode(
+    public ResponseEntity<SuccessResponse<EmailResponse>> sendAuthCode(
              @ExistUser(checkType = ExistUser.CheckType.USERNAME) @RequestParam String username) {
 
-        mailService.sendAuthCode(username);
-        return ResponseFactory.success(null);
+        var result = mailService.sendAuthCode(username);
+        return ResponseFactory.success(result);
     }
 
     @Operation(summary = "✅ 인증 코드 검증",
