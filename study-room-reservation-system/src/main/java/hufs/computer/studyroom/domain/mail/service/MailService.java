@@ -44,32 +44,33 @@ public class MailService {
     // 인증번호 만료 시간 5분
     @Value("${spring.service.authCodeExpiryTime}") private int authCodeExpiryTime;
     @Value("${spring.mail.username}") private String senderEmail;
-    private static final String MAIL_PREFIX = "mail:";
+    private final static String MAIL_PREFIX = "mail:";
 
     public EmailResponse sendAuthCode(String username) {
-        String email = userQueryService.findByUsername(username).getEmail();
-        String uuid = UUID.nameUUIDFromBytes(email.getBytes()).toString();
 
-        String authCode = generateAuthCode();
         String verificationId = MAIL_PREFIX + UUID.randomUUID();
+        String email = userQueryService.findByUsername(username).getEmail();
+        String authCode = generateAuthCode();
 
         String authInfoJson = serializeAuthInfo(new AuthInfo(email,authCode));
 
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
+
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
 //      메일 전송
         javaMailSender.send(message);
 
-        return mailMapper.toEmailResponse(uuid);
+        return mailMapper.toEmailResponse(verificationId);
     }
 
     public EmailResponse sendAuthCodeToEmail(String email){
+        String verificationId = MAIL_PREFIX + UUID.randomUUID();
+
         String authCode = generateAuthCode();
         String authInfoJson = serializeAuthInfo(new AuthInfo(email,authCode));
 
-        String verificationId = MAIL_PREFIX + UUID.randomUUID();
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
 //      메일 생성
@@ -77,7 +78,7 @@ public class MailService {
 //      메일 전송
         javaMailSender.send(message);
 
-        return mailMapper.toEmailResponse(email);
+        return mailMapper.toEmailResponse(verificationId);
     }
 
     public EmailVerifyResponse verifyMailForPassword(EmailVerifyRequest request) {
