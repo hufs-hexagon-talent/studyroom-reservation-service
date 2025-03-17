@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record CheckInRequest(
-        @NotNull(message = "OTP 코드가 유효하지 않습니다.")
+
         @NotEmpty(message = "OTP 코드가 유효하지 않습니다.")
         String verificationCode,
 

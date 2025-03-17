@@ -29,8 +29,6 @@ public enum AuthErrorCode implements ErrorCode{
     // 메일 인증 코드
     AUTH_CODE_MISMATCH(HttpStatus.CONFLICT, "AUTH-014", "인증 코드가 일치하지않습니다."),
     EMAIL_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-015", "이메일 생성 또는 전송에 실패했습니다."),
-    SERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-016", "인증 정보 직렬화에 실패했습니다."),
-    DESERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-017", "인증 정보 역직렬화에 실패했습니다."),
     INVALID_AUTH_INFO(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-018", "인증 정보가 유효 하지 않습니다.");
 
     private final HttpStatus httpStatus;

@@ -1,7 +1,11 @@
 package hufs.computer.studyroom.domain.checkin.service;
 
+import hufs.computer.studyroom.common.error.code.CheckInErrorCode;
 import hufs.computer.studyroom.common.error.code.ReservationErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.common.service.JsonConverterService;
+import hufs.computer.studyroom.common.service.RedisService;
+import hufs.computer.studyroom.domain.auth.dto.OTPInfo;
 import hufs.computer.studyroom.domain.checkin.dto.request.CheckInRequest;
 import hufs.computer.studyroom.domain.checkin.dto.response.CheckInResponse;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
@@ -25,13 +29,24 @@ public class CheckInService {
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
     private final CheckInValidationService validationService;
+    private final RedisService redisService;
+    private final JsonConverterService jsonConverterService;
     @Value("${spring.service.allowedStartMinute}") private Long allowedStartMinute;
 
 
     public CheckInResponse verifyCheckIn(CheckInRequest request){
 
+        String otpInfoJson = redisService.getValue(request.verificationCode());
+        // 검증
+        if (otpInfoJson == null || otpInfoJson.isEmpty()) {
+            throw new CustomException(CheckInErrorCode.OTP_NOT_FOUND);
+        }
+
+        OTPInfo otpInfo = jsonConverterService.deserializeAuthInfo(otpInfoJson, OTPInfo.class);
+
         //해당 OTP를 통해 유저 정보 검증 + 가져온다.
-        Long userId = validationService.validateVerificationCode(request.verificationCode());
+        Long userId = otpInfo.userId();
+
 
         //해당 룸에 대한 파티션들을 모두 검증 + 가져온다.
         List<Long> partitionIds = validationService.validateRoomId(request.roomId());

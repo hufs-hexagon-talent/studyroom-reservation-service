@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hufs.computer.studyroom.common.error.code.AuthErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.common.service.JsonConverterService;
 import hufs.computer.studyroom.common.service.RedisService;
 import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.mail.dto.AuthInfo;
@@ -39,7 +40,7 @@ public class MailService {
     private final MailMapper mailMapper;
     private final SpringTemplateEngine templateEngine;
     private final JWTService jwtService;
-    private final ObjectMapper objectMapper;
+    private final JsonConverterService jsonConverterService;
 
     // 인증번호 만료 시간 5분
     @Value("${spring.service.authCodeExpiryTime}") private int authCodeExpiryTime;
@@ -52,7 +53,7 @@ public class MailService {
         String email = userQueryService.findByUsername(username).getEmail();
         String authCode = generateAuthCode();
 
-        String authInfoJson = serializeAuthInfo(new AuthInfo(email,authCode));
+        String authInfoJson = jsonConverterService.serializeAuthInfo(new AuthInfo(email,authCode));
 
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
@@ -69,7 +70,7 @@ public class MailService {
         String verificationId = MAIL_PREFIX + UUID.randomUUID();
 
         String authCode = generateAuthCode();
-        String authInfoJson = serializeAuthInfo(new AuthInfo(email,authCode));
+        String authInfoJson = jsonConverterService.serializeAuthInfo(new AuthInfo(email,authCode));
 
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
@@ -90,7 +91,7 @@ public class MailService {
             throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
         }
 
-        AuthInfo authInfo = deserializeAuthInfo(storedAuthInfo);
+        AuthInfo authInfo = jsonConverterService.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
 
         String storedEmail = authInfo.email();
         String storedAuthCode = authInfo.authCode();
@@ -115,7 +116,7 @@ public class MailService {
             throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
         }
 
-        AuthInfo authInfo = deserializeAuthInfo(storedAuthInfo);
+        AuthInfo authInfo = jsonConverterService.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
 
         String storedEmail = authInfo.email();
         String storedAuthCode = authInfo.authCode();
@@ -159,25 +160,5 @@ public class MailService {
         return String.valueOf(random.nextInt(900000) + 100000);
     }
 
-    /**
-    * 직렬화
-    */
-    private String serializeAuthInfo(AuthInfo authInfo) {
-        try {
-            return objectMapper.writeValueAsString(authInfo);
-        } catch (JsonProcessingException e) {
-            throw new CustomException(AuthErrorCode.SERIALIZATION_FAILED);
-        }
-    }
 
-    /**
-    * 역직렬화
-    */
-    private AuthInfo deserializeAuthInfo(String storedAuthInfo) {
-        try {
-            return objectMapper.readValue(storedAuthInfo, AuthInfo.class);
-        } catch (JsonProcessingException e) {
-            throw new CustomException(AuthErrorCode.DESERIALIZATION_FAILED);
-        }
-    }
 }
