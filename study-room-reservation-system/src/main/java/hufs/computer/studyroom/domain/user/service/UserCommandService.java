@@ -3,6 +3,7 @@ package hufs.computer.studyroom.domain.user.service;
 import hufs.computer.studyroom.common.error.code.DepartmentErrorCode;
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.common.service.RedisService;
 import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;
@@ -40,6 +41,7 @@ public class UserCommandService {
     private final DepartmentQueryService departmentQueryService;
     private final JWTService jwtService;
     private final MailService mailService;
+    private final RedisService redisService;
 
     public UserInfoResponse signUpProcess(@Valid SignUpRequest request) {
 
@@ -126,8 +128,8 @@ public class UserCommandService {
     public UserInfoResponse authorizeEmailChange(Long userId, VerifyEmailRequest request){
         User user = userQueryService.getUserById(userId);
 
-        mailService.verifyMailForMail(request);
-        String newEmail = request.email();
+        String newEmail = mailService.verifyMailForMail(request);
+
         user.setEmail(newEmail);
 
         User savedUser = userRepository.save(user);

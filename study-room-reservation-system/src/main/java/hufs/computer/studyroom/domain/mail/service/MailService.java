@@ -44,15 +44,14 @@ public class MailService {
     // 인증번호 만료 시간 5분
     @Value("${spring.service.authCodeExpiryTime}") private int authCodeExpiryTime;
     @Value("${spring.mail.username}") private String senderEmail;
-
+    private static final String MAIL_PREFIX = "mail:";
 
     public EmailResponse sendAuthCode(String username) {
         String email = userQueryService.findByUsername(username).getEmail();
         String authCode = generateAuthCode();
-        String verificationId = UUID.randomUUID().toString();
+        String verificationId = MAIL_PREFIX + UUID.randomUUID();
 
-        AuthInfo authInfo = new AuthInfo(email,authCode);
-        String authInfoJson = serializeAuthInfo(authInfo);
+        String authInfoJson = serializeAuthInfo(new AuthInfo(email,authCode));
 
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
@@ -66,8 +65,10 @@ public class MailService {
 
     public EmailResponse sendAuthCodeToEmail(String email){
         String authCode = generateAuthCode();
+        String authInfoJson = serializeAuthInfo(new AuthInfo(email,authCode));
 
-        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
+        String verificationId = MAIL_PREFIX + UUID.randomUUID();
+        redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
@@ -92,6 +93,7 @@ public class MailService {
         String storedAuthCode = authInfo.authCode();
 
 //      인증 코드 검증
+
         if (!storedAuthCode.equals(request.verifyCode())) {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
@@ -101,15 +103,27 @@ public class MailService {
         return mailMapper.toEmailVerifyResponse(storedEmail, passwordResetToken);
     }
 
-    public void verifyMailForMail(VerifyEmailRequest request){
-        String email = request.email();
-        String storedAuthCode = redisService.getValue(email);
+    public String verifyMailForMail(VerifyEmailRequest request){
+        String verificationId = request.verificationId();
+
+        String storedAuthInfo = redisService.getValue(verificationId);
+
+        if (storedAuthInfo == null || storedAuthInfo.isEmpty()) {
+            throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
+        }
+
+        AuthInfo authInfo = deserializeAuthInfo(storedAuthInfo);
+
+        String storedEmail = authInfo.email();
+        String storedAuthCode = authInfo.authCode();
+
         //      인증 코드 검증
         if (!storedAuthCode.equals(request.verifyCode())) {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
-        redisService.deleteValue(email);
+        redisService.deleteValue(verificationId);
 
+        return storedEmail;
     }
 
     /**
