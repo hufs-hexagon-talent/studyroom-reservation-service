@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Schema (description = "이메일 인증 응답 DTO")
 public record EmailResponse (
-    @Schema(description = "전송된 이메일 주소")
-    String email
+    @Schema(description = "인증 절차에 사용되는 임시 식별자")
+    String verificationId
 ) {}

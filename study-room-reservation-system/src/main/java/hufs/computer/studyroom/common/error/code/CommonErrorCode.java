@@ -20,7 +20,9 @@ public enum CommonErrorCode implements ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "CLIENT-005", "허용되지 않은 메서드입니다. 요청 방식을 확인해주세요."),
     NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "CLIENT-006", "요청한 리소스가 허용되지 않는 형식입니다."),
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "CLIENT-007", "지원되지 않는 미디어 형식입니다."),
-    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "CLIENT-008", "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.");
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "CLIENT-008", "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
+    SERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-016", "정보 직렬화에 실패했습니다."),
+    DESERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-017", "정보 역직렬화에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

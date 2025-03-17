@@ -1,9 +1,13 @@
 package hufs.computer.studyroom.domain.mail.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hufs.computer.studyroom.common.error.code.AuthErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.common.service.JsonConverterService;
 import hufs.computer.studyroom.common.service.RedisService;
 import hufs.computer.studyroom.domain.auth.service.JWTService;
+import hufs.computer.studyroom.domain.mail.dto.AuthInfo;
 import hufs.computer.studyroom.domain.mail.dto.request.EmailVerifyRequest;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailResponse;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailVerifyResponse;
@@ -23,6 +27,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.Duration;
 import java.util.Random;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -35,62 +40,94 @@ public class MailService {
     private final MailMapper mailMapper;
     private final SpringTemplateEngine templateEngine;
     private final JWTService jwtService;
+    private final JsonConverterService jsonConverterService;
 
     // 인증번호 만료 시간 5분
     @Value("${spring.service.authCodeExpiryTime}") private int authCodeExpiryTime;
     @Value("${spring.mail.username}") private String senderEmail;
-
+    private final static String MAIL_PREFIX = "mail:";
 
     public EmailResponse sendAuthCode(String username) {
+
+        String verificationId = MAIL_PREFIX + UUID.randomUUID();
         String email = userQueryService.findByUsername(username).getEmail();
         String authCode = generateAuthCode();
 
-        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
+        String authInfoJson = jsonConverterService.serializeAuthInfo(new AuthInfo(email,authCode));
+
+        redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
+
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
 //      메일 전송
         javaMailSender.send(message);
 
-        return mailMapper.toEmailResponse(email);
+        return mailMapper.toEmailResponse(verificationId);
     }
 
     public EmailResponse sendAuthCodeToEmail(String email){
-        String authCode = generateAuthCode();
+        String verificationId = MAIL_PREFIX + UUID.randomUUID();
 
-        redisService.setValues(email, authCode, Duration.ofMinutes(authCodeExpiryTime));
+        String authCode = generateAuthCode();
+        String authInfoJson = jsonConverterService.serializeAuthInfo(new AuthInfo(email,authCode));
+
+        redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
 //      메일 생성
         MimeMessage message = createMailContext(email, authCode);
 //      메일 전송
         javaMailSender.send(message);
 
-        return mailMapper.toEmailResponse(email);
+        return mailMapper.toEmailResponse(verificationId);
     }
 
     public EmailVerifyResponse verifyMailForPassword(EmailVerifyRequest request) {
-        String email = request.email();
-        String storedAuthCode = redisService.getValue(email);
+        String verificationId = request.verificationId();
+        String storedAuthInfo = redisService.getValue(verificationId);
+
+//      인증 정보 검증
+        if (storedAuthInfo == null || storedAuthInfo.isEmpty()) {
+            throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
+        }
+
+        AuthInfo authInfo = jsonConverterService.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
+
+        String storedEmail = authInfo.email();
+        String storedAuthCode = authInfo.authCode();
 
 //      인증 코드 검증
+
         if (!storedAuthCode.equals(request.verifyCode())) {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
-        redisService.deleteValue(email);
-        String passwordResetToken = jwtService.createPasswordResetToken(email);
+        redisService.deleteValue(verificationId);
+        String passwordResetToken = jwtService.createPasswordResetToken(storedEmail);
 
-        return mailMapper.toEmailVerifyResponse(email, passwordResetToken);
+        return mailMapper.toEmailVerifyResponse(storedEmail, passwordResetToken);
     }
 
-    public void verifyMailForMail(VerifyEmailRequest request){
-        String email = request.email();
-        String storedAuthCode = redisService.getValue(email);
+    public String verifyMailForMail(VerifyEmailRequest request){
+        String verificationId = request.verificationId();
+
+        String storedAuthInfo = redisService.getValue(verificationId);
+
+        if (storedAuthInfo == null || storedAuthInfo.isEmpty()) {
+            throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
+        }
+
+        AuthInfo authInfo = jsonConverterService.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
+
+        String storedEmail = authInfo.email();
+        String storedAuthCode = authInfo.authCode();
+
         //      인증 코드 검증
         if (!storedAuthCode.equals(request.verifyCode())) {
             throw new CustomException(AuthErrorCode.AUTH_CODE_MISMATCH);
         }
-        redisService.deleteValue(email);
+        redisService.deleteValue(verificationId);
 
+        return storedEmail;
     }
 
     /**
@@ -122,4 +159,6 @@ public class MailService {
     private String generateAuthCode() {
         return String.valueOf(random.nextInt(900000) + 100000);
     }
+
+
 }
