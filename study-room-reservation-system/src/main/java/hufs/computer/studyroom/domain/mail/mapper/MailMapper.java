@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface MailMapper {
-    @Mapping(target = "email", source = "email")
+    @Mapping(target = "verificationId", source = "email")
     EmailResponse toEmailResponse(String email);
     EmailVerifyResponse toEmailVerifyResponse(String email, String passwordResetToken);
 }
