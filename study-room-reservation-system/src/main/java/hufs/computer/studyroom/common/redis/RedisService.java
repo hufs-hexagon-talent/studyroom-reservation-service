@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common.service;
+package hufs.computer.studyroom.common.redis;
 
 import org.springframework.stereotype.Service;
 

@@ -3,7 +3,7 @@ package hufs.computer.studyroom.domain.user.service;
 import hufs.computer.studyroom.common.error.code.DepartmentErrorCode;
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.service.RedisService;
+import hufs.computer.studyroom.common.redis.RedisService;
 import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.department.repository.DepartmentRepository;

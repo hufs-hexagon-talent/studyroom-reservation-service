@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common.service;
+package hufs.computer.studyroom.common.redis;
 
 import hufs.computer.studyroom.common.error.code.RedisErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
