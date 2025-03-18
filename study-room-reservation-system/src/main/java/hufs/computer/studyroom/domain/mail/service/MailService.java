@@ -1,11 +1,9 @@
 package hufs.computer.studyroom.domain.mail.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hufs.computer.studyroom.common.error.code.AuthErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.service.JsonConverterService;
-import hufs.computer.studyroom.common.service.RedisService;
+import hufs.computer.studyroom.common.util.JsonConverterUtil;
+import hufs.computer.studyroom.common.redis.RedisService;
 import hufs.computer.studyroom.domain.auth.service.JWTService;
 import hufs.computer.studyroom.domain.mail.dto.AuthInfo;
 import hufs.computer.studyroom.domain.mail.dto.request.EmailVerifyRequest;
@@ -29,6 +27,8 @@ import java.time.Duration;
 import java.util.Random;
 import java.util.UUID;
 
+import static hufs.computer.studyroom.common.redis.RedisKeyConstants.MAIL_PREFIX;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,12 +40,11 @@ public class MailService {
     private final MailMapper mailMapper;
     private final SpringTemplateEngine templateEngine;
     private final JWTService jwtService;
-    private final JsonConverterService jsonConverterService;
+    private final JsonConverterUtil jsonConverterUtil;
 
     // 인증번호 만료 시간 5분
     @Value("${spring.service.authCodeExpiryTime}") private int authCodeExpiryTime;
     @Value("${spring.mail.username}") private String senderEmail;
-    private final static String MAIL_PREFIX = "mail:";
 
     public EmailResponse sendAuthCode(String username) {
 
@@ -53,7 +52,7 @@ public class MailService {
         String email = userQueryService.findByUsername(username).getEmail();
         String authCode = generateAuthCode();
 
-        String authInfoJson = jsonConverterService.serializeAuthInfo(new AuthInfo(email,authCode));
+        String authInfoJson = jsonConverterUtil.serializeAuthInfo(new AuthInfo(email,authCode));
 
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
@@ -70,7 +69,7 @@ public class MailService {
         String verificationId = MAIL_PREFIX + UUID.randomUUID();
 
         String authCode = generateAuthCode();
-        String authInfoJson = jsonConverterService.serializeAuthInfo(new AuthInfo(email,authCode));
+        String authInfoJson = jsonConverterUtil.serializeAuthInfo(new AuthInfo(email,authCode));
 
         redisService.setValues(verificationId, authInfoJson, Duration.ofMinutes(authCodeExpiryTime));
 
@@ -91,7 +90,7 @@ public class MailService {
             throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
         }
 
-        AuthInfo authInfo = jsonConverterService.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
+        AuthInfo authInfo = jsonConverterUtil.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
 
         String storedEmail = authInfo.email();
         String storedAuthCode = authInfo.authCode();
@@ -116,7 +115,7 @@ public class MailService {
             throw new CustomException(AuthErrorCode.INVALID_AUTH_INFO);
         }
 
-        AuthInfo authInfo = jsonConverterService.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
+        AuthInfo authInfo = jsonConverterUtil.deserializeAuthInfo(storedAuthInfo, AuthInfo.class);
 
         String storedEmail = authInfo.email();
         String storedAuthCode = authInfo.authCode();

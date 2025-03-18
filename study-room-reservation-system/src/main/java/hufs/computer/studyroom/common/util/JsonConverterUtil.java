@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common.service;
+package hufs.computer.studyroom.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JsonConverterService {
+public class JsonConverterUtil {
     private final ObjectMapper objectMapper;
 
     /**

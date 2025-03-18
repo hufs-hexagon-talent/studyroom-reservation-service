@@ -13,8 +13,6 @@ spring:
             port: ${SPRING_REDIS_PORT}
     service:
         allowedStartMinute: 15
-        randomChars : ${SPRING_RANDOM_CHARS}
-        otpLength: 8
         otpTTL: 300
         noShowBlockMonth : 1
         noShowLimit : 3
