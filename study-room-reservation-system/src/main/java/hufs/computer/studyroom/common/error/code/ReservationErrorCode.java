@@ -19,7 +19,7 @@ public enum ReservationErrorCode implements ErrorCode{
     INVALID_RESERVATION_TIME(HttpStatus.PRECONDITION_FAILED, "RESERVATION-005", "잘못된 예약 시간 입니다."),
     EXCEEDING_MAX_RESERVATION_TIME(HttpStatus.PRECONDITION_FAILED, " RESERVATION-006", "예약 가능한 시간을 초과 하였습니다."),
     TOO_MANY_CURRENT_RESERVATIONS(HttpStatus.PRECONDITION_FAILED, "RESERVATION-007", "미출석이 예약이 존재합니다. 해당 예약 출석 후 추가 예약이 가능합니다."),
-    TOO_MANY_TODAY_RESERVATIONS(HttpStatus.PRECONDITION_FAILED, "RESERVATION-008", "사용자는 하루에 1개 이상의 예약을 할 수 없습니다."), // todo : 동적으로 알려줘야해
+    TOO_MANY_TODAY_RESERVATIONS(HttpStatus.PRECONDITION_FAILED, "RESERVATION-008", "사용자는 하루에 3개 이상의 예약을 할 수 없습니다."), // todo : 동적으로 알려줘야해
     RESERVATION_OVERLAP(HttpStatus.PRECONDITION_FAILED, "RESERVATION-009", "해당 시간에 예약이 이미 존재합니다."),
 
     RESERVATION_ALREADY_VISITED(HttpStatus.BAD_REQUEST,"RESERVATION-010","이미 방문 처리된 예약은 삭제할 수 없습니다."),
