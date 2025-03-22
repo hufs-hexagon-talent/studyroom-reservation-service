@@ -62,21 +62,6 @@ public class ReservationQueryService {
         return reservationMapper.toInfoResponses(reservations);
     }
 
-//    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
-//    public ReservationInfoResponses findAllReservationBySerial(String serial, CustomUserDetails currentUser) {
-//        User admin = currentUser.getUser();
-//        if (admin.getServiceRole() != null && admin.getServiceRole() != ServiceRole.ADMIN) {
-//            throw new CustomException(AuthErrorCode.ACCESS_DENIED);
-//        }
-//
-//        User foundUser = userRepository.findBySerial(serial).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
-//        Long userId = foundUser.getUserId();
-//        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId)
-//                .orElse(Collections.emptyList());
-////              .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
-//
-//        return reservationMapper.toInfoResponses(reservations);
-//    }
 
     /**
      * 사용자 NoShow 예약 목록 조회
@@ -100,13 +85,6 @@ public class ReservationQueryService {
         List<User> blockedUsers = userRepository.getBlockedUsers();
 
 //        2. 해당 유저에 대해서
-//
-//       one blocked user
-//       -> user's reservations == List<Reservation>
-//       -> UserNoShowCntResponse
-//
-//       many blocked user -> List<UserNoShowCntResponse> == UserNoShowCntResponses
-
         List<UserNoShowCntResponse> usersNoShowCntResponse = blockedUsers.stream()
                 .map(blockedUser ->
                         {
@@ -117,14 +95,6 @@ public class ReservationQueryService {
                 ).collect(Collectors.toList());
         return reservationMapper.toUserNoShowCntResponses(usersNoShowCntResponse);
 
-
-//        2-1. 한 유저에 대해서
-//        List<Reservation> blockedUserNoShowReservations =
-//                reservationRepository.findNoShowReservationsByUserId();
-//        UserNoShowCntResponse userNoShowCntResponse = reservationMapper.toUserNoShowCntResponse(blockedUserNoShowReservations.size(), blockedUserNoShowReservations);
-
-//       2-2. 여러 유저에 대해서
-//        return reservationMapper.toUserNoShowCntResponses(userNoShowCntResponse);
     }
 
     /**
