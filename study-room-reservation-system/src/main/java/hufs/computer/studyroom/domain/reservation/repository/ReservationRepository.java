@@ -78,4 +78,8 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     List<Reservation> findRecentValidReservationByUserId(Long userId, Pageable pageable);
 // 해당 유저의 모든 reservation 로그 찾기
     Optional<List<Reservation>> findAllByUserUserId(Long userId);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.createAt BETWEEN :todayStart AND :todayEnd")
+    long countRangeReservations(@Param("todayStart") Instant todayStart, @Param("todayEnd") Instant todayEnd);
+
 }
