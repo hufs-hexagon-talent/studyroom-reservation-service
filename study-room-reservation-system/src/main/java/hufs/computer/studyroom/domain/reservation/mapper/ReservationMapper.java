@@ -69,6 +69,17 @@ public interface ReservationMapper {
     @Mapping(source = "policy.eachMaxMinute", target = "eachMaxMinute")
     PartitionReservationStatus toPartitionReservationStatus(RoomPartition partition, RoomOperationPolicy policy, List<ReservationTimeRange> reservationTimeRanges);
 
+
+    @Mapping(target = "totalReservations", source = "totalReservations")
+    @Mapping(target = "todayReservations", source = "todayReservations")
+    @Mapping(target = "weeklyReservations", source = "weeklyReservations")
+    @Mapping(target = "monthlyReservations", source = "monthlyReservations")
+    ReservationStaticResponse toReservationStatic(Long totalReservations,
+                                                  Long todayReservations,
+                                                  Long weeklyReservations,
+                                                  Long monthlyReservations);
+
+
     // List<PartitionReservationStatus> -> AllPartitionsReservationStatusResponse 변환
     default AllPartitionsReservationStatusResponse toAllPartitionsReservationStatusResponse(List<PartitionReservationStatus> partitionReservationStatuses) {
         return AllPartitionsReservationStatusResponse.builder()

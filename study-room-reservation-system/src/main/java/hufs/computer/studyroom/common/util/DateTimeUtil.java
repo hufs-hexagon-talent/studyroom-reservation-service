@@ -55,6 +55,15 @@ public class DateTimeUtil {
         return updatedDateTime.toInstant(ZoneOffset.UTC);
     }
 
+    public static Instant getInstantDayBefore(Instant instant, Long days) {
+        // Instant를 LocalDateTime으로 변환 (UTC 기준)
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        // 주어진 개월 수를 뺌
+        LocalDateTime updatedDateTime = localDateTime.minusDays(days);
+        // 다시 LocalDateTime을 Instant로 변환 (UTC 기준)
+        return updatedDateTime.toInstant(ZoneOffset.UTC);
+    }
+
     public static Instant getInstantMonthAfter(Instant instant, Long months) {
         // Instant를 LocalDateTime으로 변환 (UTC 기준)
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);

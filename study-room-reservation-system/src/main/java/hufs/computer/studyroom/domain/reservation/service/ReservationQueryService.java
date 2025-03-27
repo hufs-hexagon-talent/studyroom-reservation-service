@@ -250,6 +250,20 @@ public class ReservationQueryService {
     }
 
 
+    public ReservationStaticResponse getReservationStatics(){
+        Instant todayStart = getInstantStartOfToday();
+        Instant todayEnd = getInstantEndOfToday();
+        Instant beforeWeekStart = getInstantDayBefore(todayEnd,7L);
+        Instant beforeMonthStart = getInstantMonthBefore(todayEnd,1L);
+
+        long totalReservations = reservationRepository.count();
+        long todayReservations = reservationRepository.countRangeReservations(todayStart, todayEnd);
+        long weeklyReservations = reservationRepository.countRangeReservations(beforeWeekStart, todayEnd);
+        long monthlyReservations = reservationRepository.countRangeReservations(beforeMonthStart, todayEnd);
+
+        return reservationMapper.toReservationStatic(totalReservations, todayReservations, weeklyReservations, monthlyReservations);
+    }
+
     public Reservation getReservationById(Long id) {
         return reservationRepository.findById(id).orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }

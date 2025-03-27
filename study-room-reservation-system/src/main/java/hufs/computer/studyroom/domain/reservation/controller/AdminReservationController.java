@@ -8,6 +8,7 @@ import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationS
 import hufs.computer.studyroom.domain.reservation.dto.response.BlockedUserNoShowResponses;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponse;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
+import hufs.computer.studyroom.domain.reservation.dto.response.ReservationStaticResponse;
 import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
@@ -93,5 +94,17 @@ public class AdminReservationController {
 
         return ResponseFactory.success(result);
     }
+
+    @Operation(summary = "✅[관리자] 금일 예약들 통계 조회",
+            description = "관리용 예약 수치 조회",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/admin/statics")
+    public ResponseEntity<SuccessResponse<ReservationStaticResponse>> getReservationStatics() {
+
+        var result = reservationQueryService.getReservationStatics();
+
+        return ResponseFactory.success(result);
+    }
+
 
 }
