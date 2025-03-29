@@ -250,13 +250,14 @@ public class ReservationQueryService {
     }
 
 
-    public ReservationStaticResponse getReservationStatics(){
-        Instant todayStart = getInstantStartOfToday();
-        Instant todayEnd = getInstantEndOfToday();
-        Instant beforeWeekStart = getInstantDayBefore(todayEnd,7L);
-        Instant beforeMonthStart = getInstantMonthBefore(todayEnd,1L);
+    public ReservationStaticResponse getReservationStatics(LocalDate date){
+        Instant todayStart = getInstantStartOfToday(date);
+        Instant todayEnd = getInstantEndOfToday(date);
+        Instant beforeWeekStart = getInstantDayBefore(todayStart,7L);
+        Instant beforeMonthStart = getInstantMonthBefore(todayStart,1L);
 
-        long totalReservations = reservationRepository.count();
+
+        long totalReservations = reservationRepository.countRangeReservations(todayEnd);
         long todayReservations = reservationRepository.countRangeReservations(todayStart, todayEnd);
         long weeklyReservations = reservationRepository.countRangeReservations(beforeWeekStart, todayEnd);
         long monthlyReservations = reservationRepository.countRangeReservations(beforeMonthStart, todayEnd);
