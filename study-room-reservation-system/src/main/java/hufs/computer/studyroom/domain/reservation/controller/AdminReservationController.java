@@ -102,7 +102,7 @@ public class AdminReservationController {
     public ResponseEntity<SuccessResponse<ReservationStaticResponse>> getReservationStatics(
             @RequestParam("date") LocalDate date) {
 
-        var result = reservationQueryService.getReservationStatics(date);
+        var result = reservationQueryService.getReservationStaticsByDate(date);
 
         return ResponseFactory.success(result);
     }
