@@ -11,6 +11,7 @@ import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import hufs.computer.studyroom.domain.reservation.mapper.ReservationMapper;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
+import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.room.repository.RoomRepository;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -55,8 +55,7 @@ public class ReservationQueryService {
     public ReservationInfoResponses findAllReservationByUser(Long userId) {
 //        Long userId = currentUser.getUser().getUserId();
 
-        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId)
-                .orElse(Collections.emptyList());
+        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId);
 //              .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
 
         return reservationMapper.toInfoResponses(reservations);
@@ -225,8 +224,7 @@ public class ReservationQueryService {
     * */
     public List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute) {
         String notVisitedState = ReservationState.NOT_VISITED.toString();
-        return reservationRepository.findValidReservations(userId, roomPartitionIds, nowTime, allowedStartMinute,notVisitedState)
-                .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+        return reservationRepository.findValidReservations(userId, roomPartitionIds, nowTime, allowedStartMinute,notVisitedState);
     }
 
     /**
@@ -250,21 +248,45 @@ public class ReservationQueryService {
     }
 
 
-    public ReservationStaticResponse getReservationStatics(LocalDate date){
+    public ReservationStaticResponse getReservationStaticsByDate(LocalDate date){
+//      모든 방에 대해서
         Instant todayStart = getInstantStartOfToday(date);
         Instant todayEnd = getInstantEndOfToday(date);
         Instant beforeWeekStart = getInstantDayBefore(todayStart,7L);
         Instant beforeMonthStart = getInstantMonthBefore(todayStart,1L);
 
+        long totalReservations = reservationRepository.countReservationsBefore(todayEnd);
 
-        long totalReservations = reservationRepository.countRangeReservations(todayEnd);
-        long todayReservations = reservationRepository.countRangeReservations(todayStart, todayEnd);
-        long weeklyReservations = reservationRepository.countRangeReservations(beforeWeekStart, todayEnd);
-        long monthlyReservations = reservationRepository.countRangeReservations(beforeMonthStart, todayEnd);
+        // day
+        long dayReservations = reservationRepository.countReservationsWithinRange(todayStart, todayEnd);
+        List<PartitionUsageStats> dayStats = reservationRepository.findPartitionUsageStats(todayStart, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsToday =
+                reservationMapper.toPartitionUsageStatsResponses(dayStats);
 
-        return reservationMapper.toReservationStatic(totalReservations, todayReservations, weeklyReservations, monthlyReservations);
+        // week
+        long weeklyReservations = reservationRepository.countReservationsWithinRange(beforeWeekStart, todayEnd);
+        List<PartitionUsageStats> weekStats = reservationRepository.findPartitionUsageStats(beforeWeekStart, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsWeekly =
+                reservationMapper.toPartitionUsageStatsResponses(weekStats);
+
+        // month
+        long monthlyReservations = reservationRepository.countReservationsWithinRange(beforeMonthStart, todayEnd);
+        List<PartitionUsageStats> monthStats = reservationRepository.findPartitionUsageStats(beforeMonthStart, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsMonthly =
+                reservationMapper.toPartitionUsageStatsResponses(monthStats);
+
+        return reservationMapper.toReservationStatic(
+                totalReservations,
+                dayReservations,
+                weeklyReservations,
+                monthlyReservations,
+                partitionStatsToday,
+                partitionStatsWeekly,
+                partitionStatsMonthly
+        );
     }
 
+    // -- 헬퍼 --
     public Reservation getReservationById(Long id) {
         return reservationRepository.findById(id).orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }

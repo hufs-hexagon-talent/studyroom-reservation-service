@@ -8,6 +8,7 @@ import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationS
 import hufs.computer.studyroom.domain.reservation.dto.response.*;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
+import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -77,8 +78,19 @@ public interface ReservationMapper {
     ReservationStaticResponse toReservationStatic(Long totalReservations,
                                                   Long todayReservations,
                                                   Long weeklyReservations,
-                                                  Long monthlyReservations);
+                                                  Long monthlyReservations,
+                                                  List<PartitionUsageStatsResponse> partitionStatsToday,
+                                                  List<PartitionUsageStatsResponse> partitionStatsWeekly,
+                                                  List<PartitionUsageStatsResponse> partitionStatsMonthly);
 
+    // PartitionUsageStats Projection → PartitionUsageStatsResponse DTO 변환
+    @Mapping(target = "partitionId", source = "partitionId")
+    @Mapping(target = "reservationCount", source = "reservationCount")
+    @Mapping(target = "totalReservationMinutes", source = "totalReservationMinutes")
+    PartitionUsageStatsResponse toPartitionUsageStatsResponse(PartitionUsageStats usageStats);
+
+    // List 변환 (MapStruct가 @IterableMapping 없이도 알아서 매핑 가능)
+    List<PartitionUsageStatsResponse> toPartitionUsageStatsResponses(List<PartitionUsageStats> usageStatsList);
 
     // List<PartitionReservationStatus> -> AllPartitionsReservationStatusResponse 변환
     default AllPartitionsReservationStatusResponse toAllPartitionsReservationStatusResponse(List<PartitionReservationStatus> partitionReservationStatuses) {
