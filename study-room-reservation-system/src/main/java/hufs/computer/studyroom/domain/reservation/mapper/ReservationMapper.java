@@ -71,14 +71,8 @@ public interface ReservationMapper {
     PartitionReservationStatus toPartitionReservationStatus(RoomPartition partition, RoomOperationPolicy policy, List<ReservationTimeRange> reservationTimeRanges);
 
 
-    @Mapping(target = "totalReservations", source = "totalReservations")
-    @Mapping(target = "todayReservations", source = "todayReservations")
-    @Mapping(target = "weeklyReservations", source = "weeklyReservations")
-    @Mapping(target = "monthlyReservations", source = "monthlyReservations")
-    ReservationStaticResponse toReservationStatic(Long totalReservations,
-                                                  Long todayReservations,
-                                                  Long weeklyReservations,
-                                                  Long monthlyReservations,
+
+    ReservationStaticResponse toReservationStatic(List<PartitionUsageStatsResponse> partitionStatsTotal,
                                                   List<PartitionUsageStatsResponse> partitionStatsToday,
                                                   List<PartitionUsageStatsResponse> partitionStatsWeekly,
                                                   List<PartitionUsageStatsResponse> partitionStatsMonthly);
