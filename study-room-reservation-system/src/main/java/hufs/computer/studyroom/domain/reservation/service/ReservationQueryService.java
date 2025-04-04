@@ -247,7 +247,9 @@ public class ReservationQueryService {
         return isExpired;
     }
 
-
+    /**
+     * 기간별 통계를 조회
+     */
     public ReservationStaticResponse getReservationStaticsByDate(LocalDate date){
 //      모든 방에 대해서
         Instant todayStart = getInstantStartOfToday(date);
@@ -255,34 +257,31 @@ public class ReservationQueryService {
         Instant beforeWeekStart = getInstantDayBefore(todayStart,7L);
         Instant beforeMonthStart = getInstantMonthBefore(todayStart,1L);
 
-        long totalReservations = reservationRepository.countReservationsBefore(todayEnd);
+        // total
+        List<PartitionUsageStats> totalStats = reservationRepository.findPartitionUsageStats(Instant.EPOCH, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsTotal =
+                reservationMapper.toPartitionUsageStatsResponses(totalStats);
 
         // day
-        long dayReservations = reservationRepository.countReservationsWithinRange(todayStart, todayEnd);
         List<PartitionUsageStats> dayStats = reservationRepository.findPartitionUsageStats(todayStart, todayEnd);
         List<PartitionUsageStatsResponse> partitionStatsToday =
                 reservationMapper.toPartitionUsageStatsResponses(dayStats);
 
         // week
-        long weeklyReservations = reservationRepository.countReservationsWithinRange(beforeWeekStart, todayEnd);
         List<PartitionUsageStats> weekStats = reservationRepository.findPartitionUsageStats(beforeWeekStart, todayEnd);
         List<PartitionUsageStatsResponse> partitionStatsWeekly =
                 reservationMapper.toPartitionUsageStatsResponses(weekStats);
 
         // month
-        long monthlyReservations = reservationRepository.countReservationsWithinRange(beforeMonthStart, todayEnd);
         List<PartitionUsageStats> monthStats = reservationRepository.findPartitionUsageStats(beforeMonthStart, todayEnd);
         List<PartitionUsageStatsResponse> partitionStatsMonthly =
                 reservationMapper.toPartitionUsageStatsResponses(monthStats);
 
         return reservationMapper.toReservationStatic(
-                totalReservations,
-                dayReservations,
-                weeklyReservations,
-                monthlyReservations,
                 partitionStatsToday,
                 partitionStatsWeekly,
-                partitionStatsMonthly
+                partitionStatsMonthly,
+                partitionStatsTotal
         );
     }
 
