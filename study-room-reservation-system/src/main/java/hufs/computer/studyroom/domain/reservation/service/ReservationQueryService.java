@@ -257,11 +257,6 @@ public class ReservationQueryService {
         Instant beforeWeekStart = getInstantDayBefore(todayStart,7L);
         Instant beforeMonthStart = getInstantMonthBefore(todayStart,1L);
 
-        // total
-        List<PartitionUsageStats> totalStats = reservationRepository.findPartitionUsageStats(Instant.EPOCH, todayEnd);
-        List<PartitionUsageStatsResponse> partitionStatsTotal =
-                reservationMapper.toPartitionUsageStatsResponses(totalStats);
-
         // day
         List<PartitionUsageStats> dayStats = reservationRepository.findPartitionUsageStats(todayStart, todayEnd);
         List<PartitionUsageStatsResponse> partitionStatsToday =
@@ -276,6 +271,11 @@ public class ReservationQueryService {
         List<PartitionUsageStats> monthStats = reservationRepository.findPartitionUsageStats(beforeMonthStart, todayEnd);
         List<PartitionUsageStatsResponse> partitionStatsMonthly =
                 reservationMapper.toPartitionUsageStatsResponses(monthStats);
+
+        // total
+        List<PartitionUsageStats> totalStats = reservationRepository.findPartitionUsageStats(Instant.EPOCH, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsTotal =
+                reservationMapper.toPartitionUsageStatsResponses(totalStats);
 
         return reservationMapper.toReservationStatic(
                 partitionStatsToday,

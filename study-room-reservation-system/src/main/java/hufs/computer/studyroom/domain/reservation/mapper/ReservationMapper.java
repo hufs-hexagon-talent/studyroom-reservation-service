@@ -72,10 +72,10 @@ public interface ReservationMapper {
 
 
 
-    ReservationStaticResponse toReservationStatic(List<PartitionUsageStatsResponse> partitionStatsTotal,
-                                                  List<PartitionUsageStatsResponse> partitionStatsToday,
+    ReservationStaticResponse toReservationStatic(List<PartitionUsageStatsResponse> partitionStatsToday,
                                                   List<PartitionUsageStatsResponse> partitionStatsWeekly,
-                                                  List<PartitionUsageStatsResponse> partitionStatsMonthly);
+                                                  List<PartitionUsageStatsResponse> partitionStatsMonthly,
+                                                  List<PartitionUsageStatsResponse> partitionStatsTotal);
 
     // PartitionUsageStats Projection → PartitionUsageStatsResponse DTO 변환
     @Mapping(target = "partitionId", source = "partitionId")
