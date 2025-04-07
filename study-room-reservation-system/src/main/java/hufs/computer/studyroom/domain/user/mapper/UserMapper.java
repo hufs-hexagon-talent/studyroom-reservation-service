@@ -3,12 +3,10 @@ package hufs.computer.studyroom.domain.user.mapper;
 import hufs.computer.studyroom.domain.department.entity.Department;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpRequest;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.dto.response.*;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
+import hufs.computer.studyroom.domain.user.repository.projection.ServiceRoleStats;
 import org.mapstruct.*;
 
 import java.time.LocalDate;
@@ -41,6 +39,13 @@ public interface UserMapper {
     UserBlockedInfoResponse toBlockedInfoResponse(User user, LocalDate startBlockedDate, LocalDate endBlockedDate);
 
 
+    @Mapping(source = "totalCount",      target = "totalUserCount")
+    @Mapping(source = "userCount",       target = "activeUserCount")
+    @Mapping(source = "blockedCount",    target = "bannedUserCount")
+    @Mapping(source = "expiredCount",    target = "expiredUserCount")
+    @Mapping(source = "adminCount",      target = "adminUserCount")
+    @Mapping(source = "residentCount",   target = "systemUserCount")
+    UserStaticResponse toUserStaticResponse(ServiceRoleStats stats);
 
     // 여러 User -> 여러 UserInfoResponse DTO 변환
     List<UserInfoResponse> toInfoResponseList(List<User> users);

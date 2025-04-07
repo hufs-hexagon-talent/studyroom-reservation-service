@@ -5,14 +5,12 @@ import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.dto.response.*;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
+import hufs.computer.studyroom.domain.user.repository.projection.ServiceRoleStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,6 +78,12 @@ public class UserQueryService {
         User user = currentUser.getUser();
         validateUserIsBlocked(user);
         return createUserBlockedInfoResponse(user);
+    }
+
+    public UserStaticResponse getUserStatics(){
+        ServiceRoleStats countUserByServiceRole = userRepository.getCountUserByServiceRole();
+
+        return userMapper.toUserStaticResponse(countUserByServiceRole);
     }
 
     /*

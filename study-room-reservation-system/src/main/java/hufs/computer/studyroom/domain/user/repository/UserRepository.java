@@ -2,6 +2,7 @@ package hufs.computer.studyroom.domain.user.repository;
 
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
+import hufs.computer.studyroom.domain.user.repository.projection.ServiceRoleStats;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +17,17 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findBySerial(String serial);
     List<User> findByName(String name);
 
+    @Query(value = """
+      SELECT
+         COUNT(*)                                                      AS totalCount,
+         SUM(CASE WHEN u.serviceRole = 'USER' THEN 1 ELSE 0 END)       AS userCount,
+         SUM(CASE WHEN u.serviceRole = 'EXPIRED' THEN 1 ELSE 0 END)    AS expiredCount,
+         SUM(CASE WHEN u.serviceRole = 'ADMIN' THEN 1 ELSE 0 END)      AS adminCount,
+         SUM(CASE WHEN u.serviceRole = 'BLOCKED' THEN 1 ELSE 0 END)    AS blockedCount,
+         SUM(CASE WHEN u.serviceRole = 'RESIDENT' THEN 1 ELSE 0 END)   AS residentCount
+       FROM User u
+    """)
+    ServiceRoleStats getCountUserByServiceRole();
 
     Boolean existsByUsername(String username);
     Boolean existsBySerial(String serial);
@@ -23,6 +35,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT u.serviceRole FROM User u WHERE u.userId = :userId")
     ServiceRole findUserServiceRoleByUserId(@Param("userId") Long userId);
+
+
     @Query("SELECT u " +
             "FROM User u " +
             "WHERE u.serviceRole = 'BLOCKED'")
