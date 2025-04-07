@@ -7,10 +7,7 @@ import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoRe
 import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpBulkRequest;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.dto.response.*;
 import hufs.computer.studyroom.domain.user.service.UserCommandService;
 import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -92,7 +89,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "✅[관리자] 블락 당한 사용자들 조회",
-            description = "관리용 예약 조회",
+            description = "관리용 유저 정보 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/blocked")
     public ResponseEntity<SuccessResponse<UserBlockedInfoResponses>> getBlockedUserReservationInfo() {
@@ -102,7 +99,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "✅[관리자] 블락 당한 사용자 블락 해제",
-            description = "관리용 예약 조회",
+            description = "관리용 유저 정보 수정",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/unblocked/{userId}")
     public ResponseEntity<SuccessResponse<ReservationInfoResponses>> unBlockUserById(
@@ -121,5 +118,15 @@ public class AdminUserController {
             @Valid @RequestBody ModifyUserInfoRequest request) {
         var result = userCommandService.updateUserInfo(userId,request);
         return ResponseFactory.modified(result);
+    }
+
+    @Operation(summary = "✅[관리자] 사용자 통계 조회",
+            description = "사용자 통계 조회",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/statics")
+    public ResponseEntity<SuccessResponse<UserStaticResponse>> getUserStatic() {
+        var result = userQueryService.getUserStatics();
+
+        return ResponseFactory.success(result);
     }
 }
