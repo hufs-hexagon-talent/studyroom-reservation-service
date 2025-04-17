@@ -285,6 +285,11 @@ public class ReservationQueryService {
         );
     }
 
+    public ReservationInfoResponses getAllReservations(){
+        List<Reservation> reservations = reservationRepository.findAll();
+        return reservationMapper.toInfoResponses(reservations);
+    }
+
     // -- 헬퍼 --
     public Reservation getReservationById(Long id) {
         return reservationRepository.findById(id).orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
