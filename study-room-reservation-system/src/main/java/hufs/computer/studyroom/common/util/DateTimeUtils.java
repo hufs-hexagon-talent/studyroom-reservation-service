@@ -3,7 +3,7 @@ package hufs.computer.studyroom.common.util;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-public class DateTimeUtil {
+public class DateTimeUtils {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss");
     private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
