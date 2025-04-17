@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common.util;
+package hufs.computer.studyroom.common.util.excel.controller;
 
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
@@ -84,6 +84,7 @@ public class ExcelExportController {
         UserInfoResponses allUsers = userQueryService.findAllUsers();
 
         // header set
+        // 헤더 설정
         int rowIndex = 0;
         Row headerRow = sheet.createRow(rowIndex++);
 
@@ -107,6 +108,7 @@ public class ExcelExportController {
         headerRowCell4.setCellValue("학과");
         headerRowCell4.setCellStyle(greyCellStyle);
 
+        // 바디 설정
         for (UserInfoResponse user : allUsers.users()){
             Row bodyRow = sheet.createRow(rowIndex++);
 
