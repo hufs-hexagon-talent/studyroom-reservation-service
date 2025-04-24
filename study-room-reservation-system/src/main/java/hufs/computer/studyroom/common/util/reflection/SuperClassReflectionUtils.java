@@ -1,4 +1,4 @@
-package hufs.computer.studyroom.common.util;
+package hufs.computer.studyroom.common.util.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -37,7 +37,9 @@ public final class SuperClassReflectionUtils {
         }
         throw new NoSuchFieldException();
     }
-
+    /*
+     * 클래스 계층 전체 조회
+     */
     private static List<Class<?>> getAllClassesIncludingSuperClasses(Class<?> clazz, boolean isFromSuper){
         List<Class<?>> classes = new ArrayList<>();
         while (clazz != null) {
