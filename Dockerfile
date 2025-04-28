@@ -5,7 +5,7 @@ FROM bellsoft/liberica-openjdk-alpine:17 as build
 
 # 작업 디렉터리 설정
 WORKDIR /home/app
-ENV TZ=Asia/Seoul
+#ENV TZ=Asia/Seoul
 # 소스 코드와 빌드 파일 복사
 COPY ./study-room-reservation-system .
 
@@ -21,8 +21,12 @@ WORKDIR /app
 RUN apk update && \
     apk add --no-cache \
       fontconfig \
-      ttf-dejavu && \
-    rm -rf /var/cache/apk/*
+      fontconfig-dev \
+      freetype \
+      expat \
+      ttf-dejavu \
+      ttf-freefont && \
+    fc-cache -fv
 
 # 2) JVM 헤드리스 모드 설정 (AWT 에서 그래픽 환경 없이 동작하도록)
 ENV JAVA_TOOL_OPTIONS="-Djava.awt.headless=true"
