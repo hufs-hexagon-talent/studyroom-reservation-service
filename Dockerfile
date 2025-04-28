@@ -1,11 +1,15 @@
 #   첫 번째 스테이지: 빌드 환경 구성
 
 #   베이스 이미지로 Java 17버전이 포함된 Docker 이미지를 사용
-FROM bellsoft/liberica-openjdk-alpine:17 as build
+#FROM bellsoft/liberica-openjdk-alpine:17 as build
+FROM eclipse-temurin:17-jdk-jammy AS build
+
+# Gradle 캐시 최적화(선택)
+ARG GRADLE_USER_HOME=/gradle-cache
+ENV GRADLE_USER_HOME=${GRADLE_USER_HOME}
 
 # 작업 디렉터리 설정
 WORKDIR /home/app
-
 # 소스 코드와 빌드 파일 복사
 COPY ./study-room-reservation-system .
 
@@ -13,7 +17,11 @@ COPY ./study-room-reservation-system .
 RUN ./gradlew clean build -x test
 # --------------------------------------------
 # 두 번째 스테이지: 실행 환경 구성
-FROM bellsoft/liberica-openjdk-alpine:17
+#FROM bellsoft/liberica-openjdk-alpine:17
+FROM eclipse-temurin:17-jdk-jammy
+
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # 작업 디렉터리 설정
 WORKDIR /app
