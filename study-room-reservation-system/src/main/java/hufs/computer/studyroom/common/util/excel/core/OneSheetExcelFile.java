@@ -15,13 +15,19 @@ public final class OneSheetExcelFile<T> extends SXSSFExcelFile<T> {
     @Override
     public void renderExcel(List<T> data) {
         sheet = workbook.createSheet();
+
+        trackAllColumns(resource.getDataFieldNames().size());
+
         renderHeaders(sheet, ROW_START_INDEX, COLUMN_START_INDEX);
-        if (data.isEmpty()) {
-            return;
-        }
+
+        if (data.isEmpty()) return;
+
+
         int rowIndex = ROW_START_INDEX + 1;
         for (Object renderedData : data) {
             renderBody(renderedData, rowIndex++, COLUMN_START_INDEX);
         }
+
+        setAutoSizeAllColumns(CELL_PADDING_SIZE);
     }
 }
