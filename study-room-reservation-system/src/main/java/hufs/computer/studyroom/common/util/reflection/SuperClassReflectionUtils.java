@@ -1,5 +1,8 @@
 package hufs.computer.studyroom.common.util.reflection;
 
+import hufs.computer.studyroom.common.error.code.CommonErrorCode;
+import hufs.computer.studyroom.common.error.exception.CustomException;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -35,7 +38,7 @@ public final class SuperClassReflectionUtils {
 
             }
         }
-        throw new NoSuchFieldException();
+        throw new CustomException(CommonErrorCode.NO_SUCH_FIELD);
     }
     /*
      * 클래스 계층 전체 조회

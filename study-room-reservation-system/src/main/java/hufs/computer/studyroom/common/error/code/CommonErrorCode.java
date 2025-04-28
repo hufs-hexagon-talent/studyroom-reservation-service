@@ -22,7 +22,8 @@ public enum CommonErrorCode implements ErrorCode {
     UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "CLIENT-007", "지원되지 않는 미디어 형식입니다."),
     TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "CLIENT-008", "요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
     SERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-016", "정보 직렬화에 실패했습니다."),
-    DESERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-017", "정보 역직렬화에 실패했습니다.");
+    DESERIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH-017", "정보 역직렬화에 실패했습니다."),
+    NO_SUCH_FIELD(HttpStatus.INTERNAL_SERVER_ERROR,"SYS-018","지정한 이름의 필드를 클래스에서 찾을 수 없습니다." );
 
     private final HttpStatus httpStatus;
     private final String code;
