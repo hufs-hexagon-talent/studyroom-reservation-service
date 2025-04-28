@@ -3,9 +3,11 @@ package hufs.computer.studyroom.common.util.excel.core;
 import hufs.computer.studyroom.common.error.code.ExcelErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.common.util.excel.meta.ExcelMetaDataFactory;
+import hufs.computer.studyroom.common.util.excel.meta.ExcelRenderLocation;
 import hufs.computer.studyroom.common.util.excel.meta.ExcelRenderResource;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -19,6 +21,11 @@ import static hufs.computer.studyroom.common.util.reflection.SuperClassReflectio
 
 
 /*
+ * 대용량 엑셀 처리용 추상 클래스(SXSSF 기반)
+ * - Workbook 초기화 및 @ExcelColumn 메타 데이터 스캔
+ * - 공통 렌더링 메서드 제공(renderHeaders, renderBody)
+ * - write() 호출 시 리소스(임시 파일) 정리 포함
+ *
                      ExcelFile - 인터페이스
                                ↑
                  SXSSFExcelFile - 추상 클래스
@@ -26,11 +33,6 @@ import static hufs.computer.studyroom.common.util.reflection.SuperClassReflectio
             OneSheetExcelFile, MultiSheetExcelFile  - 구현 클래스
 
             메타 데이터 → 렌더링 전용 객체
-
-            ExcelMetaData :
-             - @ExcelColumn 스캔 → 필드명·헤더명 매핑
-             - 필드/헤더별 CellStyle(옵션) 프리-캐시
-
 */
 // ExcelFile 의 구현체 이자 추상 클래스 <- 단일 시트와 멀티 시트의 추상 클래스
 public abstract class SXSSFExcelFile<T> implements ExcelFile {
@@ -44,19 +46,17 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile {
     protected Sheet sheet;                        // 현재 작업 중인 Sheet
 
     /* ====== 생성 ====== */
-    public SXSSFExcelFile(List<T> data,
-                          Class<T> dtoType) {
-//                          DataFormatDecider formatDecider) {
+    public SXSSFExcelFile(List<T> data, Class<T> dtoType) {
 
         validateMaxRow(data);
 
         this.workbook = new SXSSFWorkbook();
-        this.resource = ExcelMetaDataFactory.create(dtoType);
+        this.resource = ExcelMetaDataFactory.create(dtoType, workbook);
 
         renderExcel(data);  // 템플릿 메서드 → 구현체가 시트 분할 전략 결정
     }
 
-    /* ====== 행 수 검증 ====== */
+    // 행 수 검증
     protected void validateMaxRow(List<T> data) {
         int maxRows = SUPPLY_EXCEL_VERSION.getMaxRows();
         if (data.size() > maxRows) {
@@ -75,7 +75,7 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile {
         for (String fieldName : resource.getDataFieldNames()) {
             Cell cell = row.createCell(colIdx++);
             cell.setCellValue(resource.getExcelHeaderName(fieldName));
-//            cell.setCellStyle(resource.getCellStyle(fieldName, ExcelRenderLocation.HEADER));
+            cell.setCellStyle(resource.getCellStyle(fieldName, ExcelRenderLocation.HEADER));
         }
     }
 
@@ -87,12 +87,10 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile {
         for (String fieldName : resource.getDataFieldNames()) {
             Cell cell = row.createCell(colIdx++);
             try {
-                Field field = getField(dto.getClass(), fieldName);
-                field.setAccessible(true);
-                Object val = field.get(dto);
+                Field field = getField(dto.getClass(), fieldName); field.setAccessible(true);
+                renderCellValue(cell, field.get(dto));
 
-//                cell.setCellStyle(resource.getCellStyle(fieldName, ExcelRenderLocation.BODY));
-                renderCellValue(cell, val);
+                cell.setCellStyle(resource.getCellStyle(fieldName, ExcelRenderLocation.BODY));
 
             } catch (Exception e) {
                 throw new CustomException(ExcelErrorCode.RENDER_ERROR);
@@ -116,6 +114,14 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile {
         } finally {
             workbook.dispose();          // temp 파일 정리
         }
+    }
+
+    /**
+     * 워크북으로부터 CellStyle을 생성할 수 있도록 노출하는 메서드
+     * @return 새 CellStyle 인스턴스
+     */
+    public CellStyle createCellStyle() {
+        return this.workbook.createCellStyle();
     }
 
 }
