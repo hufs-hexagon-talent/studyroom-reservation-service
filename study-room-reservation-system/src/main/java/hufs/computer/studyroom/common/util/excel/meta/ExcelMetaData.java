@@ -12,6 +12,11 @@ import java.util.Map;
 
 import static hufs.computer.studyroom.common.util.reflection.SuperClassReflectionUtils.getAllFields;
 
+/**
+ * @ExcelColumn 어노테이션을 스캔하여
+ * 필드명 ↔ 엑셀 헤더명 매핑 정보를 보유
+ */
+
 @Getter
 public class ExcelMetaData {
     // 헤더 순서 보존용 LinkedHashMap<필드명, 헤더 텍스트>
