@@ -22,10 +22,6 @@ public class ExcelCellStyleConfigurer {
     private ExcelAlign horizontalAlign = ExcelAlign.LEFT;
     private ExcelAlign verticalAlign   = ExcelAlign.TOP;
 
-    // 셀크기
-    private int cellWidth;
-    private int cellHeight;
-
 
     public ExcelCellStyleConfigurer backgroundColor(int red, int green, int blue) {
          this.backgroundColor = new RgbExcelColor(red, green, blue);

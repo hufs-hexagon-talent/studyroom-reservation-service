@@ -7,9 +7,9 @@ import hufs.computer.studyroom.common.util.excel.meta.ExcelRenderLocation;
 import hufs.computer.studyroom.common.util.excel.meta.ExcelRenderResource;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.IOException;
@@ -40,6 +40,8 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile {
     protected static final SpreadsheetVersion SUPPLY_EXCEL_VERSION = SpreadsheetVersion.EXCEL2007; // 1,048,576 rows
     protected static final int ROW_START_INDEX = 0;
     protected static final int COLUMN_START_INDEX = 0;
+    protected static final int CELL_PADDING_SIZE = 8;
+    protected static final int EXCEL_COLUMN_UNIT = 256; // POI에서 컬럼 단위(1글자 = 256)
 
     protected final SXSSFWorkbook workbook;
     protected final ExcelRenderResource resource; // 헤더명·필드목록·셀스타일 보유
@@ -117,11 +119,40 @@ public abstract class SXSSFExcelFile<T> implements ExcelFile {
     }
 
     /**
-     * 워크북으로부터 CellStyle을 생성할 수 있도록 노출하는 메서드
-     * @return 새 CellStyle 인스턴스
+     * 모든 열(0 ~ columnCount-1)을 자동폭 계산에 추적
+     *
+     * @param columnCount 추적할 열 개수
      */
-    public CellStyle createCellStyle() {
-        return this.workbook.createCellStyle();
+    protected void trackAllColumns(int columnCount) {
+        if (!(sheet instanceof SXSSFSheet sxssfSheet)) {
+            return;                 // XSSF/HSSF → 추적 불필요
+        }
+
+        for (int colIdx = 0; colIdx < columnCount; colIdx++) {
+            sxssfSheet.trackColumnForAutoSizing(colIdx);
+        }
     }
 
+    /**
+     * 자동폭(autoSizeColumn) 계산 후,
+     * paddingChars 글자 폭만큼 추가 여유 (글자 1칸 = 256 단위)
+     *
+     * @param paddingChars 추가할 글자 폭(예: 2 → 2*256)
+     */
+    protected void setAutoSizeAllColumns(int paddingChars) {
+
+        // XSSF/HSSF → 자동폭 미지원
+        if (!(sheet instanceof SXSSFSheet sxssfSheet)) return;
+
+        int columnCount = resource.getDataFieldNames().size();
+
+        for (int colIdx = 0; colIdx < columnCount; colIdx++) {
+
+            // 자동 폭 계산
+            sxssfSheet.autoSizeColumn(colIdx);
+            int autoWidth   = sxssfSheet.getColumnWidth(colIdx);
+            int paddedWidth = autoWidth + paddingChars * EXCEL_COLUMN_UNIT;
+            sxssfSheet.setColumnWidth(colIdx, paddedWidth);
+        }
+    }
 }
