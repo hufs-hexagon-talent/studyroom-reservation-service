@@ -64,7 +64,7 @@ spring:
         password: ${SPRING_DATASOURCE_PASSWORD}
 env:
     base-url: ${SPRING_BASE_URL}
-    api-version: 2.6.16
+    api-version: 2.7.16
 
 #logging:
 #    level:
