@@ -95,17 +95,15 @@ public interface ReservationMapper {
 
     // 개별 Reservation -> Excel DTO
     // Reservation -> ReservationExportExcelDto
-    @Mapping(target = "serial",               source = "user.serial")
-    @Mapping(target = "name",                 source = "user.name")
-    @Mapping(target = "place",
-            source = "roomPartition",
+    @Mapping(target = "serial",                 source = "user.serial")
+    @Mapping(target = "name",                   source = "user.name")
+    @Mapping(target = "place",                  source = "roomPartition",
             qualifiedByName = "toPlace")
 
-    @Mapping(target = "reservationStartTimeKst",
-            source = "reservationStartTime",
+    @Mapping(target = "reservationStartTimeKst", source = "reservationStartTime",
             qualifiedByName = "instantToKstString")
-    @Mapping(target = "reservationEndTimeKst",
-            source = "reservationEndTime",
+
+    @Mapping(target = "reservationEndTimeKst",   source = "reservationEndTime",
             qualifiedByName = "instantToKstString")
 
 
