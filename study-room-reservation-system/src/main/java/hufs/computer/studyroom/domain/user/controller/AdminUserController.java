@@ -146,7 +146,7 @@ public class AdminUserController {
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/export/excel")
     public ResponseEntity<SuccessResponse<Void>> exportExcel(
-            @Parameter(in = ParameterIn.QUERY,description = "필터링 할 ServiceRole 목록(없으면 전체)")
+            @Parameter(in = ParameterIn.QUERY, description = "필터링 할 ServiceRole 목록(없으면 전체)")
             @RequestParam(value = "roles", required = false) List<ServiceRole> roles,
 
             HttpServletResponse response) throws IOException {

@@ -3,7 +3,6 @@ package hufs.computer.studyroom.domain.user.service;
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
-import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
 import hufs.computer.studyroom.domain.user.dto.response.*;
@@ -14,10 +13,7 @@ import hufs.computer.studyroom.domain.user.repository.UserRepository;
 import hufs.computer.studyroom.domain.user.repository.projection.ServiceRoleStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collection;
