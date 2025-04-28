@@ -6,6 +6,7 @@ import hufs.computer.studyroom.common.util.DateTimeUtils;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.partition.repository.RoomPartitionRepository;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.reservation.dto.excel.ReservationExportExcelDto;
 import hufs.computer.studyroom.domain.reservation.dto.response.*;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,11 +55,7 @@ public class ReservationQueryService {
 //    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
 
     public ReservationInfoResponses findAllReservationByUser(Long userId) {
-//        Long userId = currentUser.getUser().getUserId();
-
         List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId);
-//              .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
-
         return reservationMapper.toInfoResponses(reservations);
     }
 
@@ -130,7 +128,6 @@ public class ReservationQueryService {
     }
 
     private PartitionReservationStatus getEachPartitionReservationState(RoomPartition partition , LocalDate dateKst) {
-//        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
         // 운영 정책 일정이 없는 경우 null 반환
         Optional<RoomOperationPolicySchedule> optionalSchedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), dateKst);
         if (optionalSchedule.isEmpty()) {
@@ -285,9 +282,15 @@ public class ReservationQueryService {
         );
     }
 
-    public ReservationInfoResponses getAllReservations(){
-        List<Reservation> reservations = reservationRepository.findAll();
-        return reservationMapper.toInfoResponses(reservations);
+    public List<ReservationExportExcelDto> getExcelDTOs(  Collection<ReservationState> states,
+                                                    Instant startDateTime,
+                                                    Instant endDateTime){
+        List<Reservation> reservations =
+                reservationRepository.findByFilter(states, startDateTime, endDateTime);
+
+        log.info("{}",states);
+        log.info("{}",reservations);
+        return reservationMapper.toExportExcelDTOs(reservations);
     }
 
     // -- 헬퍼 --

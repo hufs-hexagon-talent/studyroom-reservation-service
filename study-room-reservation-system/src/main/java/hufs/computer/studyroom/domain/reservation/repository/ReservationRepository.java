@@ -1,6 +1,7 @@
 package hufs.computer.studyroom.domain.reservation.repository;
 
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
+import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.user.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -158,4 +160,15 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             @Param("startTime") Instant startTime,
             @Param("endTime") Instant endTime
     );
+
+    @Query("""
+    SELECT r FROM Reservation r
+    WHERE (:states      IS NULL OR r.state IN :states)
+      AND (:startDate IS NULL OR r.reservationStartTime >= :startDate)
+      AND (:endDate   IS NULL OR r.reservationEndTime   <= :endDate)
+    """)
+    List<Reservation> findByFilter(
+            @Param("states")      Collection<ReservationState> states,
+            @Param("startDate")   Instant startDate,
+            @Param("endDate")     Instant endDate);
 }
