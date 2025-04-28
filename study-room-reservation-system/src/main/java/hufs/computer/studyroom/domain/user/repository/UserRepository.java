@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,5 +42,14 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "FROM User u " +
             "WHERE u.serviceRole = 'BLOCKED'")
     List<User> getBlockedUsers();
+
+
+    @Query("""
+        select u
+        from User u
+        where :roles is null
+           or u.serviceRole in :roles
+    """)
+    List<User> findUsersByServiceRole(@Param("roles") Collection<ServiceRole> roles);
 
 }

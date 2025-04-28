@@ -2,7 +2,7 @@ package hufs.computer.studyroom.domain.reservation.service;
 
 import hufs.computer.studyroom.common.error.code.*;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.util.DateTimeUtil;
+import hufs.computer.studyroom.common.util.DateTimeUtils;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.partition.repository.RoomPartitionRepository;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
+import static hufs.computer.studyroom.common.util.DateTimeUtils.*;
 
 @Service
 @Slf4j
@@ -168,8 +168,8 @@ public class ReservationQueryService {
      */
 
     public ReservationInfoResponses getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date) {
-        Instant startTime = DateTimeUtil.getInstantStartOfDate(date);
-        Instant endTime = DateTimeUtil.getInstantEndOfDate(date);
+        Instant startTime = DateTimeUtils.getInstantStartOfDate(date);
+        Instant endTime = DateTimeUtils.getInstantEndOfDate(date);
 
         List<Reservation> reservations
                 = reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(partitionIds, startTime, endTime);
@@ -210,7 +210,7 @@ public class ReservationQueryService {
      */
     private Instant calculateNoShowBlockEndTime(Long userId) {
         Instant latestNoShowTime = getLatestNoShowStartTime(userId);
-        return DateTimeUtil.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
+        return DateTimeUtils.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
     }
 
     /**
@@ -283,6 +283,11 @@ public class ReservationQueryService {
                 partitionStatsMonthly,
                 partitionStatsTotal
         );
+    }
+
+    public ReservationInfoResponses getAllReservations(){
+        List<Reservation> reservations = reservationRepository.findAll();
+        return reservationMapper.toInfoResponses(reservations);
     }
 
     // -- 헬퍼 --

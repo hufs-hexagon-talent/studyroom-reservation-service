@@ -49,6 +49,10 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core' //-> MySql 8.3 지원안함
 	implementation 'org.flywaydb:flyway-mysql'
 
+// excel
+	implementation 'org.apache.poi:poi:5.2.3'
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+
 
 // Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'

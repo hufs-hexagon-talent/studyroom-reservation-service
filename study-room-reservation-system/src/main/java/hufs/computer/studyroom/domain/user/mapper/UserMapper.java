@@ -1,6 +1,7 @@
 package hufs.computer.studyroom.domain.user.mapper;
 
 import hufs.computer.studyroom.domain.department.entity.Department;
+import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpRequest;
 import hufs.computer.studyroom.domain.user.dto.response.*;
@@ -47,6 +48,11 @@ public interface UserMapper {
     @Mapping(source = "residentCount",   target = "systemUserCount")
     UserStaticResponse toUserStaticResponse(ServiceRoleStats stats);
 
+
+    @Mapping(target = "departmentName", source = "department.departmentName")
+    @Mapping(target = "status",         source = "serviceRole")  // enum → toString()
+    UserExportExcelDto toExportExcelDTO(User user);
+
     // 여러 User -> 여러 UserInfoResponse DTO 변환
     List<UserInfoResponse> toInfoResponseList(List<User> users);
 
@@ -62,5 +68,11 @@ public interface UserMapper {
         return UserBlockedInfoResponses.builder()
                 .UserBlockedInfoResponses(userBlockedInfoResponses)
                 .build();
+    }
+
+    default List<UserExportExcelDto> toExportExcelDTOs(List<User> users) {
+        return users.stream()
+                .map(this::toExportExcelDTO)
+                .toList();
     }
 }

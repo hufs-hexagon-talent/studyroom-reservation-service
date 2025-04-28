@@ -2,7 +2,7 @@ package hufs.computer.studyroom.domain.reservation.service;
 
 import hufs.computer.studyroom.common.error.code.*;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.util.DateTimeUtil;
+import hufs.computer.studyroom.common.util.DateTimeUtils;
 import hufs.computer.studyroom.domain.partition.service.PartitionQueryService;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
 import hufs.computer.studyroom.domain.room.entity.Room;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 
-import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
+import static hufs.computer.studyroom.common.util.DateTimeUtils.*;
 
 @Slf4j
 @Service
@@ -57,7 +57,7 @@ public class ReservationValidationService {
 
         Room room = partitionQueryService.getPartitionById(roomPartitionId).getRoom();
 //       utc -> kst -> data
-        LocalDate kstDate = DateTimeUtil.convertUtcToKst(startDateTime).toLocalDate();
+        LocalDate kstDate = DateTimeUtils.convertUtcToKst(startDateTime).toLocalDate();
 
         RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(room, kstDate)
                 .orElseThrow(() -> new CustomException(PolicyErrorCode.POLICY_NOT_FOUND));
