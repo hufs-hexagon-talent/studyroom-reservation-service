@@ -27,7 +27,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
+import java.util.Arrays;
 import java.util.List;
 
 @Tag(name = "User", description = "사용자 관련 API")
@@ -141,7 +141,7 @@ public class AdminUserController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "🚧 [관리자] 사용자 정보 Excel 내보내기",
+    @Operation(summary = "✅[관리자] 사용자 정보 Excel 내보내기",
             description = "사용자 정보 Excel 추출",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/export/excel")
@@ -160,5 +160,16 @@ public class AdminUserController {
         excelFile.write(response.getOutputStream());
 
         return ResponseFactory.success(null);
+    }
+
+    @Operation(summary = "✅[관리자] 사용자 역할 리스트 조회",
+            description = "ServiceRole 전체 값을 반환",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/roles")
+    public ResponseEntity<SuccessResponse<List<String>>> getRoles() {
+        List<String> result = Arrays.stream(ServiceRole.values())
+                .map(Enum::name)
+                .toList();
+        return ResponseFactory.success(result);
     }
 }
