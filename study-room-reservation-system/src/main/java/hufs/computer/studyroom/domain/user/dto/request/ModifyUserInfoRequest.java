@@ -19,7 +19,7 @@ public record ModifyUserInfoRequest(
         @Schema(description = "학번", example = "202512345")
         String serial,
 
-        @Schema(description = "회원 역할", example = "USER")
+        @Schema(description = "회원 권한", example = "USER")
         ServiceRole serviceRole,
 
         @Schema(description = "회원 이름", example = "황병훈")

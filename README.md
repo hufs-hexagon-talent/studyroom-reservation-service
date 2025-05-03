@@ -64,10 +64,5 @@ src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-o
 ### CI/CD
 - **GitHub Actions**  
   
-
-## Architecture
-![세미나실 drawio](https://github.com/user-attachments/assets/b199cfad-2a2e-42fa-bec0-151d8c2ed8f1)
-
-
 ## Contributing
 개선 사항이 있으면 이슈를 열거나 풀 리퀘스트를 제출해 주세요.

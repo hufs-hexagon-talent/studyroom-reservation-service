@@ -1,5 +1,6 @@
 package hufs.computer.studyroom.domain.user.controller;
 
+import hufs.computer.studyroom.common.response.PageResponse;
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.common.util.excel.core.ExcelFile;
@@ -10,6 +11,7 @@ import hufs.computer.studyroom.domain.reservation.service.ReservationCommandServ
 import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpBulkRequest;
+import hufs.computer.studyroom.domain.user.dto.request.UserSearchCondition;
 import hufs.computer.studyroom.domain.user.dto.response.*;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.service.UserCommandService;
@@ -69,12 +71,13 @@ public class AdminUserController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅ [관리자] 모든 회원 정보 조회",
+    @Operation(summary = "🚧 [관리자] 회원 검색 조회 (고도화 예정)",
             description = "모든 user 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
-    @GetMapping("/search")
-    public ResponseEntity<SuccessResponse<UserInfoResponses>> getAllUsers() {
-        var result = userQueryService.findAllUsers();
+    @PostMapping("/search")
+    public ResponseEntity<SuccessResponse<PageResponse<UserInfoResponse>>> getAllUsers(
+            @Valid @RequestBody UserSearchCondition conditionRequest) {
+        var result = userQueryService.searchUsers(conditionRequest);
         return ResponseFactory.success(result);
     }
 
