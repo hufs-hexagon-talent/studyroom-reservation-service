@@ -1,20 +1,27 @@
 package hufs.computer.studyroom.domain.reservation.mapper;
 
+import hufs.computer.studyroom.common.util.DateTimeUtils;
 import hufs.computer.studyroom.domain.checkin.dto.response.CheckInResponse;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.reservation.dto.excel.ReservationExportExcelDto;
 import hufs.computer.studyroom.domain.reservation.dto.request.CreateReservationRequest;
 import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationStateRequest;
 import hufs.computer.studyroom.domain.reservation.dto.response.*;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
+import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 import java.time.Instant;
 import java.util.List;
+
+import static hufs.computer.studyroom.common.util.DateTimeUtils.FORMATTER;
+import static hufs.computer.studyroom.common.util.DateTimeUtils.convertUtcToKst;
 
 @Mapper(componentModel = "spring")
 public interface ReservationMapper {
@@ -68,6 +75,60 @@ public interface ReservationMapper {
     @Mapping(source = "policy.operationEndTime", target = "operationEndTime")
     @Mapping(source = "policy.eachMaxMinute", target = "eachMaxMinute")
     PartitionReservationStatus toPartitionReservationStatus(RoomPartition partition, RoomOperationPolicy policy, List<ReservationTimeRange> reservationTimeRanges);
+
+
+
+    ReservationStaticResponse toReservationStatic(List<PartitionUsageStatsResponse> partitionStatsToday,
+                                                  List<PartitionUsageStatsResponse> partitionStatsWeekly,
+                                                  List<PartitionUsageStatsResponse> partitionStatsMonthly,
+                                                  List<PartitionUsageStatsResponse> partitionStatsTotal);
+
+    // PartitionUsageStats Projection → PartitionUsageStatsResponse DTO 변환
+    @Mapping(target = "partitionId", source = "partitionId")
+    @Mapping(target = "reservationCount", source = "reservationCount")
+    @Mapping(target = "totalReservationMinutes", source = "totalReservationMinutes")
+    PartitionUsageStatsResponse toPartitionUsageStatsResponse(PartitionUsageStats usageStats);
+
+    // List 변환 (MapStruct가 @IterableMapping 없이도 알아서 매핑 가능)
+    List<PartitionUsageStatsResponse> toPartitionUsageStatsResponses(List<PartitionUsageStats> usageStatsList);
+
+
+    // 개별 Reservation -> Excel DTO
+    // Reservation -> ReservationExportExcelDto
+    @Mapping(target = "serial",                 source = "user.serial")
+    @Mapping(target = "name",                   source = "user.name")
+    @Mapping(target = "place",                  source = "roomPartition",
+            qualifiedByName = "toPlace")
+
+    @Mapping(target = "reservationStartTimeKst", source = "reservationStartTime",
+            qualifiedByName = "instantToKstString")
+
+    @Mapping(target = "reservationEndTimeKst",   source = "reservationEndTime",
+            qualifiedByName = "instantToKstString")
+
+
+    @Mapping(target = "state",               source = "state")
+    ReservationExportExcelDto toExportExcelDto(Reservation reservation);
+
+    @Named("toPlace")
+    default String toPlace(RoomPartition partition) {
+        String roomName = partition.getRoom().getRoomName();
+        String partitionNumber = partition.getPartitionNumber();
+        return roomName + "-" + partitionNumber;
+    }
+
+    @Named("instantToKstString")
+    default String instantToKstString(Instant instant) {
+        return convertUtcToKst(instant)
+                .format(FORMATTER);
+    }
+
+    // List<Reservation> -> List<ReservationExportExcelDto>
+    default List<ReservationExportExcelDto> toExportExcelDTOs(List<Reservation> reservations) {
+        return reservations.stream()
+                .map(this::toExportExcelDto)
+                .toList();
+    }
 
     // List<PartitionReservationStatus> -> AllPartitionsReservationStatusResponse 변환
     default AllPartitionsReservationStatusResponse toAllPartitionsReservationStatusResponse(List<PartitionReservationStatus> partitionReservationStatuses) {

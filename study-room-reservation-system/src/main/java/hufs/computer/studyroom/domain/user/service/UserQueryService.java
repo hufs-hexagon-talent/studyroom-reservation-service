@@ -3,24 +3,20 @@ package hufs.computer.studyroom.domain.user.service;
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
-import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponses;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
-import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponses;
+import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
+import hufs.computer.studyroom.domain.user.dto.response.*;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
+import hufs.computer.studyroom.domain.user.repository.projection.ServiceRoleStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,6 +78,12 @@ public class UserQueryService {
         return createUserBlockedInfoResponse(user);
     }
 
+    public UserStaticResponse getUserStatics(){
+        ServiceRoleStats countUserByServiceRole = userRepository.getCountUserByServiceRole();
+
+        return userMapper.toUserStaticResponse(countUserByServiceRole);
+    }
+
     /*
     * 검증 로직: 유저가 BLOCKED 상태인지 확인
     * */
@@ -107,6 +109,17 @@ public class UserQueryService {
     }
 
     public ServiceRole getServiceRoleById(Long id) {return userRepository.findUserServiceRoleByUserId(id);}
+
+    /*
+     * 엑셀 다운로드 용 DTO 리스트 반환
+     */
+    public List<UserExportExcelDto> getExcelDTOs(Collection<ServiceRole> filterByRoles){
+
+        // (필터 조건) USER 와 BLOCKED 만
+        List<User> users = userRepository.findUsersByServiceRole(filterByRoles); // user 와 blocked 만
+        return userMapper.toExportExcelDTOs(users);
+    }
+
     public boolean existByUserId(Long userId) {return userRepository.existsById(userId);}
     public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}

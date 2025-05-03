@@ -3,26 +3,32 @@ package hufs.computer.studyroom.common.util;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-public class DateTimeUtil {
+public class DateTimeUtils {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss");
     private static final ZoneId KST_ZONE_ID = ZoneId.of("Asia/Seoul");
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
-    public static ZonedDateTime getZonedStartOfToday() {
-        LocalDate localDate = LocalDate.now();
-        return localDate.atStartOfDay(KST_ZONE_ID);
-    }
-    public static Instant getInstantStartOfToday() {
-        return getZonedStartOfToday().toInstant();
+    public static ZonedDateTime getZonedStartOfToday(LocalDate date) {
+        return date.atStartOfDay(KST_ZONE_ID);
     }
 
-    public static ZonedDateTime getZonedEndOfToday() {
-        LocalDate localDate = LocalDate.now();
-        return localDate.plusDays(1).atStartOfDay(KST_ZONE_ID).minusNanos(1);
+    public static Instant getInstantStartOfToday() {
+        return getZonedStartOfToday(LocalDate.now()).toInstant();
+    }
+    public static Instant getInstantStartOfToday(LocalDate date) {
+        return getZonedStartOfToday(date).toInstant();
+    }
+
+    public static ZonedDateTime getZonedEndOfToday(LocalDate date) {
+        return date.plusDays(1).atStartOfDay(KST_ZONE_ID).minusNanos(1);
     }
     public static Instant getInstantEndOfToday() {
-        return getZonedEndOfToday().toInstant();
+        return getZonedEndOfToday(LocalDate.now()).toInstant();
     }
+    public static Instant getInstantEndOfToday(LocalDate date) {
+        return getZonedEndOfToday(date).toInstant();
+    }
+
     public static LocalDate getKstCurrentDate() {
         ZonedDateTime kstNow = ZonedDateTime.now(KST_ZONE_ID);
         // KST 기준의 현재 날짜 반환
@@ -51,6 +57,15 @@ public class DateTimeUtil {
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         // 주어진 개월 수를 뺌
         LocalDateTime updatedDateTime = localDateTime.minusMonths(months);
+        // 다시 LocalDateTime을 Instant로 변환 (UTC 기준)
+        return updatedDateTime.toInstant(ZoneOffset.UTC);
+    }
+
+    public static Instant getInstantDayBefore(Instant instant, Long days) {
+        // Instant를 LocalDateTime으로 변환 (UTC 기준)
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        // 주어진 개월 수를 뺌
+        LocalDateTime updatedDateTime = localDateTime.minusDays(days);
         // 다시 LocalDateTime을 Instant로 변환 (UTC 기준)
         return updatedDateTime.toInstant(ZoneOffset.UTC);
     }

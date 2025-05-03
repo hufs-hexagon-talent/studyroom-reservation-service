@@ -2,15 +2,17 @@ package hufs.computer.studyroom.domain.reservation.service;
 
 import hufs.computer.studyroom.common.error.code.*;
 import hufs.computer.studyroom.common.error.exception.CustomException;
-import hufs.computer.studyroom.common.util.DateTimeUtil;
+import hufs.computer.studyroom.common.util.DateTimeUtils;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.partition.repository.RoomPartitionRepository;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
+import hufs.computer.studyroom.domain.reservation.dto.excel.ReservationExportExcelDto;
 import hufs.computer.studyroom.domain.reservation.dto.response.*;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import hufs.computer.studyroom.domain.reservation.mapper.ReservationMapper;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
+import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.room.repository.RoomRepository;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
@@ -28,12 +30,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static hufs.computer.studyroom.common.util.DateTimeUtil.*;
+import static hufs.computer.studyroom.common.util.DateTimeUtils.*;
 
 @Service
 @Slf4j
@@ -53,12 +55,7 @@ public class ReservationQueryService {
 //    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
 
     public ReservationInfoResponses findAllReservationByUser(Long userId) {
-//        Long userId = currentUser.getUser().getUserId();
-
-        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId)
-                .orElse(Collections.emptyList());
-//              .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_HISTORY_NOT_FOUND));
-
+        List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId);
         return reservationMapper.toInfoResponses(reservations);
     }
 
@@ -131,7 +128,6 @@ public class ReservationQueryService {
     }
 
     private PartitionReservationStatus getEachPartitionReservationState(RoomPartition partition , LocalDate dateKst) {
-//        RoomOperationPolicySchedule schedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), date).orElseThrow(() -> new CustomException(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
         // 운영 정책 일정이 없는 경우 null 반환
         Optional<RoomOperationPolicySchedule> optionalSchedule = scheduleRepository.findByRoomAndPolicyApplicationDate(partition.getRoom(), dateKst);
         if (optionalSchedule.isEmpty()) {
@@ -169,8 +165,8 @@ public class ReservationQueryService {
      */
 
     public ReservationInfoResponses getReservationsByPartitionsAndDate(List<Long> partitionIds, LocalDate date) {
-        Instant startTime = DateTimeUtil.getInstantStartOfDate(date);
-        Instant endTime = DateTimeUtil.getInstantEndOfDate(date);
+        Instant startTime = DateTimeUtils.getInstantStartOfDate(date);
+        Instant endTime = DateTimeUtils.getInstantEndOfDate(date);
 
         List<Reservation> reservations
                 = reservationRepository.findByRoomPartitionRoomPartitionIdInAndReservationStartTimeBetween(partitionIds, startTime, endTime);
@@ -211,7 +207,7 @@ public class ReservationQueryService {
      */
     private Instant calculateNoShowBlockEndTime(Long userId) {
         Instant latestNoShowTime = getLatestNoShowStartTime(userId);
-        return DateTimeUtil.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
+        return DateTimeUtils.getInstantMonthAfter(latestNoShowTime, noShowBlockMonth);
     }
 
     /**
@@ -225,8 +221,7 @@ public class ReservationQueryService {
     * */
     public List<Reservation> findValidReservations(Long userId, List<Long> roomPartitionIds, Instant nowTime, Long allowedStartMinute) {
         String notVisitedState = ReservationState.NOT_VISITED.toString();
-        return reservationRepository.findValidReservations(userId, roomPartitionIds, nowTime, allowedStartMinute,notVisitedState)
-                .orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
+        return reservationRepository.findValidReservations(userId, roomPartitionIds, nowTime, allowedStartMinute,notVisitedState);
     }
 
     /**
@@ -249,7 +244,54 @@ public class ReservationQueryService {
         return isExpired;
     }
 
+    /**
+     * 기간별 통계를 조회
+     */
+    public ReservationStaticResponse getReservationStaticsByDate(LocalDate date){
+//      모든 방에 대해서
+        Instant todayStart = getInstantStartOfToday(date);
+        Instant todayEnd = getInstantEndOfToday(date);
+        Instant beforeWeekStart = getInstantDayBefore(todayStart,7L);
+        Instant beforeMonthStart = getInstantMonthBefore(todayStart,1L);
 
+        // day
+        List<PartitionUsageStats> dayStats = reservationRepository.findPartitionUsageStats(todayStart, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsToday =
+                reservationMapper.toPartitionUsageStatsResponses(dayStats);
+
+        // week
+        List<PartitionUsageStats> weekStats = reservationRepository.findPartitionUsageStats(beforeWeekStart, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsWeekly =
+                reservationMapper.toPartitionUsageStatsResponses(weekStats);
+
+        // month
+        List<PartitionUsageStats> monthStats = reservationRepository.findPartitionUsageStats(beforeMonthStart, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsMonthly =
+                reservationMapper.toPartitionUsageStatsResponses(monthStats);
+
+        // total
+        List<PartitionUsageStats> totalStats = reservationRepository.findPartitionUsageStats(Instant.EPOCH, todayEnd);
+        List<PartitionUsageStatsResponse> partitionStatsTotal =
+                reservationMapper.toPartitionUsageStatsResponses(totalStats);
+
+        return reservationMapper.toReservationStatic(
+                partitionStatsToday,
+                partitionStatsWeekly,
+                partitionStatsMonthly,
+                partitionStatsTotal
+        );
+    }
+
+    public List<ReservationExportExcelDto> getExcelDTOs(Collection<ReservationState> states,
+                                                    Instant startDateTime,
+                                                    Instant endDateTime){
+        List<Reservation> reservations =
+                reservationRepository.findByFilter(states, startDateTime, endDateTime);
+
+        return reservationMapper.toExportExcelDTOs(reservations);
+    }
+
+    // -- 헬퍼 --
     public Reservation getReservationById(Long id) {
         return reservationRepository.findById(id).orElseThrow(() -> new CustomException(ReservationErrorCode.RESERVATION_NOT_FOUND));
     }
