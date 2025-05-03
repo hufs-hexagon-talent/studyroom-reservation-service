@@ -282,14 +282,12 @@ public class ReservationQueryService {
         );
     }
 
-    public List<ReservationExportExcelDto> getExcelDTOs(  Collection<ReservationState> states,
+    public List<ReservationExportExcelDto> getExcelDTOs(Collection<ReservationState> states,
                                                     Instant startDateTime,
                                                     Instant endDateTime){
         List<Reservation> reservations =
                 reservationRepository.findByFilter(states, startDateTime, endDateTime);
 
-        log.info("{}",states);
-        log.info("{}",reservations);
         return reservationMapper.toExportExcelDTOs(reservations);
     }
 
