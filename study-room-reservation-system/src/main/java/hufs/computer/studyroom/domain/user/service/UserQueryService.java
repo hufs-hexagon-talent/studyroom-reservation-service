@@ -2,22 +2,31 @@ package hufs.computer.studyroom.domain.user.service;
 
 import hufs.computer.studyroom.common.error.code.UserErrorCode;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.common.response.PageMeta;
+import hufs.computer.studyroom.common.response.PageResponse;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import hufs.computer.studyroom.domain.reservation.service.ReservationQueryService;
 import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
+import hufs.computer.studyroom.domain.user.dto.request.UserSearchCondition;
 import hufs.computer.studyroom.domain.user.dto.response.*;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
 import hufs.computer.studyroom.domain.user.repository.UserRepository;
+import hufs.computer.studyroom.domain.user.repository.UserSpecification;
 import hufs.computer.studyroom.domain.user.repository.projection.ServiceRoleStats;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -56,6 +65,28 @@ public class UserQueryService {
     public UserInfoResponses findUserByName(String name) {
         List<User> users = userRepository.findByName(name);
         return userMapper.toInfoResponses(userMapper.toInfoResponseList(users));
+    }
+
+    public PageResponse<UserInfoResponse> searchUsers(UserSearchCondition condition) {
+        Pageable pageable = PageRequest.of(
+                Optional.ofNullable(condition.page()).orElse(0),
+                Optional.ofNullable(condition.size()).orElse(30),
+                Sort.by(Sort.Direction.ASC, "userId")   // 기본 정렬
+        );
+
+        Page<User> pageResult =
+                userRepository.findAll(UserSpecification.search(condition), pageable);
+
+        List<UserInfoResponse> items =
+                userMapper.toInfoResponseList(pageResult.getContent());
+
+        PageMeta meta = new PageMeta(
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageResult.getNumber(),
+                pageResult.getSize()
+        );
+        return new PageResponse<>(meta, items);
     }
 
     /**
