@@ -72,14 +72,24 @@ public class AdminUserController {
     }
 
     @Operation(summary = "🚧 [관리자] 회원 검색 조회 (고도화 예정)",
-            description = "모든 user 조회 API",
+            description = "모든 user 검색 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/search")
-    public ResponseEntity<SuccessResponse<PageResponse<UserInfoResponse>>> getAllUsers(
+    public ResponseEntity<SuccessResponse<PageResponse<UserInfoResponse>>> searchUsers(
             @Valid @RequestBody UserSearchCondition conditionRequest) {
         var result = userQueryService.searchUsers(conditionRequest);
         return ResponseFactory.success(result);
     }
+
+    @Operation(summary = "✅ [관리자] 모든 회원 조회",
+            description = "모든 user 조회 API",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("")
+    public ResponseEntity<SuccessResponse<UserInfoResponses>> getAllUsers() {
+        var result = userQueryService.findAllUsers();
+        return ResponseFactory.success(result);
+    }
+
 
     @Operation(summary = "✅ [관리자] 여러 회원 등록",
             description = "user 등록 API",
