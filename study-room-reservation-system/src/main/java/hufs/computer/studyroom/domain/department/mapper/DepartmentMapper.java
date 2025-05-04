@@ -8,6 +8,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface DepartmentMapper {
 
@@ -18,4 +20,9 @@ public interface DepartmentMapper {
     void updateDepartmentFromRequest(ModifyDepartmentRequest request, @MappingTarget Department department);
     DepartmentInfoResponse toInfoResponse(Department department);
 
+    default List<DepartmentInfoResponse> toInfoResponseList(List<Department> departments){
+        return departments.stream()
+                .map(this::toInfoResponse)
+                .toList();
+    };
 }
