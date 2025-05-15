@@ -6,6 +6,7 @@ import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.schedule.dto.response.AvailableDateResponses;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
+import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleTableResponse;
 import hufs.computer.studyroom.domain.schedule.entity.RoomOperationPolicySchedule;
 import hufs.computer.studyroom.domain.schedule.mapper.RoomOperationPolicyScheduleMapper;
 import hufs.computer.studyroom.domain.schedule.repository.RoomOperationPolicyScheduleRepository;
@@ -30,9 +31,9 @@ public class ScheduleQueryService {
         return scheduleMapper.toScheduleInfoResponse(schedule);
     }
 
-    public ScheduleInfoResponses findScheduleByDate(LocalDate date) {
+    public List<ScheduleTableResponse> findScheduleByDate(LocalDate date) {
         List<RoomOperationPolicySchedule> schedules = scheduleRepository.findByPolicyApplicationDate(date);
-        return scheduleMapper.toScheduleInfoResponses(schedules);
+        return scheduleMapper.toScheduleTableResponse(schedules);
     }
 
     public AvailableDateResponses getAvailableDatesFromToday(Long departmentId) {
