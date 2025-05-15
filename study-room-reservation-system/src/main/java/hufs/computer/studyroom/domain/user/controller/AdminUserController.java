@@ -43,7 +43,7 @@ public class AdminUserController {
     private final ReservationCommandService reservationCommandService;
 
     // request param -> json request
-    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
+    @Operation(summary = "🚧 [관리자] 특정 회원 정보 조회",
             description = "특정 회원을 ID로 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/search/by-id/{userId}")
@@ -53,7 +53,7 @@ public class AdminUserController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
+    @Operation(summary = "🚧 [관리자] 특정 회원 정보 조회",
             description = "특정 회원을 학번으로 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/search/by-serial")
@@ -62,7 +62,7 @@ public class AdminUserController {
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
+    @Operation(summary = "🚧 [관리자] 특정 회원 정보 조회",
             description = "특정 회원을 이름으로 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/search/by-name")
@@ -102,7 +102,7 @@ public class AdminUserController {
     }
 
     // request param -> json request
-    @Operation(summary = "✅ [관리자] 특정 회원 삭제",
+    @Operation(summary = "🚧 [관리자] 특정 회원 삭제",
             description = "해당 user id의 정보 삭제 API",
             security = {@SecurityRequirement(name = "JWT")})
     @DeleteMapping("/{userId}")
