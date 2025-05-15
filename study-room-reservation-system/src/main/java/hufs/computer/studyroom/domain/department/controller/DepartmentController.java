@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Department", description = "관리 부서 정보 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +42,15 @@ public class DepartmentController {
     @GetMapping("/{departmentId}")
     public ResponseEntity<SuccessResponse<DepartmentInfoResponse>> getDepartmentById(@ExistDepartment @PathVariable Long departmentId) {
         var result = departmentQueryService.findDepartmentById(departmentId);
+        return ResponseFactory.success(result);
+    }
+
+    @Operation(summary = "✅[관리자] 모든 Department 조회",
+            description = "Department 조회하는 API",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping()
+    public ResponseEntity<SuccessResponse<List<DepartmentInfoResponse>>> getAllDepartment() {
+        var result = departmentQueryService.findAllDepartment();
         return ResponseFactory.success(result);
     }
 

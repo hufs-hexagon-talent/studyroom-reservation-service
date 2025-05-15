@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +27,11 @@ public class DepartmentQueryService {
     /* Query */
     public Department getDepartmentById(Long id) {
         return departmentRepository.findById(id).orElseThrow(() -> new CustomException(DepartmentErrorCode.DEPARTMENT_NOT_FOUND));
+    }
+
+    public List<DepartmentInfoResponse> findAllDepartment(){
+        List<Department> departments = departmentRepository.findAll();
+        return departmentMapper.toInfoResponseList(departments);
     }
     /* Query */
     public boolean existByDepartmentId(Long departmentId) {
