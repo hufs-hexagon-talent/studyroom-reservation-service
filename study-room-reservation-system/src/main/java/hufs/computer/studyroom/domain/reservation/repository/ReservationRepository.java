@@ -4,8 +4,12 @@ import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.user.entity.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface ReservationRepository extends JpaRepository<Reservation,Long> {
+public interface ReservationRepository extends JpaRepository<Reservation,Long>, JpaSpecificationExecutor<Reservation> {
     // JpaRepository 에서 인터페이스 CrudRepository 가 기본 CRUD 기능을 제공
 
     /**
@@ -132,6 +136,15 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             @Param("todayEnd") Instant todayEnd);
 
     /**
+     * 특정 구간(start ~ end)에 생성된 예약 조회
+     */
+    @Query("SELECT r FROM Reservation r " +
+            "WHERE r.createAt BETWEEN :start AND :end")
+    List<Reservation> getReservationsByCreateAt(
+            @Param("start") Instant start,
+            @Param("end") Instant end);
+
+    /**
      * 특정 구간(start ~ end)에 생성된 예약 총 갯수
      */
     @Query("SELECT COUNT(r) FROM Reservation r " +
@@ -171,4 +184,14 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
             @Param("states")      Collection<ReservationState> states,
             @Param("startDate")   Instant startDate,
             @Param("endDate")     Instant endDate);
+
+
+    /* 동적 조건 + 페이지네이션 + N+1 방지 */
+    @Override
+    @EntityGraph(attributePaths = {
+            "user",                     // Many-to-One
+            "roomPartition",            // Many-to-One
+            "roomPartition.room"        // 연쇄 Join
+    })
+    Page<Reservation> findAll(Specification<Reservation> spec, Pageable pageable);
 }
