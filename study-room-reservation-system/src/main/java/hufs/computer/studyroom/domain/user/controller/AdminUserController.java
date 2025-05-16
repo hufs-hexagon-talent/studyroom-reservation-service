@@ -72,7 +72,7 @@ public class AdminUserController {
     }
 
     @Operation(summary = "🚧 [관리자] 회원 검색 조회 (고도화 예정)",
-            description = "모든 user 검색 조회 API",
+            description = "사용자 관리를 위해 모든 user 검색 조회 API",
             security = {@SecurityRequirement(name = "JWT")})
     @PostMapping("/search")
     public ResponseEntity<SuccessResponse<PageResponse<UserInfoResponse>>> searchUsers(

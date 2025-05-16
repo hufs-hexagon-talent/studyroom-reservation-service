@@ -2,16 +2,20 @@ package hufs.computer.studyroom.domain.reservation.service;
 
 import hufs.computer.studyroom.common.error.code.*;
 import hufs.computer.studyroom.common.error.exception.CustomException;
+import hufs.computer.studyroom.common.response.PageMeta;
+import hufs.computer.studyroom.common.response.PageResponse;
 import hufs.computer.studyroom.common.util.DateTimeUtils;
 import hufs.computer.studyroom.domain.partition.entity.RoomPartition;
 import hufs.computer.studyroom.domain.partition.repository.RoomPartitionRepository;
 import hufs.computer.studyroom.domain.policy.entity.RoomOperationPolicy;
 import hufs.computer.studyroom.domain.reservation.dto.excel.ReservationExportExcelDto;
+import hufs.computer.studyroom.domain.reservation.dto.request.ReservationSearchCondition;
 import hufs.computer.studyroom.domain.reservation.dto.response.*;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import hufs.computer.studyroom.domain.reservation.mapper.ReservationMapper;
 import hufs.computer.studyroom.domain.reservation.repository.ReservationRepository;
+import hufs.computer.studyroom.domain.reservation.repository.ReservationSpecification;
 import hufs.computer.studyroom.domain.reservation.repository.projection.PartitionUsageStats;
 import hufs.computer.studyroom.domain.room.entity.Room;
 import hufs.computer.studyroom.domain.room.repository.RoomRepository;
@@ -23,8 +27,11 @@ import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -52,8 +59,6 @@ public class ReservationQueryService {
 
 
     // 해당 유저의 모든 reservation 로그 찾기
-//    todo : RESERVATION_HISTORY_NOT_FOUND 예외로 처리 할 지, 빈배열 반환을 할지?
-
     public ReservationInfoResponses findAllReservationByUser(Long userId) {
         List<Reservation> reservations = reservationRepository.findAllByUserUserId(userId);
         return reservationMapper.toInfoResponses(reservations);
@@ -174,8 +179,30 @@ public class ReservationQueryService {
         return reservationMapper.toInfoResponses(reservations);
     }
 
+    public PageResponse<ReservationInfoResponse> searchReservations(ReservationSearchCondition condition){
+        Pageable pageable = PageRequest.of(
+                Optional.ofNullable(condition.page()).orElse(0),
+                Optional.ofNullable(condition.size()).orElse(30),
+                Sort.by(Sort.Direction.ASC, "reservationStartTime")   // 기본 정렬
+        );
+
+        Page<Reservation> pageResult =
+                reservationRepository.findAll(ReservationSpecification.search(condition), pageable);
+
+        List<ReservationInfoResponse> items = reservationMapper.toInfoResponseList(pageResult.getContent());
+
+        PageMeta meta = new PageMeta(
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageResult.getNumber(),
+                pageResult.getSize()
+        );
+        return new PageResponse<>(meta, items);
+    }
+
     /* Helper Method
     * */
+
 
     /**
      * 사용자의 NO_SHOW (유효 기간 + NOT_VISITED)

@@ -147,6 +147,12 @@ public interface ReservationMapper {
         return new BlockedUserNoShowResponses(userNoShowCntResponses);
     }
 
+    default List<ReservationInfoResponse> toInfoResponseList(List<Reservation> reservations) {
+        return reservations.stream()
+                .map(this::toInfoResponse)
+                .toList();
+    }
+
     // List<Reservation> -> ReservationInfoResponses 변환
     default ReservationInfoResponses toInfoResponses(List<Reservation> reservations) {
         List<ReservationInfoResponse> reservationInfoResponses = reservations.stream()
