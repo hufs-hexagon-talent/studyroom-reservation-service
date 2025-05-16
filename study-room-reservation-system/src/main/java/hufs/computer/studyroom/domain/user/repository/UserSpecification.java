@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserSpecification {
     public static Specification<User> search(UserSearchCondition cond) {
@@ -26,9 +28,9 @@ public class UserSpecification {
     private static Specification<User> email(String v)    { return like("email", v); }
 
 
-    private static Specification<User> role(ServiceRole r) {
-        return (r == null) ? null
-                : (root, q, cb) -> cb.equal(root.get("serviceRole"), r);
+    private static Specification<User> role(List<ServiceRole> roles) {
+        return (roles == null || roles.isEmpty()) ? null
+                : (root, q, cb) -> root.get("serviceRole").in(roles);
     }
 
     private static Specification<User> department(Long id) {
