@@ -1,6 +1,5 @@
 package hufs.computer.studyroom.domain.reservation.dto.request;
 
-import hufs.computer.studyroom.domain.reservation.entity.Reservation;
 import hufs.computer.studyroom.domain.reservation.entity.Reservation.ReservationState;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,6 +8,8 @@ import java.util.List;
 
 @Schema(description = "예약 정보 조회 조건 요청 DTO")
 public record ReservationSearchCondition(
+        @Schema(description = "id (userId)", example = "35")
+        Long userId,
         @Schema(description = "로그인 아이디 (username)", example = "202512345")
         String username,
         @Schema(description = "학번 (serial)", example = "202512345")

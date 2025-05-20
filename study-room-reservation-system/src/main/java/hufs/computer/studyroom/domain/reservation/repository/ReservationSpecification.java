@@ -19,7 +19,8 @@ import static hufs.computer.studyroom.domain.reservation.entity.Reservation.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReservationSpecification {
     public static Specification<Reservation> search(ReservationSearchCondition cond){
-        return Specification.where(username(cond.username()))
+        return Specification.where(userId(cond.userId())
+                .and(username(cond.username())))
                 .and(serial(cond.serial()))
                 .and(name(cond.name()))
                 .and(roomIds(cond.roomIds()))
@@ -39,6 +40,7 @@ public class ReservationSpecification {
         };
     }
 
+    private static Specification<Reservation> userId(String value) {return likeOnUser("userId", value);}
     private static Specification<Reservation> username(String value) {return likeOnUser("username", value);}
     private static Specification<Reservation> serial(String value) {return likeOnUser("serial", value);}
     private static Specification<Reservation> name(String value) {return likeOnUser("name", value);}
