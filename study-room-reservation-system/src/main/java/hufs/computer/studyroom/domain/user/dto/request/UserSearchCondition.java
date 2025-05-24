@@ -3,18 +3,20 @@ package hufs.computer.studyroom.domain.user.dto.request;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+
 @Schema(description = "회원 정보 조회 조건 요청 DTO")
 public record UserSearchCondition(
         @Schema(description = "로그인 아이디 (username)", example = "202512345")
         String username,
         @Schema(description = "학번 (serial)", example = "202512345")
         String serial,
-        @Schema(description = "사용자 이름", example = "홍길동")
+        @Schema(description = "사용자 이름", example = "황병훈")
         String name,
         @Schema(description = "이메일 주소", example = "user@hufs.ac.kr")
         String email,
-        @Schema(description = "회원 권한", example = "USER")
-        ServiceRole role,
+        @Schema(description = "회원 권한", example = "[\"USER\",\"BLOCKED\"]")
+        List<ServiceRole> role,
         @Schema(description = "부서 ID", example = "1")
         Long departmentId,
 

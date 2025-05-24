@@ -1,5 +1,6 @@
 package hufs.computer.studyroom.domain.reservation.controller;
 
+import hufs.computer.studyroom.common.response.PageResponse;
 import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.common.util.excel.core.ExcelFile;
@@ -8,6 +9,7 @@ import hufs.computer.studyroom.common.validation.annotation.ExistReservation;
 import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
 import hufs.computer.studyroom.domain.reservation.dto.excel.ReservationExportExcelDto;
 import hufs.computer.studyroom.domain.reservation.dto.request.ModifyReservationStateRequest;
+import hufs.computer.studyroom.domain.reservation.dto.request.ReservationSearchCondition;
 import hufs.computer.studyroom.domain.reservation.dto.response.BlockedUserNoShowResponses;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponse;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
@@ -70,29 +72,29 @@ public class AdminReservationController {
         return ResponseFactory.modified(result);
     }
 
-    @Operation(summary = "✅[관리자] userId로 사용자의 예약들 조회",
+    @Operation(summary = "🚧[관리자] userId로 사용자의 예약들 조회",
             description = "관리용 예약 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/admin/users/{userId}")
     public ResponseEntity<SuccessResponse<ReservationInfoResponses>> getReservationByUserId(@ExistUser @PathVariable Long userId) {
-// todo : [의논] 어느 시점까지의 예약을 가져와야할까? 시간이 가면 갈 수 록, 예약이 너무 많아 질텐데,,,
+
         var result = reservationQueryService.findAllReservationByUser(userId);
 
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅[관리자] 블락 당한 사용자들의 예약들 조회",
+    @Operation(summary = "🚧[관리자] 블락 당한 사용자들의 예약들 조회",
             description = "관리용 예약 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/admin/blocked/users")
     public ResponseEntity<SuccessResponse<BlockedUserNoShowResponses>> getBlockedUserReservationInfo() {
-//        todo : 관리자 검증 애노테이션 생성
+
         var result = reservationQueryService.getBlockedUserReservation();
 
         return ResponseFactory.success(result);
     }
 
-    @Operation(summary = "✅[관리자] 특정 날짜 + 특정 partition 들에 대한 모든 예약 상태 확인 ",
+    @Operation(summary = "🚧[관리자] 특정 날짜 + 특정 partition 들에 대한 모든 예약 상태 확인 ",
             description = "파티션 별 로 예약 관리를 위해 날짜와 특정 파티션들에 대한 모든 예약을 확인",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/partitions/by-date")
@@ -104,6 +106,16 @@ public class AdminReservationController {
 
         return ResponseFactory.success(result);
     }
+    @Operation(summary = "🚧[관리자] 예약 검색 조회 (고도화 예정)",
+            description = "예약 관리를 위해 모든 reservation 검색 조회 API",
+            security = {@SecurityRequirement(name = "JWT")})
+    @PostMapping("/search")
+    public ResponseEntity<SuccessResponse<PageResponse<ReservationInfoResponse>>> searchReservations(
+            @Valid @RequestBody ReservationSearchCondition conditionRequest) {
+        var result = reservationQueryService.searchReservations(conditionRequest);
+        return ResponseFactory.success(result);
+    }
+
 
     @Operation(summary = "✅[관리자] 금일 예약들 통계 조회",
             description = "관리용 예약 수치 조회",

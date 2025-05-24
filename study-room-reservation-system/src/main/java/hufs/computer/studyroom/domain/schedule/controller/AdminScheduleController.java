@@ -7,6 +7,7 @@ import hufs.computer.studyroom.domain.schedule.dto.request.CreateScheduleBulkReq
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponse;
 import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleInfoResponses;
 import hufs.computer.studyroom.domain.schedule.dto.request.ModifyScheduleRequest;
+import hufs.computer.studyroom.domain.schedule.dto.response.ScheduleTableResponse;
 import hufs.computer.studyroom.domain.schedule.service.ScheduleCommandService;
 import hufs.computer.studyroom.domain.schedule.service.ScheduleQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "PolicySchedule", description = "날짜에 따른 방운영 정책")
 @RestController
@@ -53,7 +55,7 @@ public class AdminScheduleController {
             description = "스케쥴 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("date/{policyApplicationDate}")
-    ResponseEntity<SuccessResponse<ScheduleInfoResponses>> getSchedules(@PathVariable LocalDate policyApplicationDate) {
+    ResponseEntity<SuccessResponse<List<ScheduleTableResponse>>> getSchedules(@PathVariable LocalDate policyApplicationDate) {
         var result = scheduleQueryService.findScheduleByDate(policyApplicationDate);
         return ResponseFactory.success(result);
     }
