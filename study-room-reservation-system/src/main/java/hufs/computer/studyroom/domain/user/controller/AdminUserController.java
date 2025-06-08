@@ -43,7 +43,7 @@ public class AdminUserController {
     private final ReservationCommandService reservationCommandService;
 
     // request param -> json request
-    @Operation(summary = "🚧 [관리자] 특정 회원 정보 조회",
+    @Operation(summary = "✅ [관리자] 특정 회원 정보 조회",
             description = "특정 회원을 ID로 조회",
             security = {@SecurityRequirement(name = "JWT")})
     @GetMapping("/search/by-id/{userId}")
