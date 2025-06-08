@@ -11,11 +11,11 @@ import lombok.Builder;
 @Builder
 @Schema(description = "회원 정보 업데이트 요청 DTO")
 public record ModifyUserInfoRequest(
-        @UniqueUsername
+//        @UniqueUsername
         @Schema(description = "로그인 ID", example = "202512345")
         String username,
 
-        @UniqueSerial
+//        @UniqueSerial
         @Schema(description = "학번", example = "202512345")
         String serial,
 
@@ -27,7 +27,7 @@ public record ModifyUserInfoRequest(
 
         @Schema(description = "이메일", example = "@hufs.ac.kr")
         @Email(message = "유효한 이메일 주소를 입력하세요")
-        @UniqueEmail
+//        @UniqueEmail
         String email,
 
         @Schema(description = "소속 학과 ID", example = "1")
