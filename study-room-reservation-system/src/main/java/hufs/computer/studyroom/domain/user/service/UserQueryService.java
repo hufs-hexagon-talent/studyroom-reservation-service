@@ -141,13 +141,16 @@ public class UserQueryService {
 
     public ServiceRole getServiceRoleById(Long id) {return userRepository.findUserServiceRoleByUserId(id);}
 
+    public List<User> getUserByServiceRole(Collection<ServiceRole> filterByRoles) {
+        return userRepository.findUsersByServiceRole(filterByRoles);
+    }
     /*
      * 엑셀 다운로드 용 DTO 리스트 반환
      */
     public List<UserExportExcelDto> getExcelDTOs(Collection<ServiceRole> filterByRoles){
 
         // (필터 조건) USER 와 BLOCKED 만
-        List<User> users = userRepository.findUsersByServiceRole(filterByRoles); // user 와 blocked 만
+        List<User> users = getUserByServiceRole(filterByRoles);
         return userMapper.toExportExcelDTOs(users);
     }
 
