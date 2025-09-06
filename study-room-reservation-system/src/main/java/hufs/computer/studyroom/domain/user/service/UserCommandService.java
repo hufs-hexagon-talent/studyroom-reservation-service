@@ -25,8 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -71,6 +72,118 @@ public class UserCommandService {
 
         // 3. 저장한 사용자들 반환
         return userMapper.toInfoResponses(responses);
+    }
+
+    /**
+     * 매 학기 재학생 데이터를 받아 사용자 상태를 업데이트하고 신규 사용자를 등록
+     * - 기존 USER, BLOCKED → 재학생 데이터에 없으면 EXPIRED로 변경
+     * - 기존 EXPIRED → 재학생 데이터에 있으면 USER로 변경
+     * - 신규 학생 → 새로 등록 (초기 비밀번호는 학번)
+     *
+     * @param request 재학생 데이터 일괄 동기화 요청
+     * @return 처리된 사용자 정보 목록
+     */
+    @Transactional
+    public UserInfoResponses synchronizeEnroll(@Valid EnrollmentBulkRequest request) {
+        List<EnrollmentRequest> enrollmentRequests = request.enrollments();
+        List<UserInfoResponse> processedUsers = new ArrayList<>();
+
+        // 1. 현재 재학생 데이터에서 학번(serial) 추출
+        Map<String, EnrollmentRequest> currentEnrollmentMap = enrollmentRequests.stream()
+                .collect(Collectors.toMap(
+                        EnrollmentRequest::serial,
+                        Function.identity(),
+                        (existing, replacement) -> existing  // 중복 시 첫 번째 값 사용
+                ));
+
+        Set<String> currentEnrollmentSerials = currentEnrollmentMap.keySet();
+
+        // 2. 시스템에 등록된 USER, EXPIRED 상태의 사용자 조회
+        List<User> existingUsers
+                = userQueryService.getUserByServiceRole(Arrays.asList(ServiceRole.USER, ServiceRole.EXPIRED, ServiceRole.BLOCKED));
+
+        // 기존 사용자를 학번으로 매핑
+        Map<String, User> existingUserMap = existingUsers.stream()
+                .collect(Collectors.toMap(
+                        User::getSerial,
+                        Function.identity(),
+                        (existing, replacement) -> existing  // 중복 시 첫 번째 값 사용
+                ));
+
+        // 3. 기존 사용자들의 상태 업데이트
+        List<User> usersToUpdate = new ArrayList<>();
+
+        for (User existingUser : existingUsers) {
+            String userSerial = existingUser.getSerial();
+            ServiceRole currentRole = existingUser.getServiceRole();
+
+            if (currentEnrollmentSerials.contains(userSerial)) {
+                // 재학생 데이터에 포함된 경우
+                if (currentRole == ServiceRole.EXPIRED) {
+                    // EXPIRED → USER로 변경
+                    existingUser.setServiceRole(ServiceRole.USER);
+                    usersToUpdate.add(existingUser);
+                } else if (currentRole == ServiceRole.USER) {
+                    // USER 상태인 경우는 유지
+                    processedUsers.add(userMapper.toInfoResponse(existingUser));
+                }
+            } else {
+                // 재학생 데이터에 포함되지 않은 경우
+                if (currentRole == ServiceRole.USER || currentRole == ServiceRole.BLOCKED) {
+                    // USER, BLOCKED → EXPIRED로 변경
+                    existingUser.setServiceRole(ServiceRole.EXPIRED);
+                    usersToUpdate.add(existingUser);
+                }
+                // EXPIRED 상태인 경우는 유지
+            }
+        }
+
+        // 벌크 업데이트 수행
+        if (!usersToUpdate.isEmpty()) {
+            List<User> savedUsers = userRepository.saveAll(usersToUpdate);
+            processedUsers.addAll(userMapper.toInfoResponseList(savedUsers));
+        }
+
+        // 4. 신규 사용자 등록 (시스템에 없는 학번)
+        List<EnrollmentRequest> newUserRequests = currentEnrollmentMap.values().stream()
+                .filter(req -> !existingUserMap.containsKey(req.serial()))
+                .collect(Collectors.toList());
+
+
+        int newUserCount = 0;
+        int failedCount = 0;
+
+        for (EnrollmentRequest enrollmentRequest : newUserRequests) {
+            try {
+                // EnrollmentRequest를 SignUpRequest로 변환 (초기 비밀번호는 학번)
+                SignUpRequest signUpRequest = enrollmentRequest.toSignUpRequest();
+                UserInfoResponse newUser = signUpProcess(signUpRequest);
+                processedUsers.add(newUser);
+
+                newUserCount++;
+                log.info("신규 사용자 등록 성공: 학번 {}, 이름 {}, 학과ID {} (초기 비밀번호는 학번과 동일)",
+                        enrollmentRequest.serial(),
+                        enrollmentRequest.name(),
+                        enrollmentRequest.departmentId());
+            } catch (Exception e) {
+                failedCount++;
+                log.error("신규 사용자 등록 실패 - 학번: {}, 이름: {}, 오류: {}",
+                        enrollmentRequest.serial(),
+                        enrollmentRequest.name(),
+                        e.getMessage());
+                // 실패한 사용자는 건너뛰고 계속 진행
+            }
+        }
+
+        // 5. 처리 결과 로깅
+        log.info("===== 재학생 데이터 동기화 완료 =====");
+        log.info("총 처리: {}명", processedUsers.size());
+        log.info("신규 등록: {}명", newUserCount);
+        log.info("상태 변경: {}명", usersToUpdate.size());
+        log.info("실패: {}명", failedCount);
+        log.info("=====================================");
+
+        return userMapper.toInfoResponses(processedUsers);
     }
 
     public UserInfoResponse updateUserInfo(Long userId, ModifyUserInfoRequest request) {

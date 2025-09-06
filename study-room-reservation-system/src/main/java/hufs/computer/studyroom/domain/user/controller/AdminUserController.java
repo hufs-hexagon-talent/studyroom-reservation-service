@@ -9,6 +9,7 @@ import hufs.computer.studyroom.common.validation.annotation.user.ExistUser;
 import hufs.computer.studyroom.domain.reservation.dto.response.ReservationInfoResponses;
 import hufs.computer.studyroom.domain.reservation.service.ReservationCommandService;
 import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
+import hufs.computer.studyroom.domain.user.dto.request.EnrollmentBulkRequest;
 import hufs.computer.studyroom.domain.user.dto.request.ModifyUserInfoRequest;
 import hufs.computer.studyroom.domain.user.dto.request.SignUpBulkRequest;
 import hufs.computer.studyroom.domain.user.dto.request.UserSearchCondition;
@@ -99,6 +100,16 @@ public class AdminUserController {
             @Valid @RequestBody SignUpBulkRequest bulkRequest) {
         var result = userCommandService.signUpUsers(bulkRequest);
         return ResponseFactory.created(result);
+    }
+
+    @Operation(summary = "✅ [관리자] 재학생 데이터 동기화",
+            description = "매 학기 재학생 데이터를 기반으로 사용자 상태를 업데이트하고 신규 사용자를 등록합니다.\n",
+            security = {@SecurityRequirement(name = "JWT")})
+    @PostMapping("/sync-enrollment")
+    public ResponseEntity<SuccessResponse<UserInfoResponses>> synchronizeEnroll(
+            @Valid @RequestBody EnrollmentBulkRequest bulkRequest) {
+        var result = userCommandService.synchronizeEnroll(bulkRequest);
+        return ResponseFactory.success(result);
     }
 
     // request param -> json request
