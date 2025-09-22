@@ -62,7 +62,9 @@ src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-o
 - **Docker Compose**
 
 ### CI/CD
-- **GitHub Actions**  
+- **GitHub Actions**
+  <img width="1289" height="569" alt="ci-cd-study-room drawio" src="https://github.com/user-attachments/assets/daee5187-6ea7-4bc2-a52c-3cd5dedc3d5a" />
+
   
 ## Contributing
 개선 사항이 있으면 이슈를 열거나 풀 리퀘스트를 제출해 주세요.
