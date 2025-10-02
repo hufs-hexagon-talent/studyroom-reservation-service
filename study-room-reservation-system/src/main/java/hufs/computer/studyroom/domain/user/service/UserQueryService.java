@@ -9,6 +9,7 @@ import hufs.computer.studyroom.domain.reservation.service.ReservationQueryServic
 import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
 import hufs.computer.studyroom.domain.user.dto.request.UserSearchCondition;
 import hufs.computer.studyroom.domain.user.dto.response.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
@@ -37,6 +38,7 @@ public class UserQueryService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ReservationQueryService reservationQueryService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     public User findByUsername(String username) {
@@ -158,5 +160,30 @@ public class UserQueryService {
     public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
     public boolean existByEmail(String email) {return userRepository.existsByEmail(email);}
+
+    /**
+     * 비밀번호 변경 필요 여부 확인
+     * 비밀번호가 serial과 동일한지 확인
+     */
+    public PasswordChangeRequiredResponse checkPasswordChangeRequired(Long userId) {
+        User user = getUserById(userId);
+        
+        // 비밀번호가 serial과 동일한지 확인
+        boolean isPasswordSameAsSerial = bCryptPasswordEncoder.matches(user.getSerial(), user.getPassword());
+        
+        if (isPasswordSameAsSerial) {
+            return PasswordChangeRequiredResponse.builder()
+                    .isPasswordChangeRequired(true)
+                    .message("보안을 위해 비밀번호를 변경해주세요. 현재 기본 비밀번호(학번)를 사용하고 있습니다.")
+                    .passwordChangeUrl("/users/me/password")
+                    .build();
+        } else {
+            return PasswordChangeRequiredResponse.builder()
+                    .isPasswordChangeRequired(false)
+                    .message("비밀번호가 안전하게 설정되어 있습니다.")
+                    .passwordChangeUrl(null)
+                    .build();
+        }
+    }
 
 }

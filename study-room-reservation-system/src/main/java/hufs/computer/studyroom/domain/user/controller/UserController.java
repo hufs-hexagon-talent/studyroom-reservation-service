@@ -4,6 +4,7 @@ import hufs.computer.studyroom.common.response.SuccessResponse;
 import hufs.computer.studyroom.common.response.factory.ResponseFactory;
 import hufs.computer.studyroom.domain.mail.dto.response.EmailResponse;
 import hufs.computer.studyroom.domain.user.dto.request.*;
+import hufs.computer.studyroom.domain.user.dto.response.PasswordChangeRequiredResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserBlockedInfoResponse;
 import hufs.computer.studyroom.domain.user.dto.response.UserInfoResponse;
 import hufs.computer.studyroom.domain.user.entity.User;
@@ -94,5 +95,15 @@ public class UserController {
         User user = currentUser.getUser();
         var result = userCommandService.authorizeEmailChange(user.getUserId(), request);
         return ResponseFactory.modified(result);
+    }
+
+    @Operation(summary = "✅비밀번호 변경 필요 여부 확인",
+            description = "기본 비밀번호(학번)를 사용하고 있는지 확인하여 비밀번호 변경 안내",
+            security = {@SecurityRequirement(name = "JWT")})
+    @GetMapping("/me/check-password")
+    public ResponseEntity<SuccessResponse<PasswordChangeRequiredResponse>> checkPasswordChange(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        User user = currentUser.getUser();
+        var result = userQueryService.checkPasswordChangeRequired(user.getUserId());
+        return ResponseFactory.success(result);
     }
 }
