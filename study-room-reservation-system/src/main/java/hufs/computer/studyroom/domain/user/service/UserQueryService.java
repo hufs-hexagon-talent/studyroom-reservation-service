@@ -164,26 +164,19 @@ public class UserQueryService {
     /**
      * 비밀번호 변경 필요 여부 확인
      * 비밀번호가 serial과 동일한지 확인
+     * ADMIN, RESIDENT는 체크하지 않음
+     * @return true면 비밀번호 변경 필요, false면 불필요
      */
-    public PasswordChangeRequiredResponse checkPasswordChangeRequired(Long userId) {
+    public Boolean checkPasswordChangeRequired(Long userId) {
         User user = getUserById(userId);
         
-        // 비밀번호가 serial과 동일한지 확인
-        boolean isPasswordSameAsSerial = bCryptPasswordEncoder.matches(user.getSerial(), user.getPassword());
-        
-        if (isPasswordSameAsSerial) {
-            return PasswordChangeRequiredResponse.builder()
-                    .isPasswordChangeRequired(true)
-                    .message("보안을 위해 비밀번호를 변경해주세요. 현재 기본 비밀번호(학번)를 사용하고 있습니다.")
-                    .passwordChangeUrl("/users/me/password")
-                    .build();
-        } else {
-            return PasswordChangeRequiredResponse.builder()
-                    .isPasswordChangeRequired(false)
-                    .message("비밀번호가 안전하게 설정되어 있습니다.")
-                    .passwordChangeUrl(null)
-                    .build();
+        // ADMIN 또는 RESIDENT인 경우 체크하지 않음
+        if (user.getServiceRole() == ServiceRole.ADMIN || user.getServiceRole() == ServiceRole.RESIDENT) {
+            return false;
         }
+        
+        // 비밀번호가 serial과 동일한지 확인
+        return bCryptPasswordEncoder.matches(user.getSerial(), user.getPassword());
     }
 
 }

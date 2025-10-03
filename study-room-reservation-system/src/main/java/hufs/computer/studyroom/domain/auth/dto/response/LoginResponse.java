@@ -9,5 +9,7 @@ public record LoginResponse(
         @Schema (description = "엑세스 토큰", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
         String accessToken,
         @Schema (description = "리프레시 토큰")
-        String refreshToken
+        String refreshToken,
+        @Schema (description = "비밀번호 변경 필요 여부", example = "true")
+        Boolean isPasswordChangeRequired
 ) {}
