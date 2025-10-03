@@ -12,8 +12,13 @@ public interface AuthMapper {
     @Mapping(target = "accessToken", source = "accessToken")
     RefreshResponse toRefreshResponse(String accessToken);
 
-    @Mapping(target = "tokenType", constant = "bearer")  // JWT 토큰 타입을 상수로 지정
+    @Mapping(target = "tokenType", constant = "bearer")
     @Mapping(target = "accessToken", source = "accessToken")
     @Mapping(target = "refreshToken", source = "refreshToken")
-    LoginResponse toLoginResponse(String accessToken, String refreshToken);
+    @Mapping(target = "isPasswordChangeRequired", source = "isPasswordChangeRequired")
+    LoginResponse toLoginResponse(
+            String accessToken, 
+            String refreshToken,
+            Boolean isPasswordChangeRequired
+    );
 }

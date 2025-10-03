@@ -7,6 +7,8 @@ import hufs.computer.studyroom.domain.auth.dto.response.LoginResponse;
 import hufs.computer.studyroom.domain.auth.dto.response.RefreshResponse;
 import hufs.computer.studyroom.domain.auth.mapper.AuthMapper;
 import hufs.computer.studyroom.domain.auth.security.CustomUserDetails;
+import hufs.computer.studyroom.domain.user.entity.User;
+import hufs.computer.studyroom.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +27,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthMapper authMapper;
     private final JWTService jwtService;
+    private final UserQueryService userQueryService;
 
     /**
      * 로그인 요청을 받아 AccessToken 및 RefreshToken 발급
@@ -38,13 +41,17 @@ public class AuthService {
         // 2. 인증된 사용자 정보로부터 CustomUserDetails를 가져옴
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
+        User user = userDetails.getUser();
 
         // 3. 인증된 사용자 정보로 토큰을 생성
         String accessToken = jwtService.createAccessToken(username);
         String refreshToken = jwtService.createRefreshToken(username);
+        
+        // 4. 비밀번호 변경 필요 여부 체크
+        Boolean isPasswordChangeRequired = userQueryService.checkPasswordChangeRequired(user.getUserId());
 
-        // 4. JWT 토큰을 포함한 응답 DTO 반환
-        return authMapper.toLoginResponse(accessToken, refreshToken);
+        // 5. JWT 토큰 및 비밀번호 변경 정보를 포함한 응답 DTO 반환
+        return authMapper.toLoginResponse(accessToken, refreshToken, isPasswordChangeRequired);
     }
 
     /**
