@@ -9,6 +9,7 @@ import hufs.computer.studyroom.domain.reservation.service.ReservationQueryServic
 import hufs.computer.studyroom.domain.user.dto.excel.UserExportExcelDto;
 import hufs.computer.studyroom.domain.user.dto.request.UserSearchCondition;
 import hufs.computer.studyroom.domain.user.dto.response.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import hufs.computer.studyroom.domain.user.entity.ServiceRole;
 import hufs.computer.studyroom.domain.user.entity.User;
 import hufs.computer.studyroom.domain.user.mapper.UserMapper;
@@ -37,6 +38,7 @@ public class UserQueryService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ReservationQueryService reservationQueryService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     public User findByUsername(String username) {
@@ -158,5 +160,23 @@ public class UserQueryService {
     public boolean existByUsername(String username) {return userRepository.existsByUsername(username);}
     public boolean existBySerial(String serial) {return userRepository.existsBySerial(serial);}
     public boolean existByEmail(String email) {return userRepository.existsByEmail(email);}
+
+    /**
+     * 비밀번호 변경 필요 여부 확인
+     * 비밀번호가 serial과 동일한지 확인
+     * ADMIN, RESIDENT는 체크하지 않음
+     * @return true면 비밀번호 변경 필요, false면 불필요
+     */
+    public Boolean checkPasswordChangeRequired(Long userId) {
+        User user = getUserById(userId);
+        
+        // ADMIN 또는 RESIDENT인 경우 체크하지 않음
+        if (user.getServiceRole() == ServiceRole.ADMIN || user.getServiceRole() == ServiceRole.RESIDENT) {
+            return false;
+        }
+        
+        // 비밀번호가 serial과 동일한지 확인
+        return bCryptPasswordEncoder.matches(user.getSerial(), user.getPassword());
+    }
 
 }
